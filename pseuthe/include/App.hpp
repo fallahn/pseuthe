@@ -25,20 +25,56 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <App.hpp>
+//main entry point for the app
 
-#ifdef __linux
-#include <X11/Xlib.h>
-#endif // __linux
+#ifndef APP_HPP_
+#define APP_HPP_
 
-int main()
+#include <SFML/Graphics/RenderWindow.hpp>
+
+#include <functional>
+
+class App final
 {
-#ifdef __linux
-    XInitThreads();
-#endif //__linux
+public:
 
-    App app;
-    app.run();
+    struct VideoSettings final
+    {
+        sf::Int32 WindowStyle;
+        sf::VideoMode VideoMode;
+        bool VSync;
+        std::vector<sf::VideoMode> AvailableVideoModes;
 
-    return 0;
-}
+        VideoSettings()
+            : WindowStyle(sf::Style::Close),
+            VideoMode(1024, 576),
+            VSync(true){}
+    };
+
+    App();
+    ~App() = default;
+    App(const App&) = delete;
+    const App& operator = (const App&) = delete;
+
+    void run();
+    void pause();
+    void resume();
+
+    const VideoSettings& getVideoSettings() const;
+
+private:
+
+    VideoSettings m_videoSettings;
+
+    sf::RenderWindow m_renderWindow;
+
+    void handleEvents();
+    std::function<void(float)> update;
+    void updateApp(float dt);
+    void pauseApp(float dt);
+    void draw();
+
+    void registerStates();
+};
+
+#endif //APP_HPP_

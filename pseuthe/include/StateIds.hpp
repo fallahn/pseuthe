@@ -25,20 +25,18 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <App.hpp>
+#ifndef STATE_IDS_HPP_
+#define STATE_IDS_HPP_
 
-#ifdef __linux
-#include <X11/Xlib.h>
-#endif // __linux
-
-int main()
+namespace States
 {
-#ifdef __linux
-    XInitThreads();
-#endif //__linux
-
-    App app;
-    app.run();
-
-    return 0;
+    enum class ID
+    {
+        None,
+        Main,
+        Menu,
+        Pause
+    };
 }
+
+#endif //STATE_IDS_HPP_
