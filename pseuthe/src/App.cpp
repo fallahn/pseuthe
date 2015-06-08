@@ -26,6 +26,9 @@ source distribution.
 *********************************************************************/
 
 #include <App.hpp>
+#include <MenuState.hpp>
+#include <GameState.hpp>
+#include <PauseState.hpp>
 
 #include <SFML/Window/Event.hpp>
 
@@ -45,9 +48,12 @@ namespace
 
 App::App()
     : m_videoSettings   (),
-    m_renderWindow      (m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle)
+    m_renderWindow      (m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle),
+    m_stateStack        ({ m_renderWindow, *this })
 {
     registerStates();
+    m_stateStack.pushState(States::ID::Main);
+    m_stateStack.pushState(States::ID::Menu);
 
     m_renderWindow.setVerticalSyncEnabled(m_videoSettings.VSync);
 
@@ -120,14 +126,21 @@ void App::handleEvents()
         default: break;
         }
 
-        //TODO pass event to state stack
-        //m_stateStack.handleEvent(evt);
+        //-----TODO make only debug-----
+        if (evt.type == sf::Event::KeyPressed
+            && evt.key.code == sf::Keyboard::Escape)
+        {
+            m_renderWindow.close();
+        }
+        //------------------------------
+
+        m_stateStack.handleEvent(evt);
     }
 }
 
 void App::updateApp(float dt)
 {
-    //m_stateStack.update(dt);
+    m_stateStack.update(dt);
 }
 
 void App::pauseApp(float dt)
@@ -138,11 +151,13 @@ void App::pauseApp(float dt)
 void App::draw()
 {
     m_renderWindow.clear(sf::Color::Black);
-    //m_stateStack.draw();
+    m_stateStack.draw();
     m_renderWindow.display();
 }
 
 void App::registerStates()
 {
-
+    m_stateStack.registerState<MenuState>(States::ID::Menu); 
+    m_stateStack.registerState<GameState>(States::ID::Main);
+    m_stateStack.registerState<PauseState>(States::ID::Pause);
 }

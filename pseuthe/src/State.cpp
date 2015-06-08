@@ -25,59 +25,41 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//main entry point for the app
-
-#ifndef APP_HPP_
-#define APP_HPP_
-
+#include <State.hpp>
 #include <StateStack.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
-#include <functional>
+State::Context::Context(sf::RenderWindow& rw, App& app)
+    : renderWindow(rw), appInstance(app){}
 
-class App final
+
+//-----------------------------------------------------
+
+State::State(StateStack& stateStack, Context context)
+    : m_stateStack  (stateStack),
+    m_context       (context)
 {
-public:
 
-    struct VideoSettings final
-    {
-        sf::Int32 WindowStyle;
-        sf::VideoMode VideoMode;
-        bool VSync;
-        std::vector<sf::VideoMode> AvailableVideoModes;
+}
 
-        VideoSettings()
-            : WindowStyle(sf::Style::Close),
-            VideoMode(1024, 576),
-            VSync(true){}
-    };
+//protected
+void State::requestStackPush(States::ID id)
+{
+    m_stateStack.pushState(id);
+}
 
-    App();
-    ~App() = default;
-    App(const App&) = delete;
-    const App& operator = (const App&) = delete;
+void State::requestStatckPop()
+{
+    m_stateStack.popState();
+}
 
-    void run();
-    void pause();
-    void resume();
+void State::requestStackClear()
+{
+    m_stateStack.clearStates();
+}
 
-    const VideoSettings& getVideoSettings() const;
-
-private:
-
-    VideoSettings m_videoSettings;
-    sf::RenderWindow m_renderWindow;
-
-    StateStack m_stateStack;
-
-    void handleEvents();
-    std::function<void(float)> update;
-    void updateApp(float dt);
-    void pauseApp(float dt);
-    void draw();
-
-    void registerStates();
-};
-
-#endif //APP_HPP_
+State::Context State::getContext() const
+{
+    return m_context;
+}

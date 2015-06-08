@@ -67,14 +67,23 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>extlibs/sfml</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-audio.lib;sfml-graphics.lib;sfml-main.lib;sfml-system.lib;sfml-window.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp" />
+    <ClCompile Include="src\GameState.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\MenuState.cpp" />
+    <ClCompile Include="src\PauseState.cpp" />
+    <ClCompile Include="src\State.cpp" />
+    <ClCompile Include="src\StateStack.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\App.hpp" />
+    <ClInclude Include="include\GameState.hpp" />
+    <ClInclude Include="include\MenuState.hpp" />
+    <ClInclude Include="include\PauseState.hpp" />
     <ClInclude Include="include\State.hpp" />
     <ClInclude Include="include\StateIds.hpp" />
     <ClInclude Include="include\StateStack.hpp" />

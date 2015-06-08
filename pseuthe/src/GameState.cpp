@@ -25,59 +25,22 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//main entry point for the app
+#include <GameState.hpp>
 
-#ifndef APP_HPP_
-#define APP_HPP_
+GameState::GameState(StateStack& stateStack, Context context)
+    : State(stateStack, context){}
 
-#include <StateStack.hpp>
-
-#include <SFML/Graphics/RenderWindow.hpp>
-
-#include <functional>
-
-class App final
+bool GameState::update(float dt)
 {
-public:
+    return true;
+}
 
-    struct VideoSettings final
-    {
-        sf::Int32 WindowStyle;
-        sf::VideoMode VideoMode;
-        bool VSync;
-        std::vector<sf::VideoMode> AvailableVideoModes;
+void GameState::draw()
+{
 
-        VideoSettings()
-            : WindowStyle(sf::Style::Close),
-            VideoMode(1024, 576),
-            VSync(true){}
-    };
+}
 
-    App();
-    ~App() = default;
-    App(const App&) = delete;
-    const App& operator = (const App&) = delete;
-
-    void run();
-    void pause();
-    void resume();
-
-    const VideoSettings& getVideoSettings() const;
-
-private:
-
-    VideoSettings m_videoSettings;
-    sf::RenderWindow m_renderWindow;
-
-    StateStack m_stateStack;
-
-    void handleEvents();
-    std::function<void(float)> update;
-    void updateApp(float dt);
-    void pauseApp(float dt);
-    void draw();
-
-    void registerStates();
-};
-
-#endif //APP_HPP_
+bool GameState::handleEvent(const sf::Event& evt)
+{
+    return true;
+}

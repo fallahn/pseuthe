@@ -51,9 +51,14 @@ endif(X11_FOUND)
 
 add_executable(
 	pseuthe src/main.cpp
-	src/App.cpp)
+	src/App.cpp
+	src/GameState.cpp
+	src/MenuState.cpp
+	src/PauseState.cpp
+	src/State.cpp
+	src/StateStack.cpp)
 
-#copy reources to output directory
+#copy resources to output directory
 #file(COPY ${CMAKE_SOURCE_DIR}/res DESTINATION ${CMAKE_DESTDIR})
 		
 

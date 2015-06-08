@@ -25,59 +25,24 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//main entry point for the app
+//initial menu state
 
-#ifndef APP_HPP_
-#define APP_HPP_
+#ifndef MENU_STATE_HPP_
+#define MENU_STATE_HPP_
 
-#include <StateStack.hpp>
+#include <State.hpp>
 
-#include <SFML/Graphics/RenderWindow.hpp>
-
-#include <functional>
-
-class App final
+class MenuState final : public State
 {
 public:
+    MenuState(StateStack& stateStack, Context context);
+    ~MenuState() = default;
 
-    struct VideoSettings final
-    {
-        sf::Int32 WindowStyle;
-        sf::VideoMode VideoMode;
-        bool VSync;
-        std::vector<sf::VideoMode> AvailableVideoModes;
-
-        VideoSettings()
-            : WindowStyle(sf::Style::Close),
-            VideoMode(1024, 576),
-            VSync(true){}
-    };
-
-    App();
-    ~App() = default;
-    App(const App&) = delete;
-    const App& operator = (const App&) = delete;
-
-    void run();
-    void pause();
-    void resume();
-
-    const VideoSettings& getVideoSettings() const;
+    bool update(float dt) override;
+    void draw() override;
+    bool handleEvent(const sf::Event& evt) override;
 
 private:
-
-    VideoSettings m_videoSettings;
-    sf::RenderWindow m_renderWindow;
-
-    StateStack m_stateStack;
-
-    void handleEvents();
-    std::function<void(float)> update;
-    void updateApp(float dt);
-    void pauseApp(float dt);
-    void draw();
-
-    void registerStates();
 };
 
-#endif //APP_HPP_
+#endif //MENU_STATE_HPP_
