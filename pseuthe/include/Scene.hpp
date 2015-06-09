@@ -25,24 +25,42 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <MessageBus.hpp>
+//root class containing scene entities
 
-MessageBus::MessageBus(){}
+#ifndef SCENE_HPP_
+#define SCENE_HPP_
 
-bool MessageBus::poll(Message& m)
+#include <Entity.hpp>
+
+#include <SFML/Graphics/Drawable.hpp>
+
+#include <vector>
+
+class Scene final : public sf::Drawable
 {
-    if (!m_messages.empty())
+public:
+    enum Layer
     {
-        m = m_messages.back();
-        m_messages.pop_back();
-    }
-    return !m_messages.empty();
-}
+        Rear = 0,
+        Middle,
+        Front,
+        Count
+    };
 
-void MessageBus::send(const Message& m)
-{
-    //TODO we ought to prevent this from being called
-    //from within a message handler, as it has potential
-    //for inifite loops??
-    m_messages.push_front(m);
-}
+    Scene();
+    ~Scene() = default;
+    Scene(const Scene&) = delete;
+    const Scene& operator = (const Scene&) = delete;
+
+    void update(float);
+    void handleMessages(const Message&);
+    void addEntity(Entity::Ptr&, Layer);
+
+private:
+    std::vector<std::vector<Entity::Ptr>> m_layers;
+
+    void draw(sf::RenderTarget&, sf::RenderStates) const override;
+
+};
+
+#endif //SCENE_HPP_

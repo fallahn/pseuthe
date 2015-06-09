@@ -136,13 +136,13 @@ void App::handleEvents()
         default: break;
         }
 
-        //-----TODO make only debug-----
+#ifdef _DEBUG_
         if (evt.type == sf::Event::KeyPressed
             && evt.key.code == sf::Keyboard::Escape)
         {
             m_renderWindow.close();
         }
-        //------------------------------
+#endif //_DEBUG_
 
         m_stateStack.handleEvent(evt);
     }

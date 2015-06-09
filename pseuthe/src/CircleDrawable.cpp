@@ -33,7 +33,7 @@ CircleDrawable::CircleDrawable(float radius, MessageBus& m)
     : Component     (m),
     m_circleShape   (radius)
 {
-
+    m_circleShape.setOrigin(radius / 2.f, radius / 2.f);
 }
 
 //public
@@ -44,7 +44,7 @@ Component::Type CircleDrawable::type() const
 
 void CircleDrawable::entityUpdate(Entity& parent, float dt)
 {
-
+    //TODO modify colours and things based on entity properties
 }
 
 void CircleDrawable::setOuterColour(const sf::Color& colour)
@@ -60,6 +60,7 @@ void CircleDrawable::setInnerColour(const sf::Color& colour)
 void CircleDrawable::setRadius(float radius)
 {
     m_circleShape.setRadius(radius);
+    m_circleShape.setOrigin(radius / 2.f, radius / 2.f);
 }
 
 void CircleDrawable::setOutlineThickness(float thickness)

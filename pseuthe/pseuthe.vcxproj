@@ -84,6 +84,8 @@
     <ClCompile Include="src\MessageBus.cpp" />
     <ClCompile Include="src\PauseState.cpp" />
     <ClCompile Include="src\PhysicsComponent.cpp" />
+    <ClCompile Include="src\PhysicsWorld.cpp" />
+    <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\State.cpp" />
     <ClCompile Include="src\StateStack.cpp" />
   </ItemGroup>
@@ -99,7 +101,9 @@
     <ClInclude Include="include\MessageBus.hpp" />
     <ClInclude Include="include\PauseState.hpp" />
     <ClInclude Include="include\PhysicsComponent.hpp" />
+    <ClInclude Include="include\PhysicsWorld.hpp" />
     <ClInclude Include="include\Resource.hpp" />
+    <ClInclude Include="include\Scene.hpp" />
     <ClInclude Include="include\State.hpp" />
     <ClInclude Include="include\StateIds.hpp" />
     <ClInclude Include="include\StateStack.hpp" />

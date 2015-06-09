@@ -62,6 +62,8 @@ add_executable(
 	src/MessageBus.cpp
 	src/PauseState.cpp
 	src/PhysicsComponent.cpp
+	src/PhysicsWorld.cpp
+	src/Scene.cpp
 	src/State.cpp
 	src/StateStack.cpp)
 

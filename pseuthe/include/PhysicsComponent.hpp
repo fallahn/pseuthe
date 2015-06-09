@@ -33,22 +33,40 @@ source distribution.
 #include <Component.hpp>
 
 #include <SFML/System/Vector2.hpp>
-#include <SFML/System/Vector3.hpp>
+#include <SFML/Graphics/Rect.hpp>
+
+#include <memory>
 
 class PhysicsComponent final : public Component
 {
 public:
+    using Ptr = std::unique_ptr<PhysicsComponent>;
+
+    struct Manifold
+    {
+        sf::Vector2f normal;
+        float penetration = 0.f;
+        sf::Vector2f transferForce;
+    };
+
     PhysicsComponent(float, MessageBus&);
     ~PhysicsComponent() = default;
 
     Component::Type type() const override;
     void entityUpdate(Entity&, float) override;
 
-    void physicsUpdate(float, sf::Vector3f);
+    void physicsUpdate(float, const sf::FloatRect&);
+    void resolveCollision();
 
     void applyForce(const sf::Vector2f& force);
     void setPosition(const sf::Vector2f& position);
     void setVelocity(const sf::Vector2f& velocity);
+    void setManifold(const Manifold& manifold);
+
+    const sf::Vector2f& getPosition() const;
+
+    float getRadiusSquared() const;
+    sf::Vector2f getTransferForce() const;
 
 private:
 
@@ -56,6 +74,8 @@ private:
     sf::Vector2f m_velocity;
     float m_mass;
     float m_radius;
+
+    Manifold m_lastCollision;
 };
 
 #endif //PHYS_COMP_HPP_

@@ -33,6 +33,8 @@ source distribution.
 #include <State.hpp>
 #include <MessageBus.hpp>
 #include <Entity.hpp>
+#include <Scene.hpp>
+#include <PhysicsWorld.hpp>
 
 #include <vector>
 
@@ -49,8 +51,8 @@ public:
 private :
 
     MessageBus m_messageBus;
-    std::vector<Entity::Ptr> m_entities;
-
+    Scene m_scene;
+    PhysicsWorld m_physWorld;
 };
 
 #endif //GAME_STATE_HPP_

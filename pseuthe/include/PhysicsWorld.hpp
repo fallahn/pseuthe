@@ -25,24 +25,33 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <MessageBus.hpp>
+//simulates the physics and applies the results to physics components
 
-MessageBus::MessageBus(){}
+#ifndef PHYS_WORLD_HPP_
+#define PHYS_WORLD_HPP_
 
-bool MessageBus::poll(Message& m)
+#include <PhysicsComponent.hpp>
+
+#include <vector>
+#include <set>
+
+class PhysicsWorld final
 {
-    if (!m_messages.empty())
-    {
-        m = m_messages.back();
-        m_messages.pop_back();
-    }
-    return !m_messages.empty();
-}
+public:
+    PhysicsWorld();
+    ~PhysicsWorld() = default;
+    PhysicsWorld(const PhysicsWorld&) = delete;
+    const PhysicsWorld& operator = (const PhysicsWorld&) = delete;
 
-void MessageBus::send(const Message& m)
-{
-    //TODO we ought to prevent this from being called
-    //from within a message handler, as it has potential
-    //for inifite loops??
-    m_messages.push_front(m);
-}
+    PhysicsComponent::Ptr addBody(float, MessageBus&);
+    void handleMessages(const Message&);
+    void update(float);
+
+private:
+    using Collision = std::pair<PhysicsComponent*, PhysicsComponent*>;
+
+    std::vector<PhysicsComponent*> m_bodies;
+    std::set<Collision> m_collisions;
+};
+
+#endif //PHYS_WORLD_HPP_

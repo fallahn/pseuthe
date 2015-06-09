@@ -25,24 +25,53 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
+#include <Scene.hpp>
 #include <MessageBus.hpp>
 
-MessageBus::MessageBus(){}
+#include <SFML/Graphics/RenderTarget.hpp>
 
-bool MessageBus::poll(Message& m)
+Scene::Scene()
+    : m_layers(Layer::Count)
 {
-    if (!m_messages.empty())
-    {
-        m = m_messages.back();
-        m_messages.pop_back();
-    }
-    return !m_messages.empty();
+
 }
 
-void MessageBus::send(const Message& m)
+//public
+void Scene::update(float dt)
 {
-    //TODO we ought to prevent this from being called
-    //from within a message handler, as it has potential
-    //for inifite loops??
-    m_messages.push_front(m);
+    for (auto& entities : m_layers)
+    {
+        entities.erase(std::remove_if(entities.begin(), entities.end(),
+            [](const Entity::Ptr& p)
+        {
+            return p->destroyed();
+        }), entities.end());
+
+        for (auto& e : entities)
+        {
+            e->update(dt);
+        }
+    }
+}
+
+void Scene::handleMessages(const Message& msg)
+{
+
+}
+
+void Scene::addEntity(Entity::Ptr& entity, Layer layer)
+{
+    m_layers[layer].push_back(std::move(entity));
+}
+
+//private
+void Scene::draw(sf::RenderTarget& rt, sf::RenderStates states) const
+{
+    for (const auto& l : m_layers)
+    {
+        for (const auto& e : l)
+        {
+            rt.draw(*e);
+        }
+    }
 }

@@ -57,6 +57,12 @@
     <ClCompile Include="src\PhysicsComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PhysicsWorld.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\App.hpp">
@@ -105,6 +111,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Util.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Scene.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PhysicsWorld.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

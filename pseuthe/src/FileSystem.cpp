@@ -35,6 +35,7 @@ source distribution.
 //TODO check this macro works on all windows compilers
 //(only tested in VC right now)
 #ifdef _WIN32
+
 #include <Windows.h>
 
 #else

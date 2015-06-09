@@ -37,7 +37,7 @@ source distribution.
 class CircleDrawable final : public Component, public sf::Drawable
 {
 public:
-    using Ptr = std::unique_ptr<CircleDrawable> ;
+    using Ptr = std::unique_ptr<CircleDrawable>;
 
     CircleDrawable(float radius, MessageBus&);
     ~CircleDrawable() = default;

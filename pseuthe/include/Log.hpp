@@ -41,6 +41,7 @@ source distribution.
 #endif //_DEBUG_
 
 #ifdef _MSC_VER
+#define NOMINMAX
 #include <Windows.h>
 #endif //_MSC_VER
 

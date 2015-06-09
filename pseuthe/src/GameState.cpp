@@ -28,52 +28,62 @@ source distribution.
 #include <GameState.hpp>
 #include <CircleDrawable.hpp>
 #include <Log.hpp>
+#include <Util.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
+
+namespace
+{
+    Entity::Ptr createEntity(MessageBus& messageBus, PhysicsWorld& physicsWorld)
+    {
+        float size = static_cast<float>(Util::Random::value(10, 50));
+        
+        Entity::Ptr e = std::make_unique<Entity>();
+        CircleDrawable::Ptr cd = std::make_unique<CircleDrawable>(size, messageBus);
+        e->addComponent<CircleDrawable>(cd);
+
+        PhysicsComponent::Ptr pc = physicsWorld.addBody(size, messageBus);
+        e->addComponent<PhysicsComponent>(pc);
+
+        return std::move(e);
+    }
+
+    const int nubbinCount = 18;
+}
 
 GameState::GameState(StateStack& stateStack, Context context)
     : State(stateStack, context)
 {
     context.renderWindow.setView(context.defaultView);
-
-    Entity::Ptr e = std::make_unique<Entity>();
-    CircleDrawable::Ptr cd = std::make_unique<CircleDrawable>(10.f, m_messageBus);
-    e->addComponent<CircleDrawable>(cd);
-
-    m_entities.push_back(std::move(e));
+    
+    //TODO randomise layers (as layers = sound set)
+    for (int i = 0; i < nubbinCount; ++i)
+        m_scene.addEntity(createEntity(m_messageBus, m_physWorld), Scene::Layer::Front);
 }
 
 bool GameState::update(float dt)
 {
-    //TODO encapsulate entities into a scene
-    m_entities.erase(std::remove_if(m_entities.begin(), m_entities.end(),
-        [](const Entity::Ptr& p)
+    Message msg;
+    while (m_messageBus.poll(msg))
     {
-        return p->destroyed();
-    }), m_entities.end());
-
-    for (auto& e : m_entities)
-    {
-        e->update(dt);
+        m_physWorld.handleMessages(msg);
+        m_scene.handleMessages(msg);
     }
+
+    m_physWorld.update(dt);
+    m_scene.update(dt);
 
     return true;
 }
 
 void GameState::draw()
 {
-    for (const auto& e : m_entities)
-    {
-        getContext().renderWindow.draw(*e);
-    }
+    getContext().renderWindow.draw(m_scene);
 }
 
 bool GameState::handleEvent(const sf::Event& evt)
 {
-    if (evt.type == sf::Event::KeyPressed && evt.key.code == sf::Keyboard::Return)
-    {
-        m_entities[0]->destroy();
-    }
+
     return true;
 }
