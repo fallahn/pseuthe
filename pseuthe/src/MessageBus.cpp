@@ -25,32 +25,21 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//main state of the game
-
-#ifndef GAME_STATE_HPP_
-#define GAME_STATE_HPP_
-
-#include <State.hpp>
 #include <MessageBus.hpp>
-#include <Entity.hpp>
 
-#include <vector>
+MessageBus::MessageBus(){}
 
-class GameState final : public State
+bool MessageBus::poll(Message& m)
 {
-public:
-    GameState(StateStack& stateStack, Context context);
-    ~GameState() = default;
+    m = m_messages.back();
+    m_messages.pop_back();
+    return !m_messages.empty();
+}
 
-    bool update(float dt) override;
-    void draw() override;
-    bool handleEvent(const sf::Event& evt) override;
-
-private :
-
-    MessageBus m_messageBus;
-    std::vector<Entity::Ptr> m_entities;
-
-};
-
-#endif //GAME_STATE_HPP_
+void MessageBus::send(const Message& m)
+{
+    //TODO we ought to prevent this from being called
+    //from within a message handler, as it has potential
+    //for inifite loops??
+    m_messages.push_front(m);
+}

@@ -25,32 +25,23 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//main state of the game
+//static functions for cross platform file handling
 
-#ifndef GAME_STATE_HPP_
-#define GAME_STATE_HPP_
+#ifndef FILE_SYS_HPP_
+#define FILE_SYS_HPP_
 
-#include <State.hpp>
-#include <MessageBus.hpp>
-#include <Entity.hpp>
-
+#include <string>
 #include <vector>
 
-class GameState final : public State
+class FileSystem final
 {
 public:
-    GameState(StateStack& stateStack, Context context);
-    ~GameState() = default;
 
-    bool update(float dt) override;
-    void draw() override;
-    bool handleEvent(const sf::Event& evt) override;
+    static std::vector<std::string> listFiles(std::string path);
+    static std::string getFileExtension(const std::string& path);
 
-private :
-
-    MessageBus m_messageBus;
-    std::vector<Entity::Ptr> m_entities;
+private:
 
 };
 
-#endif //GAME_STATE_HPP_
+#endif //FILE_SYS_H_

@@ -25,32 +25,50 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//main state of the game
+#include <CircleDrawable.hpp>
 
-#ifndef GAME_STATE_HPP_
-#define GAME_STATE_HPP_
+#include <SFML/Graphics/RenderTarget.hpp>
 
-#include <State.hpp>
-#include <MessageBus.hpp>
-#include <Entity.hpp>
-
-#include <vector>
-
-class GameState final : public State
+CircleDrawable::CircleDrawable(float radius, MessageBus& m)
+    : Component     (m),
+    m_circleShape   (radius)
 {
-public:
-    GameState(StateStack& stateStack, Context context);
-    ~GameState() = default;
 
-    bool update(float dt) override;
-    void draw() override;
-    bool handleEvent(const sf::Event& evt) override;
+}
 
-private :
+//public
+Component::Type CircleDrawable::type() const
+{
+    return Component::Type::Drawable;
+}
 
-    MessageBus m_messageBus;
-    std::vector<Entity::Ptr> m_entities;
+void CircleDrawable::entityUpdate(Entity& parent, float dt)
+{
 
-};
+}
 
-#endif //GAME_STATE_HPP_
+void CircleDrawable::setOuterColour(const sf::Color& colour)
+{
+    m_circleShape.setOutlineColor(colour);
+}
+
+void CircleDrawable::setInnerColour(const sf::Color& colour)
+{
+    m_circleShape.setFillColor(colour);
+}
+
+void CircleDrawable::setRadius(float radius)
+{
+    m_circleShape.setRadius(radius);
+}
+
+void CircleDrawable::setOutlineThickness(float thickness)
+{
+    m_circleShape.setOutlineThickness(thickness);
+}
+//private
+void CircleDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
+{
+    states.transform *= m_circleShape.getTransform();
+    rt.draw(m_circleShape, states);
+}

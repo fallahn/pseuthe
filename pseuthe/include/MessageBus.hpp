@@ -25,32 +25,68 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//main state of the game
+//message bus to allow inter-component communication
 
-#ifndef GAME_STATE_HPP_
-#define GAME_STATE_HPP_
+#ifndef MESSAGE_BUS_HPP_
+#define MESSAGE_BUS_HPP_
 
-#include <State.hpp>
-#include <MessageBus.hpp>
-#include <Entity.hpp>
+#include <queue>
 
-#include <vector>
-
-class GameState final : public State
+class Message final
 {
 public:
-    GameState(StateStack& stateStack, Context context);
-    ~GameState() = default;
+    enum Type
+    {
+        Audio = 1,
+        Physics,
+        Drawable,
+        Entity
+    }type;
 
-    bool update(float dt) override;
-    void draw() override;
-    bool handleEvent(const sf::Event& evt) override;
+    struct AudioEvent
+    {
 
-private :
+    };
 
-    MessageBus m_messageBus;
-    std::vector<Entity::Ptr> m_entities;
+    struct PhysicsEvent
+    {
 
+    };
+
+    struct DrawableEvent
+    {
+
+    };
+
+    struct EntityEvent
+    {
+
+    };
+
+    union
+    {
+        AudioEvent audio;
+        PhysicsEvent physics;
+        DrawableEvent drawable;
+        EntityEvent entity;
+    };
 };
 
-#endif //GAME_STATE_HPP_
+class MessageBus final
+{
+public:
+    MessageBus();
+    ~MessageBus() = default;
+    MessageBus(const MessageBus&) = delete;
+    const MessageBus& operator = (const MessageBus&) = delete;
+
+    //read an despatch all messages on the message stack
+    bool poll(Message& msg);
+    //places a message on the message stack
+    void send(const Message& msg);
+
+private:
+    std::deque<Message> m_messages;
+};
+
+#endif

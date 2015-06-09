@@ -3,18 +3,18 @@ cmake_minimum_required(VERSION 2.8)
 
 #prefer clang, comment out if using g++ (4.9+)
 #SET (CMAKE_C_COMPILER             "/usr/bin/clang")
-#SET (CMAKE_C_FLAGS                "-Wall -std=c99")
-#SET (CMAKE_C_FLAGS_DEBUG          "-g -_DEBUG_")
-#SET (CMAKE_C_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
-#SET (CMAKE_C_FLAGS_RELEASE        "-O4 -DNDEBUG")
-#SET (CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -g")
+SET (CMAKE_C_FLAGS                "-Wall -std=c99")
+SET (CMAKE_C_FLAGS_DEBUG          "-g -_DEBUG_")
+SET (CMAKE_C_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
+SET (CMAKE_C_FLAGS_RELEASE        "-O4 -DNDEBUG")
+SET (CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -g")
 
 #SET (CMAKE_CXX_COMPILER             "/usr/bin/clang++")
-#SET (CMAKE_CXX_FLAGS                "-Wall")
-#SET (CMAKE_CXX_FLAGS_DEBUG          "-g -_DEBUG_")
-#SET (CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
-#SET (CMAKE_CXX_FLAGS_RELEASE        "-O4 -DNDEBUG")
-#SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
+SET (CMAKE_CXX_FLAGS                "-Wall")
+SET (CMAKE_CXX_FLAGS_DEBUG          "-g -_DEBUG_")
+SET (CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
+SET (CMAKE_CXX_FLAGS_RELEASE        "-O4 -DNDEBUG")
+SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
 
 #SET (CMAKE_AR      "/usr/bin/llvm-ar")
 #SET (CMAKE_LINKER  "/usr/bin/llvm-ld")
@@ -52,9 +52,16 @@ endif(X11_FOUND)
 add_executable(
 	pseuthe src/main.cpp
 	src/App.cpp
+	src/CircleDrawable.cpp
+	src/Component.cpp
+	src/Entity.cpp
+	src/FileSystem.cpp
+	src/FontResource.cpp
 	src/GameState.cpp
 	src/MenuState.cpp
+	src/MessageBus.cpp
 	src/PauseState.cpp
+	src/PhysicsComponent.cpp
 	src/State.cpp
 	src/StateStack.cpp)
 

@@ -25,32 +25,37 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//main state of the game
+//a circle shape drawable component
 
-#ifndef GAME_STATE_HPP_
-#define GAME_STATE_HPP_
+#ifndef CIRCLE_DRAWABLE_HPP_
+#define CIRCLE_DRAWABLE_HPP_
 
-#include <State.hpp>
-#include <MessageBus.hpp>
-#include <Entity.hpp>
+#include <Component.hpp>
 
-#include <vector>
+#include <SFML/Graphics/CircleShape.hpp>
 
-class GameState final : public State
+class CircleDrawable final : public Component, public sf::Drawable
 {
 public:
-    GameState(StateStack& stateStack, Context context);
-    ~GameState() = default;
+    using Ptr = std::unique_ptr<CircleDrawable> ;
 
-    bool update(float dt) override;
-    void draw() override;
-    bool handleEvent(const sf::Event& evt) override;
+    CircleDrawable(float radius, MessageBus&);
+    ~CircleDrawable() = default;
 
-private :
+    Component::Type type() const override;
+    void entityUpdate(Entity&, float) override;
 
-    MessageBus m_messageBus;
-    std::vector<Entity::Ptr> m_entities;
+    void setOuterColour(const sf::Color&);
+    void setInnerColour(const sf::Color&);
 
+    void setRadius(float);
+    void setOutlineThickness(float);
+
+private:
+
+    sf::CircleShape m_circleShape;
+
+    void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 };
 
-#endif //GAME_STATE_HPP_
+#endif //CIRCLE_DRAWABLE_HPP_

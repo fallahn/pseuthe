@@ -106,6 +106,16 @@ const App::VideoSettings& App::getVideoSettings() const
     return m_videoSettings;
 }
 
+sf::Font& App::getFont(const std::string& path)
+{
+    return m_fontResource.get(path);
+}
+
+sf::Texture& App::getTexture(const std::string& path)
+{
+    return m_textureResource.get(path);
+}
+
 //private
 void App::handleEvents()
 {

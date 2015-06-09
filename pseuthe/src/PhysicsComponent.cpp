@@ -25,32 +25,52 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//main state of the game
+#include <PhysicsComponent.hpp>
+#include <Util.hpp>
 
-#ifndef GAME_STATE_HPP_
-#define GAME_STATE_HPP_
-
-#include <State.hpp>
-#include <MessageBus.hpp>
-#include <Entity.hpp>
-
-#include <vector>
-
-class GameState final : public State
+namespace
 {
-public:
-    GameState(StateStack& stateStack, Context context);
-    ~GameState() = default;
+    const float density = 10.f;
+    const float PI = 3.142f;
+}
 
-    bool update(float dt) override;
-    void draw() override;
-    bool handleEvent(const sf::Event& evt) override;
+PhysicsComponent::PhysicsComponent(float radius, MessageBus& m)
+    : Component (m),
+    m_radius(radius),
+    m_mass(std::powf(radius, 3.f) * 4.f * PI * density / 3.f)
+{
+    
+}
 
-private :
+//public
+Component::Type PhysicsComponent::type() const
+{
+    return Component::Type::Physics;
+}
 
-    MessageBus m_messageBus;
-    std::vector<Entity::Ptr> m_entities;
+void PhysicsComponent::entityUpdate(Entity& e, float dt)
+{
+    //set the parent entity's position to that of phys body
+}
 
-};
+void PhysicsComponent::physicsUpdate(float dt, sf::Vector3f manifold)
+{
 
-#endif //GAME_STATE_HPP_
+}
+
+void PhysicsComponent::applyForce(const sf::Vector2f& force)
+{
+    m_velocity += force;
+}
+
+void PhysicsComponent::setPosition(const sf::Vector2f& position)
+{
+    m_position = position;
+}
+
+void PhysicsComponent::setVelocity(const sf::Vector2f& velocity)
+{
+    m_velocity = velocity;
+}
+
+//private

@@ -25,32 +25,46 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//main state of the game
+//abstract base class for entity components
 
-#ifndef GAME_STATE_HPP_
-#define GAME_STATE_HPP_
+#ifndef COMPONENT_HPP_
+#define COMPONENT_HPP_
 
-#include <State.hpp>
-#include <MessageBus.hpp>
-#include <Entity.hpp>
+#include <Log.hpp>
 
-#include <vector>
+#include <memory>
 
-class GameState final : public State
+class Entity;
+class Message;
+class MessageBus;
+class Component
 {
 public:
-    GameState(StateStack& stateStack, Context context);
-    ~GameState() = default;
+    using Ptr = std::unique_ptr<Component>;
 
-    bool update(float dt) override;
-    void draw() override;
-    bool handleEvent(const sf::Event& evt) override;
+    enum class Type
+    {
+        Drawable,
+        Physics
+    };
 
-private :
+    explicit Component(MessageBus&);
+    virtual ~Component() = default;
 
-    MessageBus m_messageBus;
-    std::vector<Entity::Ptr> m_entities;
+    virtual Type type() const = 0;
+    //this is called once per frame by the component's parent entity
+    //providing the opportinuty to update each other
+    virtual void entityUpdate(Entity&, float) = 0;
 
+    void destroy();
+    bool destroyed() const;
+
+protected:
+    void sendMessage(const Message&);
+
+private:
+    MessageBus& m_messageBus;
+    bool m_destroyed;
 };
 
-#endif //GAME_STATE_HPP_
+#endif //COMPONENT_HPP_

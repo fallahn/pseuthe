@@ -25,32 +25,37 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//main state of the game
+//circular physics body
 
-#ifndef GAME_STATE_HPP_
-#define GAME_STATE_HPP_
+#ifndef PHYS_COMP_HPP_
+#define PHYS_COMP_HPP_
 
-#include <State.hpp>
-#include <MessageBus.hpp>
-#include <Entity.hpp>
+#include <Component.hpp>
 
-#include <vector>
+#include <SFML/System/Vector2.hpp>
+#include <SFML/System/Vector3.hpp>
 
-class GameState final : public State
+class PhysicsComponent final : public Component
 {
 public:
-    GameState(StateStack& stateStack, Context context);
-    ~GameState() = default;
+    PhysicsComponent(float, MessageBus&);
+    ~PhysicsComponent() = default;
 
-    bool update(float dt) override;
-    void draw() override;
-    bool handleEvent(const sf::Event& evt) override;
+    Component::Type type() const override;
+    void entityUpdate(Entity&, float) override;
 
-private :
+    void physicsUpdate(float, sf::Vector3f);
 
-    MessageBus m_messageBus;
-    std::vector<Entity::Ptr> m_entities;
+    void applyForce(const sf::Vector2f& force);
+    void setPosition(const sf::Vector2f& position);
+    void setVelocity(const sf::Vector2f& velocity);
 
+private:
+
+    sf::Vector2f m_position;
+    sf::Vector2f m_velocity;
+    float m_mass;
+    float m_radius;
 };
 
-#endif //GAME_STATE_HPP_
+#endif //PHYS_COMP_HPP_

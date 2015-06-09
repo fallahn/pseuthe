@@ -31,6 +31,7 @@ source distribution.
 #define APP_HPP_
 
 #include <StateStack.hpp>
+#include <Resource.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
@@ -64,12 +65,18 @@ public:
 
     const VideoSettings& getVideoSettings() const;
 
+    sf::Font& getFont(const std::string& path);
+    sf::Texture& getTexture(const std::string& path);
+
 private:
 
     VideoSettings m_videoSettings;
     sf::RenderWindow m_renderWindow;
 
     StateStack m_stateStack;
+
+    FontResource m_fontResource;
+    TextureResource m_textureResource;
 
     void handleEvents();
     std::function<void(float)> update;

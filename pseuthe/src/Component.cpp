@@ -25,32 +25,30 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//main state of the game
-
-#ifndef GAME_STATE_HPP_
-#define GAME_STATE_HPP_
-
-#include <State.hpp>
+#include <Component.hpp>
 #include <MessageBus.hpp>
-#include <Entity.hpp>
 
-#include <vector>
-
-class GameState final : public State
+Component::Component(MessageBus& m)
+    : m_messageBus  (m),
+    m_destroyed     (false)
 {
-public:
-    GameState(StateStack& stateStack, Context context);
-    ~GameState() = default;
 
-    bool update(float dt) override;
-    void draw() override;
-    bool handleEvent(const sf::Event& evt) override;
+}
 
-private :
+//public
+void Component::destroy()
+{
+    m_destroyed = true;
+}
 
-    MessageBus m_messageBus;
-    std::vector<Entity::Ptr> m_entities;
+bool Component::destroyed() const
+{
+    return m_destroyed;
+}
 
-};
+//protected
 
-#endif //GAME_STATE_HPP_
+void Component::sendMessage(const Message& m)
+{
+    m_messageBus.send(m);
+}
