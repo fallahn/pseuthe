@@ -25,43 +25,34 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//a circle shape drawable component
+//plays music as requested by the current state
 
-#ifndef CIRCLE_DRAWABLE_HPP_
-#define CIRCLE_DRAWABLE_HPP_
+#ifndef MUSIC_HPP_
+#define MUSIC_HPP_
 
-#include <Component.hpp>
-#include <EchoDrawable.hpp>
+#include <SFML/Audio/Music.hpp>
 
-#include <SFML/Graphics/CircleShape.hpp>
+#include <string>
 
-class CircleDrawable final : public Component, public sf::Drawable
+class MusicPlayer final : private sf::NonCopyable
 {
 public:
-    using Ptr = std::unique_ptr<CircleDrawable>;
+    MusicPlayer();
+    ~MusicPlayer() = default;
+    MusicPlayer(const MusicPlayer&) = delete;
+    const MusicPlayer& operator = (const MusicPlayer&) = delete;
 
-    CircleDrawable(float radius, MessageBus&);
-    ~CircleDrawable() = default;
-
-    Component::Type type() const override;
-    void entityUpdate(Entity&, float) override;
-    void handleMessage(const Message&) override;
-
-    void setOuterColour(const sf::Color&);
-    void setInnerColour(const sf::Color&);
-
-    void setRadius(float);
-    void setOutlineThickness(float);
-
+    void play(const std::string& file, bool loop = true);
+    void stop();
+    void setPaused(bool paused);
+    void setVolume(float volume);
+    float getVolume() const;
 
 private:
 
-    sf::CircleShape m_circleShape;
-    EchoDrawable::Ptr m_echo;
-
-    float m_timeSinceEcho;
-
-    void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
+    float m_volume;
+    sf::Music m_music;
 };
 
-#endif //CIRCLE_DRAWABLE_HPP_
+
+#endif //MUSIC_HPP_

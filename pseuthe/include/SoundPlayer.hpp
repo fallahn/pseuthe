@@ -25,77 +25,49 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//message bus to allow inter-component communication
+//plays a given sound effect
 
-#ifndef MESSAGE_BUS_HPP_
-#define MESSAGE_BUS_HPP_
+#ifndef SOUND_PLAYER_HPP_
+#define SOUND_PLAYER_HPP_
 
-#include <SFML/Config.hpp>
+#include <SFML/System/Vector2.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
+#include <SFML/Audio/Sound.hpp>
 
-#include <queue>
+#include <map>
+#include <list>
 
-class Message final
+class SoundPlayer final
 {
 public:
-    enum Type
+    enum class AudioId
     {
-        Audio = 1,
-        Physics,
-        Drawable,
-        Entity
-    }type;
-
-    struct AudioEvent
-    {
-
+        
     };
 
-    struct PhysicsEvent
-    {
-        enum Event
-        {
-            Collided
-        }event;
+    SoundPlayer();
+    ~SoundPlayer() = default;
+    SoundPlayer(const SoundPlayer&) = delete;
+    const SoundPlayer& operator = (const SoundPlayer&) = delete;
 
-        sf::Uint64 entityId;
-    };
+    void update();
+    void play(AudioId id);
+    void play(AudioId id, const sf::Vector2f& position, bool loop = false);
+    void play(AudioId, const sf::Vector3f& position);
+    
+    void setListenerPosition(const sf::Vector2f& position);
+    sf::Vector2f getListenerPosition() const;
+    void cacheSound(AudioId, const std::string&);
 
-    struct DrawableEvent
-    {
-
-    };
-
-    struct EntityEvent
-    {
-
-    };
-
-    union
-    {
-        AudioEvent audio;
-        PhysicsEvent physics;
-        DrawableEvent drawable;
-        EntityEvent entity;
-    };
-};
-
-class MessageBus final
-{
-public:
-    MessageBus();
-    ~MessageBus() = default;
-    MessageBus(const MessageBus&) = delete;
-    const MessageBus& operator = (const MessageBus&) = delete;
-
-    //read an despatch all messages on the message stack
-    Message poll();
-    //places a message on the message stack
-    void send(const Message& msg);
-
-    bool empty();
+    static void setVolume(float volume);
+    static float getVolume();
 
 private:
-    std::queue<Message> m_messages;
+
+    std::map<AudioId, sf::SoundBuffer> m_buffers;
+    std::list<sf::Sound> m_sounds;
+
+    void flushSounds();
 };
 
-#endif
+#endif //SOUND_PLAYER_HPP_

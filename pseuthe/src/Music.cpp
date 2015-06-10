@@ -25,43 +25,52 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//a circle shape drawable component
+#include <Music.hpp>
+#include <Log.hpp>
 
-#ifndef CIRCLE_DRAWABLE_HPP_
-#define CIRCLE_DRAWABLE_HPP_
+#include <cassert>
 
-#include <Component.hpp>
-#include <EchoDrawable.hpp>
-
-#include <SFML/Graphics/CircleShape.hpp>
-
-class CircleDrawable final : public Component, public sf::Drawable
+MusicPlayer::MusicPlayer()
+    : m_volume  (100.f)
 {
-public:
-    using Ptr = std::unique_ptr<CircleDrawable>;
 
-    CircleDrawable(float radius, MessageBus&);
-    ~CircleDrawable() = default;
+}
 
-    Component::Type type() const override;
-    void entityUpdate(Entity&, float) override;
-    void handleMessage(const Message&) override;
+void MusicPlayer::play(const std::string& title, bool loop)
+{
+    if (m_music.openFromFile(title))
+    {
+        m_music.setVolume(m_volume);
+        m_music.setLoop(loop);
+        m_music.play();
+    }
+    else
+    {
+        //TODO this probably warns anyway
+        LOG("failed to open " + title, Logger::Type::Error);
+    }
+}
 
-    void setOuterColour(const sf::Color&);
-    void setInnerColour(const sf::Color&);
+void MusicPlayer::stop()
+{
+    m_music.stop();
+}
 
-    void setRadius(float);
-    void setOutlineThickness(float);
+void MusicPlayer::setPaused(bool paused)
+{
+    (paused) ? m_music.pause() : m_music.play();
+}
 
+void MusicPlayer::setVolume(float volume)
+{
+    assert(volume >= 0.f && volume <= 100.f);
 
-private:
+    m_volume = volume;
+    if(m_music.getStatus() == sf::Music::Playing)
+        m_music.setVolume(volume);
+}
 
-    sf::CircleShape m_circleShape;
-    EchoDrawable::Ptr m_echo;
-
-    float m_timeSinceEcho;
-
-    void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
-};
-
-#endif //CIRCLE_DRAWABLE_HPP_
+float MusicPlayer::getVolume() const
+{
+    return m_volume;
+}

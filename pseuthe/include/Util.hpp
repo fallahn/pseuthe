@@ -38,9 +38,9 @@ source distribution.
 #include <cassert>
 #include <sstream>
 
-namespace
+namespace //is this not moot here as the anonymous namespace gets included in any TU which use this?
 {
-    std::default_random_engine rndEngine(static_cast<unsigned long>(std::time(0)));
+    static std::default_random_engine rndEngine(static_cast<unsigned long>(std::time(0)));
 }
 
 namespace Util

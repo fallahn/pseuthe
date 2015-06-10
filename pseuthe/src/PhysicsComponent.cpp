@@ -36,7 +36,8 @@ namespace
     const float PI = 3.142f;
 
     const int maxVelocity = 400;
-    const int maxPosition = 1080;
+    const int maxPositionX = 1920;
+    const int maxPositionY = 1080;
 
     const float epsilon = 0.2f;
 }
@@ -45,13 +46,13 @@ PhysicsComponent::PhysicsComponent(float radius, MessageBus& m)
     : Component     (m),
     m_radius        (radius),
     m_mass          ((std::powf(radius, 2.f) * PI * density / 2.f)),
-    m_inverseMass   (1.f/m_mass)
+    m_inverseMass   (1.f / m_mass)
 {
     m_velocity.x = static_cast<float>(Util::Random::value(-maxVelocity, maxVelocity));
     m_velocity.y = static_cast<float>(Util::Random::value(-maxVelocity, maxVelocity));
 
-    m_position.x = static_cast<float>(Util::Random::value(0, maxPosition));
-    m_position.y = static_cast<float>(Util::Random::value(0, maxPosition));
+    m_position.x = static_cast<float>(Util::Random::value(1, maxPositionX));
+    m_position.y = static_cast<float>(Util::Random::value(1, maxPositionY));
 }
 
 //public
@@ -87,6 +88,12 @@ void PhysicsComponent::physicsUpdate(float dt, const sf::FloatRect& bounds)
             m_velocity = Util::Vector::reflect(m_velocity, normal);
 
             m_position.y = Util::Math::clamp(m_position.y, bounds.top, bounds.top + bounds.height);
+
+            Message msg;
+            msg.type = Message::Type::Physics;
+            msg.physics.event = Message::PhysicsEvent::Collided;
+            msg.physics.entityId = getParentUID();
+            sendMessage(msg);
         }
         else if (m_position.y > bounds.top
             && m_position.y < bounds.top + bounds.height)

@@ -86,6 +86,7 @@ private:
     std::vector<sf::Drawable*> m_drawables;
 
     void draw(sf::RenderTarget& rt, sf::RenderStates state) const override;
+
 };
 
 #endif //ENTITY_HPP_

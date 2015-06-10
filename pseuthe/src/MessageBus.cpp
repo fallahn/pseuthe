@@ -26,17 +26,18 @@ source distribution.
 *********************************************************************/
 
 #include <MessageBus.hpp>
+#include <Log.hpp>
 
 MessageBus::MessageBus(){}
 
-bool MessageBus::poll(Message& m)
+Message MessageBus::poll()
 {
-    if (!m_messages.empty())
-    {
-        m = m_messages.back();
-        m_messages.pop_back();
-    }
-    return !m_messages.empty();
+   /* if (!m_messages.empty())
+    {*/
+        Message m = m_messages.front();
+        m_messages.pop();
+    //}
+    return m;
 }
 
 void MessageBus::send(const Message& m)
@@ -44,5 +45,10 @@ void MessageBus::send(const Message& m)
     //TODO we ought to prevent this from being called
     //from within a message handler, as it has potential
     //for inifite loops??
-    m_messages.push_front(m);
+    m_messages.push(m);
+}
+
+bool MessageBus::empty()
+{
+    return m_messages.empty();
 }

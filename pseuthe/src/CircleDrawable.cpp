@@ -31,9 +31,16 @@ source distribution.
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
+namespace
+{
+    const float minEchoTime = 0.3f;
+}
+
 CircleDrawable::CircleDrawable(float radius, MessageBus& m)
     : Component     (m),
-    m_circleShape   (radius)
+    m_circleShape   (radius),
+    m_echo          (nullptr),
+    m_timeSinceEcho (minEchoTime)
 {
     m_circleShape.setOrigin(radius, radius);
 }
@@ -52,6 +59,8 @@ void CircleDrawable::entityUpdate(Entity& parent, float dt)
     {
         parent.addComponent<EchoDrawable>(m_echo);
     }
+
+    m_timeSinceEcho -= dt;
 }
 
 void CircleDrawable::handleMessage(const Message& msg)
@@ -59,10 +68,12 @@ void CircleDrawable::handleMessage(const Message& msg)
     switch (msg.type)
     {
     case Message::Type::Physics:
+        if (m_timeSinceEcho > 0) break;
         if (msg.physics.entityId == getParentUID())
         {
             m_echo = std::make_unique<EchoDrawable>(m_circleShape.getRadius(), getMessageBus());
             m_echo->setColour(m_circleShape.getOutlineColor());
+            m_timeSinceEcho = minEchoTime;
         }
         break;
     default:break;

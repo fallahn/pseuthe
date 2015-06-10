@@ -64,10 +64,10 @@ GameState::GameState(StateStack& stateStack, Context context)
 }
 
 bool GameState::update(float dt)
-{
-    Message msg;
-    while (m_messageBus.poll(msg))
+{    
+    while (!m_messageBus.empty())
     {
+        Message msg = m_messageBus.poll();
         m_physWorld.handleMessages(msg);
         m_scene.handleMessages(msg);
     }

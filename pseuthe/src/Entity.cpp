@@ -33,6 +33,8 @@ source distribution.
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 
+#include <iostream>
+
 namespace
 {
     sf::Uint64 uid = 0u;
@@ -64,9 +66,6 @@ void Entity::update(float dt)
         return false;
     }), m_components.end());
 
-    //mark self as deleted if no components remain
-    if (m_components.empty()) destroy();
-
     //allow entity / components to update each other
     for (auto& c : m_components)
     {
@@ -79,6 +78,15 @@ void Entity::update(float dt)
         m_components.push_back(std::move(c));
     }
     m_pendingComponents.clear();
+
+
+    //mark self as deleted if no components remain
+    if (m_components.empty())
+    {
+        destroy();
+    }
+
+
 }
 
 void Entity::destroy()

@@ -61,10 +61,12 @@ add_executable(
 	src/GameState.cpp
 	src/MenuState.cpp
 	src/MessageBus.cpp
+	src/Music.cpp
 	src/PauseState.cpp
 	src/PhysicsComponent.cpp
 	src/PhysicsWorld.cpp
 	src/Scene.cpp
+	src/SoundPlayer.cpp
 	src/State.cpp
 	src/StateStack.cpp)
 
