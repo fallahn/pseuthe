@@ -56,26 +56,28 @@ public:
     void entityUpdate(Entity&, float) override;
 
     void physicsUpdate(float, const sf::FloatRect&);
-    void resolveCollision();
+    void resolveCollision(PhysicsComponent*, const Manifold&);
 
     void applyForce(const sf::Vector2f& force);
     void setPosition(const sf::Vector2f& position);
     void setVelocity(const sf::Vector2f& velocity);
-    void setManifold(const Manifold& manifold);
 
     const sf::Vector2f& getPosition() const;
+    const sf::Vector2f& getVelocity() const;
+    float getMass() const;
+    float getInverseMass() const;
 
     float getRadiusSquared() const;
-    sf::Vector2f getTransferForce() const;
 
 private:
 
     sf::Vector2f m_position;
     sf::Vector2f m_velocity;
-    float m_mass;
     float m_radius;
+    float m_mass;
+    float m_inverseMass;
 
-    Manifold m_lastCollision;
+
 };
 
 #endif //PHYS_COMP_HPP_

@@ -31,6 +31,7 @@ source distribution.
 namespace
 {
     const sf::FloatRect bounds(-50.f, 0.f, 2020.f, 1080.f);
+    const float elasticity = 1.6f;
 }
 
 PhysicsWorld::PhysicsWorld()
@@ -70,16 +71,6 @@ void PhysicsWorld::update(float dt)
                 float summedRadius = b1->getRadiusSquared() + b2->getRadiusSquared();
                 if (distance < summedRadius)
                 {
-                    PhysicsComponent::Manifold manifold;
-                    manifold.penetration = std::sqrt(summedRadius - distance) / 2.f;
-                    manifold.normal = Util::Vector::normalise(pairVector);
-                    manifold.transferForce = b1->getTransferForce();
-
-                    b2->setManifold(manifold);
-                    manifold.normal = -manifold.normal;
-                    manifold.transferForce = b2->getTransferForce();
-                    b1->setManifold(manifold);
-
                     m_collisions.insert(std::minmax(b1, b2));
                 }
             }
@@ -89,8 +80,20 @@ void PhysicsWorld::update(float dt)
     //resolve collisions
     for (const auto& c : m_collisions)
     {
-        c.first->resolveCollision();
-        c.second->resolveCollision();
+        auto collisionVec = c.second->getPosition() - c.first->getPosition();
+
+        PhysicsComponent::Manifold m;
+        m.normal = Util::Vector::normalise(collisionVec);
+        m.penetration = std::sqrtf((c.first->getRadiusSquared() + c.second->getRadiusSquared()) - Util::Vector::lengthSquared(collisionVec)) / 2.f;
+
+        float relForce = -Util::Vector::dot(m.normal, c.first->getVelocity() - c.second->getVelocity());
+        float impulse = (elasticity * relForce) / (c.first->getInverseMass() + c.second->getInverseMass());
+        m.transferForce = m.normal * (impulse / c.second->getMass());
+        c.first->resolveCollision(c.second, m);
+
+        m.normal = -m.normal;
+        m.transferForce = m.normal * (impulse / c.first->getMass());
+        c.second->resolveCollision(c.first, m);
     }
 
     //update bodies
