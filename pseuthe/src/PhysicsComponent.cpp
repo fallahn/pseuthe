@@ -28,10 +28,11 @@ source distribution.
 #include <PhysicsComponent.hpp>
 #include <Entity.hpp>
 #include <Util.hpp>
+#include <MessageBus.hpp>
 
 namespace
 {
-    const float density = 0.5f;
+    const float density = 2.5f;
     const float PI = 3.142f;
 
     const int maxVelocity = 400;
@@ -63,6 +64,11 @@ void PhysicsComponent::entityUpdate(Entity& e, float dt)
 {
     //set the parent entity's position to that of phys body
     e.setPosition(m_position);
+}
+
+void PhysicsComponent::handleMessage(const Message& msg)
+{
+
 }
 
 void PhysicsComponent::physicsUpdate(float dt, const sf::FloatRect& bounds)
@@ -99,6 +105,12 @@ void PhysicsComponent::resolveCollision(PhysicsComponent* other, const Manifold&
 {
     m_velocity += m.transferForce;
     m_position -= (other->m_mass / (other->m_mass + m_mass) * m.penetration) * m.normal;
+
+    Message msg;
+    msg.type = Message::Type::Physics;
+    msg.physics.event = Message::PhysicsEvent::Collided;
+    msg.physics.entityId = getParentUID();
+    sendMessage(msg);
 }
 
 void PhysicsComponent::applyForce(const sf::Vector2f& force)

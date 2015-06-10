@@ -75,6 +75,7 @@
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\CircleDrawable.cpp" />
     <ClCompile Include="src\Component.cpp" />
+    <ClCompile Include="src\EchoDrawable.cpp" />
     <ClCompile Include="src\Entity.cpp" />
     <ClCompile Include="src\FileSystem.cpp" />
     <ClCompile Include="src\FontResource.cpp" />
@@ -93,6 +94,7 @@
     <ClInclude Include="include\App.hpp" />
     <ClInclude Include="include\CircleDrawable.hpp" />
     <ClInclude Include="include\Component.hpp" />
+    <ClInclude Include="include\EchoDrawable.hpp" />
     <ClInclude Include="include\Entity.hpp" />
     <ClInclude Include="include\FileSystem.hpp" />
     <ClInclude Include="include\GameState.hpp" />

@@ -31,6 +31,7 @@ source distribution.
 #define CIRCLE_DRAWABLE_HPP_
 
 #include <Component.hpp>
+#include <EchoDrawable.hpp>
 
 #include <SFML/Graphics/CircleShape.hpp>
 
@@ -44,6 +45,7 @@ public:
 
     Component::Type type() const override;
     void entityUpdate(Entity&, float) override;
+    void handleMessage(const Message&) override;
 
     void setOuterColour(const sf::Color&);
     void setInnerColour(const sf::Color&);
@@ -51,9 +53,11 @@ public:
     void setRadius(float);
     void setOutlineThickness(float);
 
+
 private:
 
     sf::CircleShape m_circleShape;
+    EchoDrawable::Ptr m_echo;
 
     void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 };

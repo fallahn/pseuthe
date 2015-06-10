@@ -31,7 +31,7 @@ source distribution.
 namespace
 {
     const sf::FloatRect bounds(-50.f, 0.f, 2020.f, 1080.f);
-    const float elasticity = 1.6f;
+    const float elasticity = 1.1f;
 }
 
 PhysicsWorld::PhysicsWorld()

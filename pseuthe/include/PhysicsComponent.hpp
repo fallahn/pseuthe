@@ -54,6 +54,7 @@ public:
 
     Component::Type type() const override;
     void entityUpdate(Entity&, float) override;
+    void handleMessage(const Message&) override;
 
     void physicsUpdate(float, const sf::FloatRect&);
     void resolveCollision(PhysicsComponent*, const Manifold&);

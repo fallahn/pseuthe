@@ -27,6 +27,7 @@ source distribution.
 
 #include <GameState.hpp>
 #include <CircleDrawable.hpp>
+#include <EchoDrawable.hpp>
 #include <Log.hpp>
 #include <Util.hpp>
 

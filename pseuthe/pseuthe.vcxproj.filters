@@ -63,6 +63,9 @@
     <ClCompile Include="src\PhysicsWorld.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\EchoDrawable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\App.hpp">
@@ -117,6 +120,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\PhysicsWorld.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EchoDrawable.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

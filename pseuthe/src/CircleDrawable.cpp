@@ -26,6 +26,8 @@ source distribution.
 *********************************************************************/
 
 #include <CircleDrawable.hpp>
+#include <Entity.hpp>
+#include <MessageBus.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
@@ -33,7 +35,7 @@ CircleDrawable::CircleDrawable(float radius, MessageBus& m)
     : Component     (m),
     m_circleShape   (radius)
 {
-    m_circleShape.setOrigin(radius / 2.f, radius / 2.f);
+    m_circleShape.setOrigin(radius, radius);
 }
 
 //public
@@ -44,7 +46,27 @@ Component::Type CircleDrawable::type() const
 
 void CircleDrawable::entityUpdate(Entity& parent, float dt)
 {
-    //TODO modify colours and things based on entity properties
+    //modify colours and things based on entity properties
+
+    if (m_echo)
+    {
+        parent.addComponent<EchoDrawable>(m_echo);
+    }
+}
+
+void CircleDrawable::handleMessage(const Message& msg)
+{
+    switch (msg.type)
+    {
+    case Message::Type::Physics:
+        if (msg.physics.entityId == getParentUID())
+        {
+            m_echo = std::make_unique<EchoDrawable>(m_circleShape.getRadius(), getMessageBus());
+            m_echo->setColour(m_circleShape.getOutlineColor());
+        }
+        break;
+    default:break;
+    }
 }
 
 void CircleDrawable::setOuterColour(const sf::Color& colour)
@@ -67,9 +89,9 @@ void CircleDrawable::setOutlineThickness(float thickness)
 {
     m_circleShape.setOutlineThickness(thickness);
 }
+
 //private
 void CircleDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
-    states.transform *= m_circleShape.getTransform();
     rt.draw(m_circleShape, states);
 }

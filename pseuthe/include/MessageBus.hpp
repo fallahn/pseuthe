@@ -30,6 +30,8 @@ source distribution.
 #ifndef MESSAGE_BUS_HPP_
 #define MESSAGE_BUS_HPP_
 
+#include <SFML/Config.hpp>
+
 #include <queue>
 
 class Message final
@@ -50,7 +52,12 @@ public:
 
     struct PhysicsEvent
     {
+        enum Event
+        {
+            Collided
+        }event;
 
+        sf::Uint64 entityId;
     };
 
     struct DrawableEvent

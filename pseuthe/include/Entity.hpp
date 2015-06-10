@@ -65,17 +65,23 @@ public:
             //store a reference to drawables so they can be drawn
             m_drawables.push_back(dynamic_cast<sf::Drawable*>(c.get()));
         }
-
-        m_components.push_back(std::move(c));
+        c->setParentUID(m_uid);
+        m_pendingComponents.push_back(std::move(c));
     }
 
     void destroy();
     bool destroyed() const;
 
+    sf::Uint64 getUID() const;
+
+    void handleMessage(const Message&);
+
 private:
 
     bool m_destroyed;
+    sf::Uint64 m_uid;
 
+    std::vector<std::unique_ptr<Component>> m_pendingComponents;
     std::vector<std::unique_ptr<Component>> m_components;
     std::vector<sf::Drawable*> m_drawables;
 

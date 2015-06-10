@@ -30,7 +30,7 @@ source distribution.
 #ifndef COMPONENT_HPP_
 #define COMPONENT_HPP_
 
-#include <Log.hpp>
+#include <SFML/Config.hpp>
 
 #include <memory>
 
@@ -55,16 +55,23 @@ public:
     //this is called once per frame by the component's parent entity
     //providing the opportinuty to update each other
     virtual void entityUpdate(Entity&, float) = 0;
+    virtual void handleMessage(const Message&) = 0;
 
     void destroy();
     bool destroyed() const;
 
+    void setParentUID(sf::Uint64 uid);
+
 protected:
     void sendMessage(const Message&);
+    MessageBus& getMessageBus() const;
+    sf::Uint64 getParentUID() const;
 
 private:
     MessageBus& m_messageBus;
     bool m_destroyed;
+
+    sf::Uint64 m_parentUID;
 };
 
 #endif //COMPONENT_HPP_

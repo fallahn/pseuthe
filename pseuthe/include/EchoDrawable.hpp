@@ -25,46 +25,37 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
+//draws an expanding 'echo'
+
+#ifndef ECHO_DRAWABLE_HPP_
+#define ECHO_DRAWABLE_HPP_
+
 #include <Component.hpp>
-#include <MessageBus.hpp>
+#include <Log.hpp>
 
-Component::Component(MessageBus& m)
-    : m_messageBus  (m),
-    m_destroyed     (false),
-    m_parentUID     (0u)
+#include <SFML/Graphics/CircleShape.hpp>
+
+class EchoDrawable final : public Component, public sf::Drawable
 {
+public:
+    using Ptr = std::unique_ptr<EchoDrawable>;
 
-}
+    EchoDrawable(float, MessageBus&);
+    ~EchoDrawable() = default;
 
-//public
-void Component::destroy()
-{
-    m_destroyed = true;
-}
+    Component::Type type() const override;
+    void entityUpdate(Entity&, float) override;
+    void handleMessage(const Message&) override;
 
-bool Component::destroyed() const
-{
-    return m_destroyed;
-}
+    void setColour(const sf::Color&);
 
-void Component::setParentUID(sf::Uint64 uid)
-{
-    m_parentUID = uid;
-}
+private:
 
-//protected
+    sf::CircleShape m_circleShape;
+    sf::Color m_colour;
+    float m_lifetime;
 
-void Component::sendMessage(const Message& m)
-{
-    m_messageBus.send(m);
-}
+    void draw(sf::RenderTarget&, sf::RenderStates) const override;
+};
 
-MessageBus& Component::getMessageBus() const
-{
-    return m_messageBus;
-}
-
-sf::Uint64 Component::getParentUID() const
-{
-    return m_parentUID;
-}
+#endif //ECHO_DRAWABLE_HPP_

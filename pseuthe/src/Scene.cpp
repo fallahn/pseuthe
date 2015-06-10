@@ -56,7 +56,13 @@ void Scene::update(float dt)
 
 void Scene::handleMessages(const Message& msg)
 {
-
+    for (auto& layer : m_layers)
+    {
+        for (auto & entity : layer)
+        {
+            entity->handleMessage(msg);
+        }
+    }
 }
 
 void Scene::addEntity(Entity::Ptr& entity, Layer layer)

@@ -27,46 +27,58 @@ source distribution.
 
 #include <Entity.hpp>
 #include <Component.hpp>
-#include <Log.hpp>
+#include <MessageBus.hpp>
+#include <EchoDrawable.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 
+namespace
+{
+    sf::Uint64 uid = 0u;
+}
+
 Entity::Entity()
- : m_destroyed(false)
+ : m_destroyed  (false),
+ m_uid          (uid++)
 {}
 
 //public
 void Entity::update(float dt)
 {
-    //remove deleted components
-    void* dp = nullptr;
+    //remove destroyed components
     m_components.erase(std::remove_if(m_components.begin(), m_components.end(),
-        [&dp](const Component::Ptr& p)
+        [&](const Component::Ptr& p)
     {
         if (p->destroyed())
         {
-            dp = p.get();
+            if (p->type() == Component::Type::Drawable)
+            {
+                auto r = std::find(m_drawables.begin(), m_drawables.end(),
+                    dynamic_cast<sf::Drawable*>(p.get()));
+
+                if (r != m_drawables.end()) m_drawables.erase(r);
+            }
             return true;
         }
         return false;
     }), m_components.end());
-    if (dp)
-    {
-        m_drawables.erase(std::remove_if(m_drawables.begin(), m_drawables.end(),
-            [dp](const sf::Drawable* p)
-        {
-            return p == dp;
-        }), m_drawables.end());
-    }
 
     //mark self as deleted if no components remain
     if (m_components.empty()) destroy();
 
+    //allow entity / components to update each other
     for (auto& c : m_components)
     {
         c->entityUpdate(*this, dt);
     }
+
+    //copy any new components we may have aquired via update
+    for (auto& c : m_pendingComponents)
+    {
+        m_components.push_back(std::move(c));
+    }
+    m_pendingComponents.clear();
 }
 
 void Entity::destroy()
@@ -79,6 +91,24 @@ void Entity::destroy()
 bool Entity::destroyed() const
 {
     return m_destroyed;
+}
+
+sf::Uint64 Entity::getUID() const
+{
+    return m_uid;
+}
+
+void Entity::handleMessage(const Message& msg)
+{
+    for (auto& c : m_components)
+        c->handleMessage(msg);
+    
+    switch (msg.type)
+    {
+    case Message::Type::Physics:
+        break;
+    default: break;
+    }
 }
 
 //private
