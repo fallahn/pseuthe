@@ -28,6 +28,7 @@ source distribution.
 #include <GameState.hpp>
 #include <CircleDrawable.hpp>
 #include <EchoDrawable.hpp>
+#include <GradientDrawable.hpp>
 #include <Log.hpp>
 #include <Util.hpp>
 
@@ -36,12 +37,13 @@ source distribution.
 
 namespace
 {
-    Entity::Ptr createEntity(MessageBus& messageBus, PhysicsWorld& physicsWorld)
+    Entity::Ptr createEntity(MessageBus& messageBus, PhysicsWorld& physicsWorld, const sf::Color& colour)
     {
         float size = static_cast<float>(Util::Random::value(10, 50));
         
         Entity::Ptr e = std::make_unique<Entity>();
         CircleDrawable::Ptr cd = std::make_unique<CircleDrawable>(size, messageBus);
+        cd->setColour(colour);
         e->addComponent<CircleDrawable>(cd);
 
         PhysicsComponent::Ptr pc = physicsWorld.addBody(size, messageBus);
@@ -58,9 +60,16 @@ GameState::GameState(StateStack& stateStack, Context context)
 {
     context.renderWindow.setView(context.defaultView);
     
-    //TODO randomise layers (as layers = sound set)
-    for (int i = 0; i < nubbinCount; ++i)
-        m_scene.addEntity(createEntity(m_messageBus, m_physWorld), Scene::Layer::Front);
+    for (int i = 0; i < 9; ++i)
+        m_scene.addEntity(createEntity(m_messageBus, m_physWorld, sf::Color::White), Scene::Layer::FrontFront);
+
+    for (int i = 0; i < 6; ++i)
+        m_scene.addEntity(createEntity(m_messageBus, m_physWorld, sf::Color(170u, 170u, 170u)), Scene::Layer::FrontMiddle);
+
+    for (int i = 0; i < 3; ++i)
+        m_scene.addEntity(createEntity(m_messageBus, m_physWorld, sf::Color(85u, 85u, 85u)), Scene::Layer::FrontRear);
+
+    m_scene.getLayer(Scene::Layer::BackRear).addComponent<GradientDrawable>(std::make_unique<GradientDrawable>(m_messageBus));
 }
 
 bool GameState::update(float dt)

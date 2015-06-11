@@ -25,41 +25,36 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//a circle shape drawable component
+//uses a vertex array to create a gradient
 
-#ifndef CIRCLE_DRAWABLE_HPP_
-#define CIRCLE_DRAWABLE_HPP_
+#ifndef GRADIENT_HPP_
+#define GRADIENT_HPP_
 
 #include <Component.hpp>
-#include <EchoDrawable.hpp>
 
-#include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics/VertexArray.hpp>
 
-class CircleDrawable final : public Component, public sf::Drawable
+class GradientDrawable final : public Component, public sf::Drawable
 {
 public:
-    using Ptr = std::unique_ptr<CircleDrawable>;
+    using Ptr = std::unique_ptr<GradientDrawable>;
 
-    CircleDrawable(float radius, MessageBus&);
-    ~CircleDrawable() = default;
+    GradientDrawable(MessageBus&);
+    ~GradientDrawable() = default;
 
     Component::Type type() const override;
     void entityUpdate(Entity&, float) override;
     void handleMessage(const Message&) override;
 
-    void setColour(sf::Color);
-    void setRadius(float);
-    void setOutlineThickness(float);
-
-
 private:
 
-    sf::CircleShape m_circleShape;
-    EchoDrawable::Ptr m_echo;
+    sf::VertexArray m_vertexArray;
+    sf::Color m_colour;
 
-    float m_timeSinceEcho;
+    float m_currentTime;
+    int m_colourIndexA, m_colourIndexB;
 
-    void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
+    void draw(sf::RenderTarget&, sf::RenderStates) const override;
 };
 
-#endif //CIRCLE_DRAWABLE_HPP_
+#endif //GRADIENT_HPP_

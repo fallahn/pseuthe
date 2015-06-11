@@ -59,6 +59,7 @@ add_executable(
 	src/FileSystem.cpp
 	src/FontResource.cpp
 	src/GameState.cpp
+	src/GradientDrawable.cpp
 	src/MenuState.cpp
 	src/MessageBus.cpp
 	src/Music.cpp

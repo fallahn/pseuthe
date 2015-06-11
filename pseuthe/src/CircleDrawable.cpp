@@ -34,6 +34,7 @@ source distribution.
 namespace
 {
     const float minEchoTime = 0.3f;
+    const sf::Uint8 alpha = 180u;
 }
 
 CircleDrawable::CircleDrawable(float radius, MessageBus& m)
@@ -43,6 +44,8 @@ CircleDrawable::CircleDrawable(float radius, MessageBus& m)
     m_timeSinceEcho (minEchoTime)
 {
     m_circleShape.setOrigin(radius, radius);
+    m_circleShape.setOutlineThickness(2.f);
+    m_circleShape.setFillColor(sf::Color(255u, 255u, 255u, alpha));
 }
 
 //public
@@ -80,13 +83,10 @@ void CircleDrawable::handleMessage(const Message& msg)
     }
 }
 
-void CircleDrawable::setOuterColour(const sf::Color& colour)
+void CircleDrawable::setColour(sf::Color colour)
 {
     m_circleShape.setOutlineColor(colour);
-}
-
-void CircleDrawable::setInnerColour(const sf::Color& colour)
-{
+    colour.a = alpha;
     m_circleShape.setFillColor(colour);
 }
 

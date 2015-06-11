@@ -31,53 +31,37 @@ source distribution.
 #include <SFML/Graphics/RenderTarget.hpp>
 
 Scene::Scene()
-    : m_layers(Layer::Count)
 {
-
+    for (int i = 0; i < Layer::Count; ++i)
+        m_layers.emplace_back(std::make_unique<Entity>());
 }
 
 //public
 void Scene::update(float dt)
 {
-    for (auto& entities : m_layers)
-    {
-        entities.erase(std::remove_if(entities.begin(), entities.end(),
-            [](const Entity::Ptr& p)
-        {
-            return p->destroyed();
-        }), entities.end());
-
-        for (auto& e : entities)
-        {
-            e->update(dt);
-        }
-    }
+    for (auto& e : m_layers)
+        e->update(dt);
 }
 
 void Scene::handleMessages(const Message& msg)
 {
-    for (auto& layer : m_layers)
-    {
-        for (auto & entity : layer)
-        {
-            entity->handleMessage(msg);
-        }
-    }
+    for (auto& e : m_layers)
+        e->handleMessage(msg);
 }
 
 void Scene::addEntity(Entity::Ptr& entity, Layer layer)
 {
-    m_layers[layer].push_back(std::move(entity));
+    m_layers[layer]->addChild(std::move(entity));
+}
+
+Entity& Scene::getLayer(Layer l)
+{
+    return *m_layers[l];
 }
 
 //private
 void Scene::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
-    for (const auto& l : m_layers)
-    {
-        for (const auto& e : l)
-        {
-            rt.draw(*e);
-        }
-    }
+    for (const auto& e : m_layers)
+        rt.draw(*e, states);
 }

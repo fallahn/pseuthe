@@ -42,10 +42,49 @@ namespace
 
 Entity::Entity()
  : m_destroyed  (false),
- m_uid          (uid++)
+ m_uid          (uid++),
+ m_parent       (nullptr)
 {}
 
 //public
+void Entity::addChild(Entity::Ptr& child)
+{
+    child->m_parent = this;
+    m_children.push_back(std::move(child));
+}
+
+Entity::Ptr Entity::removeChild(Entity& child)
+{
+    auto result = std::find_if(m_children.begin(), m_children.end(),
+        [&child](const Ptr& p)
+    {
+        return (p.get() == &child);
+    });
+
+    if (result != m_children.end())
+    {
+        Ptr found = std::move(*result);
+        found->m_parent = nullptr;
+        m_children.erase(result);
+        return found;
+    }
+    return nullptr;
+}
+
+sf::Vector2f Entity::getWorldPosition() const
+{
+    return getWorldTransform() * sf::Vector2f();
+}
+
+sf::Transform Entity::getWorldTransform() const
+{
+    auto t = sf::Transform::Identity;
+    for (const auto* ent = this; ent != nullptr; ent = ent->m_parent)
+        t = ent->getTransform() * t;
+
+    return t;
+}
+
 void Entity::update(float dt)
 {
     //remove destroyed components
@@ -86,7 +125,20 @@ void Entity::update(float dt)
         destroy();
     }
 
+    //update all children
+    std::vector<Entity*> deadChildren;
+    for (auto& c : m_children)
+    {
+        c->update(dt);
+        if (c->destroyed())
+            deadChildren.push_back(&(*c));
+    }
 
+    //remove any dead children (there's a line I never thought I'd write...)
+    for (const auto& dc : deadChildren)
+    {
+        removeChild(*dc);
+    }
 }
 
 void Entity::destroy()
@@ -117,13 +169,24 @@ void Entity::handleMessage(const Message& msg)
         break;
     default: break;
     }
+
+    //pass down to children
+    for (auto& c : m_children)
+        c->handleMessage(msg);
 }
 
 //private
 void Entity::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
-    states.transform *= getTransform();
-    for (auto& d : m_drawables)
+    states.transform *= getTransform();    
+    drawSelf(rt, states);
+    for (const auto& c : m_children)
+        rt.draw(*c, states);
+}
+
+void Entity::drawSelf(sf::RenderTarget& rt, sf::RenderStates states) const
+{
+    for (const auto& d : m_drawables)
     {
         rt.draw(*d, states);
     }

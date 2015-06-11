@@ -41,9 +41,12 @@ class Scene final : public sf::Drawable
 public:
     enum Layer
     {
-        Rear = 0,
-        Middle,
-        Front,
+        BackRear = 0,
+        BackMiddle,
+        BackFront,
+        FrontRear,
+        FrontMiddle,
+        FrontFront,
         Count
     };
 
@@ -55,9 +58,10 @@ public:
     void update(float);
     void handleMessages(const Message&);
     void addEntity(Entity::Ptr&, Layer);
+    Entity& getLayer(Layer);
 
 private:
-    std::vector<std::vector<Entity::Ptr>> m_layers;
+    std::vector<Entity::Ptr> m_layers;
 
     void draw(sf::RenderTarget&, sf::RenderStates) const override;
 

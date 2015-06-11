@@ -54,6 +54,12 @@ public:
     Entity(const Entity&) = delete;
     Entity& operator = (const Entity&) = delete;
 
+    void addChild(Ptr&);
+    Ptr removeChild(Entity&);
+
+    sf::Vector2f getWorldPosition() const;
+    sf::Transform getWorldTransform() const;
+
     void update(float dt);
 
     template <typename T>
@@ -85,8 +91,11 @@ private:
     std::vector<std::unique_ptr<Component>> m_components;
     std::vector<sf::Drawable*> m_drawables;
 
-    void draw(sf::RenderTarget& rt, sf::RenderStates state) const override;
+    std::vector<Ptr> m_children;
+    Entity* m_parent;
 
+    void draw(sf::RenderTarget& rt, sf::RenderStates state) const override;
+    void drawSelf(sf::RenderTarget&, sf::RenderStates) const;
 };
 
 #endif //ENTITY_HPP_
