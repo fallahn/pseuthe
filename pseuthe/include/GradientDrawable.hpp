@@ -33,8 +33,9 @@ source distribution.
 #include <Component.hpp>
 
 #include <SFML/Graphics/VertexArray.hpp>
+#include <SFML/Graphics/Transformable.hpp>
 
-class GradientDrawable final : public Component, public sf::Drawable
+class GradientDrawable final : public Component, public sf::Drawable, public sf::Transformable
 {
 public:
     using Ptr = std::unique_ptr<GradientDrawable>;

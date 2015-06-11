@@ -61,6 +61,11 @@ namespace
         retVal.b = static_cast<sf::Uint8>(static_cast<float>(b.b - a.b) * time) + a.b;
         return retVal;
     }
+
+    const float radius = 1300.f;
+    bool shrink = true;
+    const float minScale = 0.9f;
+    const float rotationSpeed = 5.f;
 }
 
 GradientDrawable::GradientDrawable(MessageBus& mb)
@@ -71,13 +76,15 @@ GradientDrawable::GradientDrawable(MessageBus& mb)
     m_colourIndexA  (0),
     m_colourIndexB  (1)
 {
-    sf::Vector2f centre(960.f, 540.f);
-    auto points = createPoints(centre, 8, 1200.f);
+    sf::Vector2f centre;
+    auto points = createPoints(centre, 8, radius);
 
     m_vertexArray.append({ centre, sf::Color::Black });
 
     for (const auto& p : points)
         m_vertexArray.append({ p, m_colour });
+
+    setPosition(960.f, 540.f);
 }
 
 Component::Type GradientDrawable::type() const
@@ -101,6 +108,24 @@ void GradientDrawable::entityUpdate(Entity&, float dt)
 
     for (int i = 1; i < m_vertexArray.getVertexCount(); ++i)
         m_vertexArray[i].color = m_colour;
+
+    //slowly mutate transform
+    auto scale = getScale();
+    const float amount = dt * 0.01f;
+    if (shrink)
+    {
+        scale.x -= amount;
+        scale.y -= amount;
+        if (scale.x < minScale) shrink = false;
+    }
+    else
+    {
+        scale.x += amount;
+        scale.y += amount;
+        if (scale.x > 1.f) shrink = true;
+    }
+    setScale(scale);
+    rotate(rotationSpeed * dt);
 }
 
 void GradientDrawable::handleMessage(const Message&)
@@ -111,5 +136,6 @@ void GradientDrawable::handleMessage(const Message&)
 //private
 void GradientDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
+    states.transform *= getTransform();
     rt.draw(m_vertexArray, states);
 }

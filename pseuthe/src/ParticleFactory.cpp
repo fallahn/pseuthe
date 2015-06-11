@@ -25,14 +25,14 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//conveniece function for creating particle system presets
+//convenience function for creating particle system presets
 
 #include <Particles.hpp>
 #include <Util.hpp>
 
 ParticleSystem::Ptr ParticleSystem::create(Particle::Type type, MessageBus& mb)
 {
-    auto ps = std::make_unique<ParticleSystem>(mb);
+    auto ps = std::make_unique<ParticleSystem>(mb, type);
 
     switch (type)
     {
@@ -43,10 +43,21 @@ ParticleSystem::Ptr ParticleSystem::create(Particle::Type type, MessageBus& mb)
         ForceAffector fa({ 10.f, -170.f });
         ps->addAffector<ForceAffector>(fa);
 
-        ScaleAffector sa({ 4.f, 4.f });
+        const float scale = Util::Random::value(4.f, 6.f);
+        ScaleAffector sa({ scale, scale });
         ps->addAffector<ScaleAffector>(sa);
 
         ps->start();
+    }
+        break;
+
+    case Particle::Type::Echo:
+    {
+        ScaleAffector sa({ 1.6f, 1.6f });
+        ps->addAffector<ScaleAffector>(sa);
+
+        ps->setParticleLifetime(0.85f);
+        ps->followParent(true);
     }
         break;
     default: break;

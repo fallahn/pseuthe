@@ -31,7 +31,6 @@ source distribution.
 #define CIRCLE_DRAWABLE_HPP_
 
 #include <Component.hpp>
-#include <EchoDrawable.hpp>
 
 #include <SFML/Graphics/CircleShape.hpp>
 
@@ -55,9 +54,6 @@ public:
 private:
 
     sf::CircleShape m_circleShape;
-    EchoDrawable::Ptr m_echo;
-
-    float m_timeSinceEcho;
 
     void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 };

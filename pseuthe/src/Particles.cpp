@@ -28,6 +28,7 @@ source distribution.
 #include <Particles.hpp>
 #include <Util.hpp>
 #include <Entity.hpp>
+#include <MessageBus.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Shader.hpp>
@@ -38,10 +39,12 @@ namespace
 
 }
 
-ParticleSystem::ParticleSystem(MessageBus& mb)
+ParticleSystem::ParticleSystem(MessageBus& mb, Particle::Type type)
     : Component         (mb),
+    m_type              (type),
     m_texture           (nullptr),
     m_colour            (sf::Color::White),
+    m_followParent      (false),
     m_particleSize      (4.f, 4.f),
     m_randVelocity      (false),
     m_emitRate          (30.f),
@@ -67,12 +70,23 @@ Component::Type ParticleSystem::type() const
 void ParticleSystem::entityUpdate(Entity& entity, float dt)
 {
     update(dt);
-    m_position = entity.getWorldPosition();
+    if(!m_followParent)
+        m_position = entity.getWorldPosition();
 }
 
 void ParticleSystem::handleMessage(const Message& msg)
 {
-
+    switch (msg.type)
+    {
+    case Message::Type::Physics:
+        if (msg.physics.entityId == getParentUID()
+            && m_type == Particle::Type::Echo)
+        {
+            start(1u, 0.02f);
+        }
+        break;
+    default:break;
+    }
 }
 
 void ParticleSystem::setTexture(const sf::Texture& t)
@@ -109,6 +123,11 @@ void ParticleSystem::setPosition(const sf::Vector2f& position)
 void ParticleSystem::move(const sf::Vector2f& amount)
 {
     m_position += amount;
+}
+
+void ParticleSystem::followParent(bool follow)
+{
+    m_followParent = follow;
 }
 
 void ParticleSystem::setParticleLifetime(float time)
@@ -273,6 +292,6 @@ void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     states.texture = m_texture;
     states.shader = m_shader;
     states.blendMode = m_blendMode;
-    states.transform = sf::Transform::Identity;
+    if (!m_followParent)states.transform = sf::Transform::Identity;
     rt.draw(m_vertices, states);
 }

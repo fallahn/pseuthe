@@ -45,7 +45,8 @@ struct Particle final : public sf::Transformable
 {    
     enum class Type
     {
-        Trail
+        Trail,
+        Echo
     };
 
     sf::Vector2f velocity;
@@ -59,7 +60,7 @@ public:
     using Affector =  std::function<void(Particle& p, float dt)>;
     using Ptr = std::unique_ptr<ParticleSystem> ;
 
-    explicit ParticleSystem(MessageBus&);
+    ParticleSystem(MessageBus&, Particle::Type);
     ~ParticleSystem() = default;
 
     Component::Type type() const override;
@@ -76,6 +77,7 @@ public:
     void setParticleSize(const sf::Vector2f& size);
     void setPosition(const sf::Vector2f& position);
     void move(const sf::Vector2f& amount);
+    void followParent(bool);
 
     void setParticleLifetime(float time);
     void setInitialVelocity(const sf::Vector2f& vel);
@@ -94,10 +96,12 @@ public:
     sf::Uint32 getParticleCount() const;
 
 private:
+    Particle::Type m_type;
     std::deque<Particle> m_particles;
     sf::Texture* m_texture;
     sf::Color m_colour;
     sf::Vector2f m_position;
+    bool m_followParent;
     sf::Vector2f m_particleSize;
     sf::Vector2f m_texCoords;
     float m_particleLifetime;

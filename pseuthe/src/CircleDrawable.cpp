@@ -33,15 +33,12 @@ source distribution.
 
 namespace
 {
-    const float minEchoTime = 0.3f;
     const sf::Uint8 alpha = 180u;
 }
 
 CircleDrawable::CircleDrawable(float radius, MessageBus& m)
     : Component     (m),
-    m_circleShape   (radius),
-    m_echo          (nullptr),
-    m_timeSinceEcho (minEchoTime)
+    m_circleShape   (radius)
 {
     m_circleShape.setOrigin(radius, radius);
     m_circleShape.setOutlineThickness(2.f);
@@ -58,12 +55,6 @@ void CircleDrawable::entityUpdate(Entity& parent, float dt)
 {
     //modify colours and things based on entity properties
 
-    if (m_echo)
-    {
-        parent.addComponent<EchoDrawable>(m_echo);
-    }
-
-    m_timeSinceEcho -= dt;
 }
 
 void CircleDrawable::handleMessage(const Message& msg)
@@ -71,14 +62,11 @@ void CircleDrawable::handleMessage(const Message& msg)
     switch (msg.type)
     {
     case Message::Type::Physics:
-        if (m_timeSinceEcho > 0) break;
-        if (msg.physics.entityId == getParentUID())
-        {
-            m_echo = std::make_unique<EchoDrawable>(m_circleShape.getRadius(), getMessageBus());
-            m_echo->setColour(m_circleShape.getOutlineColor());
-            m_timeSinceEcho = minEchoTime;
-        }
-        break;
+        //if (msg.physics.entityId == getParentUID())
+        //{
+
+        //}
+        //break;
     default:break;
     }
 }

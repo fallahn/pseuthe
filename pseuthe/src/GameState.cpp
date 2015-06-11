@@ -27,7 +27,6 @@ source distribution.
 
 #include <GameState.hpp>
 #include <CircleDrawable.hpp>
-#include <EchoDrawable.hpp>
 #include <GradientDrawable.hpp>
 #include <Particles.hpp>
 #include <App.hpp>
@@ -98,11 +97,27 @@ Entity::Ptr GameState::createEntity(const sf::Color& colour)
     e->addComponent<CircleDrawable>(cd);
 
     PhysicsComponent::Ptr pc = m_physWorld.addBody(size, m_messageBus);
-    e->addComponent<PhysicsComponent>(pc);
+    e->addComponent<PhysicsComponent>(pc); 
 
-    ParticleSystem::Ptr ps = ParticleSystem::create(Particle::Type::Trail, m_messageBus);
+    ParticleSystem::Ptr ps = ParticleSystem::create(Particle::Type::Echo, m_messageBus);
     ps->setTexture(getContext().appInstance.getTexture("assets/images/particles/circle.png"));
+    auto particleSize = size * 2.f;
+    ps->setParticleSize({ particleSize, particleSize });
+    ps->setColour(colour);
     e->addComponent<ParticleSystem>(ps);
+
+
+    ps = ParticleSystem::create(Particle::Type::Trail, m_messageBus);
+    ps->setTexture(getContext().appInstance.getTexture("assets/images/particles/circle.png"));
+
+    Entity::Ptr f = std::make_unique<Entity>();
+    f->addComponent<ParticleSystem>(ps);
+    e->addChild(f);
+
+
+
+
+
 
     return std::move(e);
 }
