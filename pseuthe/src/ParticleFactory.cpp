@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2015
+Matt Marchant 2014 - 2015
 http://trederia.blogspot.com
 
 pseuthe Zlib license.
@@ -25,41 +25,33 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//main state of the game
+//conveniece function for creating particle system presets
 
-#ifndef GAME_STATE_HPP_
-#define GAME_STATE_HPP_
+#include <Particles.hpp>
+#include <Util.hpp>
 
-#include <State.hpp>
-#include <MessageBus.hpp>
-#include <Entity.hpp>
-#include <Scene.hpp>
-#include <PhysicsWorld.hpp>
-
-#include <vector>
-
-namespace sf
+ParticleSystem::Ptr ParticleSystem::create(Particle::Type type, MessageBus& mb)
 {
-    class Color;
+    auto ps = std::make_unique<ParticleSystem>(mb);
+
+    switch (type)
+    {
+    case Particle::Type::Trail:
+    {
+        ps->setEmitRate(Util::Random::value(1.f, 2.f));
+
+        ForceAffector fa({ 10.f, -170.f });
+        ps->addAffector<ForceAffector>(fa);
+
+        ScaleAffector sa({ 4.f, 4.f });
+        ps->addAffector<ScaleAffector>(sa);
+
+        ps->start();
+    }
+        break;
+    default: break;
+    }
+
+
+    return std::move(ps);
 }
-
-class GameState final : public State
-{
-public:
-    GameState(StateStack& stateStack, Context context);
-    ~GameState() = default;
-
-    bool update(float dt) override;
-    void draw() override;
-    bool handleEvent(const sf::Event& evt) override;
-
-private :
-
-    MessageBus m_messageBus;
-    Scene m_scene;
-    PhysicsWorld m_physWorld;
-
-    Entity::Ptr createEntity(const sf::Color& colour);
-};
-
-#endif //GAME_STATE_HPP_

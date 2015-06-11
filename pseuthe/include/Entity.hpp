@@ -60,6 +60,8 @@ public:
     sf::Vector2f getWorldPosition() const;
     sf::Transform getWorldTransform() const;
 
+    void setWorldPosition(sf::Vector2f);
+
     void update(float dt);
 
     template <typename T>

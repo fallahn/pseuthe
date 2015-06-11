@@ -69,6 +69,7 @@ void PhysicsWorld::update(float dt)
                 sf::Vector2f pairVector = b2->getPosition() - b1->getPosition();
                 float distance = Util::Vector::lengthSquared(pairVector);
                 float summedRadius = b1->getRadiusSquared() + b2->getRadiusSquared();
+
                 if (distance < summedRadius)
                 {
                     m_collisions.insert(std::minmax(b1, b2));

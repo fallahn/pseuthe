@@ -72,6 +72,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Affectors.cpp" />
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\CircleDrawable.cpp" />
     <ClCompile Include="src\Component.cpp" />
@@ -85,6 +86,8 @@
     <ClCompile Include="src\MenuState.cpp" />
     <ClCompile Include="src\MessageBus.cpp" />
     <ClCompile Include="src\Music.cpp" />
+    <ClCompile Include="src\ParticleFactory.cpp" />
+    <ClCompile Include="src\Particles.cpp" />
     <ClCompile Include="src\PauseState.cpp" />
     <ClCompile Include="src\PhysicsComponent.cpp" />
     <ClCompile Include="src\PhysicsWorld.cpp" />
@@ -94,6 +97,7 @@
     <ClCompile Include="src\StateStack.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Affectors.hpp" />
     <ClInclude Include="include\App.hpp" />
     <ClInclude Include="include\CircleDrawable.hpp" />
     <ClInclude Include="include\Component.hpp" />
@@ -106,6 +110,7 @@
     <ClInclude Include="include\MenuState.hpp" />
     <ClInclude Include="include\MessageBus.hpp" />
     <ClInclude Include="include\Music.hpp" />
+    <ClInclude Include="include\Particles.hpp" />
     <ClInclude Include="include\PauseState.hpp" />
     <ClInclude Include="include\PhysicsComponent.hpp" />
     <ClInclude Include="include\PhysicsWorld.hpp" />

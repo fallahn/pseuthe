@@ -64,7 +64,7 @@ Component::Type PhysicsComponent::type() const
 void PhysicsComponent::entityUpdate(Entity& e, float dt)
 {
     //set the parent entity's position to that of phys body
-    e.setPosition(m_position);
+    e.setWorldPosition(m_position);
 }
 
 void PhysicsComponent::handleMessage(const Message& msg)

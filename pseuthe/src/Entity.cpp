@@ -85,6 +85,12 @@ sf::Transform Entity::getWorldTransform() const
     return t;
 }
 
+void Entity::setWorldPosition(sf::Vector2f position)
+{
+    if (m_parent) position -= m_parent->getWorldPosition();
+    setPosition(position);
+}
+
 void Entity::update(float dt)
 {
     //remove destroyed components

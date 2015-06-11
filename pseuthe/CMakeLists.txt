@@ -51,6 +51,7 @@ endif(X11_FOUND)
 
 add_executable(
 	pseuthe src/main.cpp
+	src/Affectors.cpp
 	src/App.cpp
 	src/CircleDrawable.cpp
 	src/Component.cpp
@@ -63,6 +64,8 @@ add_executable(
 	src/MenuState.cpp
 	src/MessageBus.cpp
 	src/Music.cpp
+	src/ParticleFactory.cpp	
+	src/Particles.cpp
 	src/PauseState.cpp
 	src/PhysicsComponent.cpp
 	src/PhysicsWorld.cpp

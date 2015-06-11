@@ -33,11 +33,11 @@ source distribution.
 namespace
 {
     static std::vector<sf::Color> colours =
-    { 
-        sf::Color(52u, 32u, 102u),
+    {        
         sf::Color(32u, 37u, 102u),
         sf::Color(32u, 93u, 102u),
-        sf::Color(32u, 102u, 74u)
+        sf::Color(32u, 102u, 74u),
+        sf::Color(52u, 32u, 102u)
     };
 
     const float TAU = 3.14159f * 2.f;
@@ -72,7 +72,7 @@ GradientDrawable::GradientDrawable(MessageBus& mb)
     m_colourIndexB  (1)
 {
     sf::Vector2f centre(960.f, 540.f);
-    auto points = createPoints(centre, 8, 1920.f);
+    auto points = createPoints(centre, 8, 1200.f);
 
     m_vertexArray.append({ centre, sf::Color::Black });
 

@@ -29,6 +29,8 @@ source distribution.
 #include <CircleDrawable.hpp>
 #include <EchoDrawable.hpp>
 #include <GradientDrawable.hpp>
+#include <Particles.hpp>
+#include <App.hpp>
 #include <Log.hpp>
 #include <Util.hpp>
 
@@ -37,21 +39,6 @@ source distribution.
 
 namespace
 {
-    Entity::Ptr createEntity(MessageBus& messageBus, PhysicsWorld& physicsWorld, const sf::Color& colour)
-    {
-        float size = static_cast<float>(Util::Random::value(10, 50));
-        
-        Entity::Ptr e = std::make_unique<Entity>();
-        CircleDrawable::Ptr cd = std::make_unique<CircleDrawable>(size, messageBus);
-        cd->setColour(colour);
-        e->addComponent<CircleDrawable>(cd);
-
-        PhysicsComponent::Ptr pc = physicsWorld.addBody(size, messageBus);
-        e->addComponent<PhysicsComponent>(pc);
-
-        return std::move(e);
-    }
-
     const int nubbinCount = 18;
 }
 
@@ -61,13 +48,15 @@ GameState::GameState(StateStack& stateStack, Context context)
     context.renderWindow.setView(context.defaultView);
     
     for (int i = 0; i < 9; ++i)
-        m_scene.addEntity(createEntity(m_messageBus, m_physWorld, sf::Color::White), Scene::Layer::FrontFront);
+        m_scene.addEntity(createEntity(sf::Color::White), Scene::Layer::FrontFront);
 
     for (int i = 0; i < 6; ++i)
-        m_scene.addEntity(createEntity(m_messageBus, m_physWorld, sf::Color(170u, 170u, 170u)), Scene::Layer::FrontMiddle);
+        m_scene.addEntity(createEntity(sf::Color(170u, 170u, 170u)), Scene::Layer::FrontMiddle);
 
     for (int i = 0; i < 3; ++i)
-        m_scene.addEntity(createEntity(m_messageBus, m_physWorld, sf::Color(85u, 85u, 85u)), Scene::Layer::FrontRear);
+        m_scene.addEntity(createEntity(sf::Color(85u, 85u, 85u)), Scene::Layer::FrontRear);
+
+    //m_scene.addEntity(createEntity(m_messageBus, m_physWorld, sf::Color::White), Scene::Layer::FrontFront);
 
     m_scene.getLayer(Scene::Layer::BackRear).addComponent<GradientDrawable>(std::make_unique<GradientDrawable>(m_messageBus));
 }
@@ -96,4 +85,24 @@ bool GameState::handleEvent(const sf::Event& evt)
 {
 
     return true;
+}
+
+//private
+Entity::Ptr GameState::createEntity(const sf::Color& colour)
+{
+    float size = static_cast<float>(Util::Random::value(10, 50));
+
+    Entity::Ptr e = std::make_unique<Entity>();
+    CircleDrawable::Ptr cd = std::make_unique<CircleDrawable>(size, m_messageBus);
+    cd->setColour(colour);
+    e->addComponent<CircleDrawable>(cd);
+
+    PhysicsComponent::Ptr pc = m_physWorld.addBody(size, m_messageBus);
+    e->addComponent<PhysicsComponent>(pc);
+
+    ParticleSystem::Ptr ps = ParticleSystem::create(Particle::Type::Trail, m_messageBus);
+    ps->setTexture(getContext().appInstance.getTexture("assets/images/particles/circle.png"));
+    e->addComponent<ParticleSystem>(ps);
+
+    return std::move(e);
 }

@@ -25,36 +25,54 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//uses a vertex array to create a gradient
+//affectors for particle systems
 
-#ifndef GRADIENT_HPP_
-#define GRADIENT_HPP_
+#ifndef AFFECTORS_HPP_
+#define AFFECTORS_HPP_
 
-#include <Component.hpp>
+#include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/Color.hpp>
 
-#include <SFML/Graphics/VertexArray.hpp>
-
-class GradientDrawable final : public Component, public sf::Drawable
+struct Particle;
+struct ForceAffector
 {
-public:
-    using Ptr = std::unique_ptr<GradientDrawable>;
-
-    explicit GradientDrawable(MessageBus&);
-    ~GradientDrawable() = default;
-
-    Component::Type type() const override;
-    void entityUpdate(Entity&, float) override;
-    void handleMessage(const Message&) override;
+    explicit ForceAffector(const sf::Vector2f& force);
+    void operator()(Particle& p, float dt);
+    void setRandom(const sf::Vector2f& rangeStart, const sf::Vector2f& rangeEnd);
 
 private:
+    sf::Vector2f m_force;
 
-    sf::VertexArray m_vertexArray;
-    sf::Color m_colour;
-
-    float m_currentTime;
-    int m_colourIndexA, m_colourIndexB;
-
-    void draw(sf::RenderTarget&, sf::RenderStates) const override;
+    bool m_random;
+    sf::Vector2f m_randomStart;
+    sf::Vector2f m_randomEnd;
 };
 
-#endif //GRADIENT_HPP_
+struct ColourAffector
+{
+    ColourAffector(const sf::Color& start, const sf::Color& end, float duration);
+    void operator() (Particle& p, float dt);
+
+private:
+    float m_duration;
+    sf::Color m_start;
+    sf::Color m_end;
+};
+
+struct RotateAffector
+{
+    explicit RotateAffector(float rotation);
+    void operator() (Particle& p, float dt);
+
+private:
+    float m_rotation;
+};
+
+struct ScaleAffector
+{
+    explicit ScaleAffector(const sf::Vector2f& scale);
+    void operator() (Particle& p, float dt);
+private:
+    sf::Vector2f m_scale;
+};
+#endif //AFFECTORS_HPP_
