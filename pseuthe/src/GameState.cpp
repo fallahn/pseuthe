@@ -46,13 +46,13 @@ GameState::GameState(StateStack& stateStack, Context context)
 {
     context.renderWindow.setView(context.defaultView);
     
-    for (int i = 0; i < 9; ++i)
+    for (int i = 0; i < 12; ++i)
         m_scene.addEntity(createEntity(sf::Color::White), Scene::Layer::FrontFront);
 
-    for (int i = 0; i < 6; ++i)
+    for (int i = 0; i < 8; ++i)
         m_scene.addEntity(createEntity(sf::Color(170u, 170u, 170u)), Scene::Layer::FrontMiddle);
 
-    for (int i = 0; i < 3; ++i)
+    for (int i = 0; i < 4; ++i)
         m_scene.addEntity(createEntity(sf::Color(85u, 85u, 85u)), Scene::Layer::FrontRear);
 
     //m_scene.addEntity(createEntity(m_messageBus, m_physWorld, sf::Color::White), Scene::Layer::FrontFront);

@@ -106,7 +106,7 @@ void GradientDrawable::entityUpdate(Entity&, float dt)
     const float ratio = m_currentTime / cycleTime;
     m_colour = lerp(colours[m_colourIndexA], colours[m_colourIndexB], ratio);
 
-    for (int i = 1; i < m_vertexArray.getVertexCount(); ++i)
+    for (auto i = 1u; i < m_vertexArray.getVertexCount(); ++i)
         m_vertexArray[i].color = m_colour;
 
     //slowly mutate transform
@@ -130,7 +130,7 @@ void GradientDrawable::entityUpdate(Entity&, float dt)
 
 void GradientDrawable::handleMessage(const Message&)
 {
-
+    //we have all the seagulls
 }
 
 //private

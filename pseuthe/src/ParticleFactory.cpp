@@ -56,7 +56,7 @@ ParticleSystem::Ptr ParticleSystem::create(Particle::Type type, MessageBus& mb)
         ScaleAffector sa({ 1.6f, 1.6f });
         ps->addAffector<ScaleAffector>(sa);
 
-        ps->setParticleLifetime(0.85f);
+        ps->setParticleLifetime(0.95f);
         ps->followParent(true);
     }
         break;
