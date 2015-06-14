@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2015
+Matt Marchant 2014 - 2015
 http://trederia.blogspot.com
 
 pseuthe Zlib license.
@@ -25,37 +25,41 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//a circle shape drawable component
+//creates a starfield type effect as a drawable component
 
-#ifndef CIRCLE_DRAWABLE_HPP_
-#define CIRCLE_DRAWABLE_HPP_
+#ifndef PARTICLE_FIELD_HPP_
+#define PARTICLE_FIELD_HPP_
 
+#include <Particle.hpp>
 #include <Component.hpp>
 
-#include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics/Drawable.hpp>
 
-class CircleDrawable final : public Component, public sf::Drawable
+#include <vector>
+
+class ParticleField final : public Component, public sf::Drawable
 {
 public:
-    using Ptr = std::unique_ptr<CircleDrawable>;
-
-    CircleDrawable(float radius, MessageBus&);
-    ~CircleDrawable() = default;
+    ParticleField(const sf::FloatRect&, MessageBus&);
+    ~ParticleField() = default;
+    ParticleField(const ParticleField&) = delete;
+    const ParticleField& operator = (const ParticleField&) = delete;
 
     Component::Type type() const override;
     void entityUpdate(Entity&, float) override;
     void handleMessage(const Message&) override;
 
-    void setColour(sf::Color);
-    void setRadius(float);
-    void setOutlineThickness(float);
-
-    const sf::Color& getColour() const;
+    void setBlendMode(sf::BlendMode);
+    //void setTexture();
 private:
 
-    sf::CircleShape m_circleShape;
+    std::vector<Particle> m_particles;
+    sf::BlendMode m_blendMode;
 
-    void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
+    void addParticle(const sf::Vector2f&);
+    void addVertex(const sf::Vector2f&, float, float, const sf::Color&);
+    void updateVertices();
+    void draw(sf::RenderTarget&, sf::RenderStates) const override;
 };
 
-#endif //CIRCLE_DRAWABLE_HPP_
+#endif //PARTICLE_FIELD_HPP_

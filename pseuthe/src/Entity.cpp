@@ -192,9 +192,11 @@ void Entity::handleMessage(const Message& msg)
 void Entity::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     states.transform *= getTransform();    
-    drawSelf(rt, states);
+
     for (const auto& c : m_children)
         rt.draw(*c, states);
+
+    drawSelf(rt, states);
 }
 
 void Entity::drawSelf(sf::RenderTarget& rt, sf::RenderStates states) const

@@ -27,7 +27,7 @@ source distribution.
 
 //convenience function for creating particle system presets
 
-#include <Particles.hpp>
+#include <ParticleSystem.hpp>
 #include <Util.hpp>
 
 ParticleSystem::Ptr ParticleSystem::create(Particle::Type type, MessageBus& mb)
@@ -38,15 +38,16 @@ ParticleSystem::Ptr ParticleSystem::create(Particle::Type type, MessageBus& mb)
     {
     case Particle::Type::Trail:
     {
-        ps->setEmitRate(Util::Random::value(1.f, 2.f));
-
-        ForceAffector fa({ 10.f, -170.f });
-        ps->addAffector<ForceAffector>(fa);
-
         const float scale = Util::Random::value(4.f, 6.f);
         ScaleAffector sa({ scale, scale });
         ps->addAffector<ScaleAffector>(sa);
 
+
+        ForceAffector fa({ 0.f, -190.f });
+        ps->addAffector<ForceAffector>(fa);
+
+        ps->setEmitRate(Util::Random::value(0.5f, 2.5f));
+        ps->setBlendMode(sf::BlendAdd);
         ps->start();
     }
         break;
@@ -56,6 +57,7 @@ ParticleSystem::Ptr ParticleSystem::create(Particle::Type type, MessageBus& mb)
         ScaleAffector sa({ 1.6f, 1.6f });
         ps->addAffector<ScaleAffector>(sa);
 
+        ps->setBlendMode(sf::BlendAdd);
         ps->setParticleLifetime(0.95f);
         ps->followParent(true);
     }

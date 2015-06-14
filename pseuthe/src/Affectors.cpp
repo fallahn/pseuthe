@@ -26,7 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include <Affectors.hpp>
-#include <Particles.hpp>
+#include <ParticleSystem.hpp>
 #include <Util.hpp>
 
 namespace

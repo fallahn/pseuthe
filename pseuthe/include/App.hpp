@@ -50,7 +50,7 @@ public:
 
         VideoSettings()
             : WindowStyle(sf::Style::Close /*sf::Style::Fullscreen*/),
-            VideoMode(1600, 900),
+            VideoMode(1280, 720),
             VSync(true){}
     };
 

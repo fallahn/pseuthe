@@ -26,13 +26,14 @@ source distribution.
 *********************************************************************/
 
 #include <GradientDrawable.hpp>
+#include <Util.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 
 namespace
 {
-    const sf::Uint8 alpha = 120u;
+    const sf::Uint8 alpha = 60u;
     static std::vector<sf::Color> colours =
     {        
         sf::Color(32u, 37u, 102u, alpha),
@@ -73,7 +74,7 @@ namespace
 GradientDrawable::GradientDrawable(MessageBus& mb)
     :Component      (mb),
     m_vertexArray   (sf::PrimitiveType::TrianglesFan),
-    m_colour        (colours[0]),
+    m_colour        (colours[Util::Random::value(0, colours.size() - 1)]),
     m_currentTime   (0.f),
     m_colourIndexA  (0),
     m_colourIndexB  (1)

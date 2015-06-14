@@ -58,7 +58,7 @@ namespace Shader
         static const std::string fragment =
             "#version 120\n" \
             "uniform sampler2D u_sourceTexture;\n" \
-            "const float threshold = 0.5;\n" \
+            "const float threshold = 0.35;\n" \
             "const float factor = 4.0;\n" \
 
             "void main()\n" \

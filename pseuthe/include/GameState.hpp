@@ -61,7 +61,7 @@ private :
     PhysicsWorld m_physWorld;
     AudioManager m_audioManager;
 
-    Entity::Ptr createEntity(const sf::Color& colour);
+    Entity::Ptr createEntity();
 };
 
 #endif //GAME_STATE_HPP_

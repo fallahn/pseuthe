@@ -66,7 +66,8 @@ add_executable(
 	src/MessageBus.cpp
 	src/Music.cpp
 	src/ParticleFactory.cpp	
-	src/Particles.cpp
+	src/ParticleField.cpp
+	src/ParticleSystem.cpp
 	src/PauseState.cpp
 	src/PhysicsComponent.cpp
 	src/PhysicsWorld.cpp

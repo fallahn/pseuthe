@@ -25,7 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <Particles.hpp>
+#include <ParticleSystem.hpp>
 #include <Util.hpp>
 #include <Entity.hpp>
 #include <MessageBus.hpp>

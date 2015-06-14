@@ -88,7 +88,8 @@
     <ClCompile Include="src\MessageBus.cpp" />
     <ClCompile Include="src\Music.cpp" />
     <ClCompile Include="src\ParticleFactory.cpp" />
-    <ClCompile Include="src\Particles.cpp" />
+    <ClCompile Include="src\ParticleField.cpp" />
+    <ClCompile Include="src\ParticleSystem.cpp" />
     <ClCompile Include="src\PauseState.cpp" />
     <ClCompile Include="src\PhysicsComponent.cpp" />
     <ClCompile Include="src\PhysicsWorld.cpp" />
@@ -115,7 +116,9 @@
     <ClInclude Include="include\MenuState.hpp" />
     <ClInclude Include="include\MessageBus.hpp" />
     <ClInclude Include="include\Music.hpp" />
-    <ClInclude Include="include\Particles.hpp" />
+    <ClInclude Include="include\Particle.hpp" />
+    <ClInclude Include="include\ParticleField.hpp" />
+    <ClInclude Include="include\ParticleSystem.hpp" />
     <ClInclude Include="include\PauseState.hpp" />
     <ClInclude Include="include\PhysicsComponent.hpp" />
     <ClInclude Include="include\PhysicsWorld.hpp" />

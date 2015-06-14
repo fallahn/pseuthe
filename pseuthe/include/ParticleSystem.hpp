@@ -25,34 +25,20 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef PARTICLES_HPP_
-#define PARTICLES_HPP_
+#ifndef PARTICLESYS_HPP_
+#define PARTICLESYS_HPP_
 
-#include <SFML/System/Vector2.hpp>
 #include <SFML/System/Clock.hpp>
-#include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
-#include <SFML/Graphics/Transformable.hpp>
 
 #include <Affectors.hpp>
 #include <Component.hpp>
+#include <Particle.hpp>
 
 #include <deque>
 #include <functional>
 #include <vector>
 
-struct Particle final : public sf::Transformable
-{    
-    enum class Type
-    {
-        Trail,
-        Echo
-    };
-
-    sf::Vector2f velocity;
-    sf::Color colour;
-    float lifetime = 0.f;
-};
 
 class ParticleSystem final : public Component, public sf::Drawable
 {

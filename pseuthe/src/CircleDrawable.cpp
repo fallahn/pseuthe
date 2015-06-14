@@ -33,7 +33,7 @@ source distribution.
 
 namespace
 {
-    const sf::Uint8 alpha = 120u;
+    const sf::Uint8 alpha = 100u;
 }
 
 CircleDrawable::CircleDrawable(float radius, MessageBus& m)
@@ -42,7 +42,14 @@ CircleDrawable::CircleDrawable(float radius, MessageBus& m)
 {
     m_circleShape.setOrigin(radius, radius);
     m_circleShape.setOutlineThickness(2.f);
-    m_circleShape.setFillColor(sf::Color(255u, 255u, 255u, alpha));
+
+    float colour = std::min(radius / 50.f, 1.f);
+    colour *= 210.f;
+    sf::Uint8 colourByte = static_cast<sf::Uint8>(colour);
+    sf::Color finalColour(colourByte, colourByte, colourByte);
+    m_circleShape.setOutlineColor(finalColour);
+    finalColour.a = alpha;
+    m_circleShape.setFillColor(finalColour);
 }
 
 //public
@@ -87,6 +94,11 @@ void CircleDrawable::setRadius(float radius)
 void CircleDrawable::setOutlineThickness(float thickness)
 {
     m_circleShape.setOutlineThickness(thickness);
+}
+
+const sf::Color& CircleDrawable::getColour() const
+{
+    return m_circleShape.getOutlineColor();
 }
 
 //private
