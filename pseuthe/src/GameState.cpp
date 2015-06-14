@@ -114,6 +114,7 @@ Entity::Ptr GameState::createEntity(const sf::Color& colour)
 
     ps = ParticleSystem::create(Particle::Type::Trail, m_messageBus);
     ps->setTexture(getContext().appInstance.getTexture("assets/images/particles/circle.png"));
+    ps->setBlendMode(sf::BlendAdd);
 
     Entity::Ptr f = std::make_unique<Entity>(m_messageBus);
     f->addComponent<ParticleSystem>(ps);

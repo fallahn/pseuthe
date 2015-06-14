@@ -92,5 +92,6 @@ void CircleDrawable::setOutlineThickness(float thickness)
 //private
 void CircleDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
+    states.blendMode = sf::BlendAdd;
     rt.draw(m_circleShape, states);
 }

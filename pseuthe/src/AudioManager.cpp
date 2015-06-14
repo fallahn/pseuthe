@@ -37,7 +37,8 @@ namespace
 {
     float musicVolume = 100.f;
     float fxVolume = 60.f;
-    const std::string soundPath = "assets/sound/";
+    const std::string impactSoundPath = "assets/sound/chimes01/";
+    const std::string fxSoundPath = "assets/sound/fx/";
 }
 
 AudioManager::AudioManager()
@@ -47,33 +48,27 @@ AudioManager::AudioManager()
     m_musicPlayer.setVolume(0.f);
     m_musicPlayer.play("assets/sound/background.ogg", true);
 
-    auto files = FileSystem::listFiles(soundPath);
+    auto files = FileSystem::listFiles(impactSoundPath);
     for (const auto& file : files)
     {
         if (FileSystem::getFileExtension(file) == ".wav")
         {
-            m_sounds.emplace_back(sf::SoundBuffer());
-            m_sounds.back().loadFromFile(soundPath + file);
+            m_impactSounds.emplace_back(sf::SoundBuffer());
+            m_impactSounds.back().loadFromFile(impactSoundPath + file);
         }
     }
 
-    ////TODO could find a list from dir and add all wav files
-    //m_sounds.emplace_back(sf::SoundBuffer());
-    //m_sounds.back().loadFromFile("assets/sound/01.wav");
-    //m_sounds.emplace_back(sf::SoundBuffer());
-    //m_sounds.back().loadFromFile("assets/sound/02.wav");
-    //m_sounds.emplace_back(sf::SoundBuffer());
-    //m_sounds.back().loadFromFile("assets/sound/03.wav");
-    //m_sounds.emplace_back(sf::SoundBuffer());
-    //m_sounds.back().loadFromFile("assets/sound/04.wav");
-    //m_sounds.emplace_back(sf::SoundBuffer());
-    //m_sounds.back().loadFromFile("assets/sound/05.wav");
-    //m_sounds.emplace_back(sf::SoundBuffer());
-    //m_sounds.back().loadFromFile("assets/sound/06.wav");
-    //m_sounds.emplace_back(sf::SoundBuffer());
-    //m_sounds.back().loadFromFile("assets/sound/07.wav");
-    //m_sounds.emplace_back(sf::SoundBuffer());
-    //m_sounds.back().loadFromFile("assets/sound/08.wav");   
+    files = FileSystem::listFiles(fxSoundPath);
+    for (const auto& file : files)
+    {
+        if (FileSystem::getFileExtension(file) == ".wav")
+        {
+            m_fxSounds.emplace_back(sf::SoundBuffer());
+            m_fxSounds.back().loadFromFile(fxSoundPath + file);
+        }
+    }
+
+    m_switchFx.loadFromFile("assets/sound/switch.wav");
 }
 
 
@@ -97,7 +92,15 @@ void AudioManager::handleMessage(const Message& msg)
     if (msg.type == Message::Type::Physics)
     {
         { 
-            m_soundPlayer.play(m_sounds[Util::Random::value(0, m_sounds.size() - 1)]);
+            m_soundPlayer.play(m_impactSounds[Util::Random::value(0, m_impactSounds.size() - 1)]);
+        }
+    }
+    else if (msg.type == Message::Type::Entity)
+    {
+        if (msg.entity.maxCollisionsReached)
+        {
+            //play a swooshy sound :D
+            m_soundPlayer.play(m_switchFx);
         }
     }
 }

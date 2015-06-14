@@ -54,7 +54,9 @@ private:
     MusicPlayer m_musicPlayer;
     SoundPlayer m_soundPlayer;
 
-    std::vector<sf::SoundBuffer> m_sounds;
+    std::vector<sf::SoundBuffer> m_impactSounds;
+    std::vector<sf::SoundBuffer> m_fxSounds;
+    sf::SoundBuffer m_switchFx;
 };
 
 #endif //AUDIO_MANAGER_HPP_

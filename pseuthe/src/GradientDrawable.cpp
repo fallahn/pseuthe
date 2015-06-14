@@ -32,12 +32,13 @@ source distribution.
 
 namespace
 {
+    const sf::Uint8 alpha = 120u;
     static std::vector<sf::Color> colours =
     {        
-        sf::Color(32u, 37u, 102u),
-        sf::Color(32u, 93u, 102u),
-        sf::Color(32u, 102u, 74u),
-        sf::Color(52u, 32u, 102u)
+        sf::Color(32u, 37u, 102u, alpha),
+        sf::Color(32u, 93u, 102u, alpha),
+        sf::Color(32u, 102u, 74u, alpha),
+        sf::Color(52u, 32u, 102u, alpha)
     };
 
     const float TAU = 3.14159f * 2.f;
@@ -59,6 +60,7 @@ namespace
         retVal.r = static_cast<sf::Uint8>(static_cast<float>(b.r - a.r) * time) + a.r;
         retVal.g = static_cast<sf::Uint8>(static_cast<float>(b.g - a.g) * time) + a.g;
         retVal.b = static_cast<sf::Uint8>(static_cast<float>(b.b - a.b) * time) + a.b;
+        retVal.a = static_cast<sf::Uint8>(static_cast<float>(b.a - a.a) * time) + a.a;
         return retVal;
     }
 
