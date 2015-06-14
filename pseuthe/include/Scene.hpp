@@ -50,7 +50,7 @@ public:
         Count
     };
 
-    Scene();
+    explicit Scene(MessageBus&);
     ~Scene() = default;
     Scene(const Scene&) = delete;
     const Scene& operator = (const Scene&) = delete;
@@ -62,6 +62,9 @@ public:
 
 private:
     std::vector<Entity::Ptr> m_layers;
+
+    int m_collisionCount;
+    MessageBus& m_messageBus;
 
     void draw(sf::RenderTarget&, sf::RenderStates) const override;
 

@@ -35,6 +35,7 @@ source distribution.
 #include <Entity.hpp>
 #include <Scene.hpp>
 #include <PhysicsWorld.hpp>
+#include <AudioManager.hpp>
 
 #include <vector>
 
@@ -58,6 +59,7 @@ private :
     MessageBus m_messageBus;
     Scene m_scene;
     PhysicsWorld m_physWorld;
+    AudioManager m_audioManager;
 
     Entity::Ptr createEntity(const sf::Color& colour);
 };

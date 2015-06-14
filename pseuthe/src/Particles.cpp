@@ -79,7 +79,7 @@ void ParticleSystem::handleMessage(const Message& msg)
     switch (msg.type)
     {
     case Message::Type::Physics:
-        if (msg.physics.entityId == getParentUID()
+        if ((msg.physics.entityId[0] == getParentUID() || msg.physics.entityId[1] == getParentUID())
             && m_type == Particle::Type::Echo)
         {
             start(1u, 0.02f);

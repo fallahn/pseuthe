@@ -29,9 +29,10 @@ source distribution.
 #include <Log.hpp>
 
 #include <cassert>
+#include <algorithm>
 
 MusicPlayer::MusicPlayer()
-    : m_volume  (100.f)
+    : m_volume      (100.f)
 {
 
 }

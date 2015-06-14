@@ -47,7 +47,7 @@ public:
 
     struct AudioEvent
     {
-
+        sf::Uint64 entityId;
     };
 
     struct PhysicsEvent
@@ -57,7 +57,7 @@ public:
             Collided
         }event;
 
-        sf::Uint64 entityId;
+        sf::Uint64 entityId[2];
     };
 
     struct DrawableEvent
@@ -67,7 +67,7 @@ public:
 
     struct EntityEvent
     {
-
+        bool maxCollisionsReached;
     };
 
     union

@@ -37,12 +37,13 @@ source distribution.
 
 namespace
 {
-    sf::Uint64 uid = 0u;
+    sf::Uint64 uid = 1u; //use 0 for no entity
 }
 
-Entity::Entity()
+Entity::Entity(MessageBus& mb)
  : m_destroyed  (false),
  m_uid          (uid++),
+ m_messageBus   (mb),
  m_parent       (nullptr)
 {}
 
@@ -172,6 +173,12 @@ void Entity::handleMessage(const Message& msg)
     switch (msg.type)
     {
     case Message::Type::Physics:
+        
+        if ((msg.physics.entityId[0] == m_uid || msg.physics.entityId[1] == m_uid))
+        {
+
+
+        }
         break;
     default: break;
     }

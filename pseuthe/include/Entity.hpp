@@ -49,7 +49,7 @@ class Entity final : public sf::Transformable, public sf::Drawable
 public:
     using Ptr = std::unique_ptr<Entity>;
 
-    Entity();
+    explicit Entity(MessageBus&);
     ~Entity() = default;
     Entity(const Entity&) = delete;
     Entity& operator = (const Entity&) = delete;
@@ -88,6 +88,7 @@ private:
 
     bool m_destroyed;
     sf::Uint64 m_uid;
+    MessageBus& m_messageBus;
 
     std::vector<std::unique_ptr<Component>> m_pendingComponents;
     std::vector<std::unique_ptr<Component>> m_components;

@@ -61,11 +61,11 @@ public:
     bool destroyed() const;
 
     void setParentUID(sf::Uint64 uid);
+    sf::Uint64 getParentUID() const;
 
 protected:
     void sendMessage(const Message&);
     MessageBus& getMessageBus() const;
-    sf::Uint64 getParentUID() const;
 
 private:
     MessageBus& m_messageBus;

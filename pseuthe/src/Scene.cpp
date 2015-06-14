@@ -30,10 +30,17 @@ source distribution.
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
-Scene::Scene()
+namespace
+{
+    const int maxCollisions = 160;
+}
+
+Scene::Scene(MessageBus& mb)
+    : m_collisionCount  (0),
+    m_messageBus        (mb)
 {
     for (int i = 0; i < Layer::Count; ++i)
-        m_layers.emplace_back(std::make_unique<Entity>());
+        m_layers.emplace_back(std::make_unique<Entity>(mb));
 }
 
 //public
@@ -41,12 +48,31 @@ void Scene::update(float dt)
 {
     for (auto& e : m_layers)
         e->update(dt);
+
+    if (m_collisionCount > maxCollisions)
+    {
+        //send a message to change velocities
+        m_collisionCount = 0;
+
+        Message msg;
+        msg.type = Message::Type::Entity;
+        msg.entity.maxCollisionsReached = true;
+        m_messageBus.send(msg);
+    }
 }
 
 void Scene::handleMessages(const Message& msg)
 {
     for (auto& e : m_layers)
         e->handleMessage(msg);
+
+    if (msg.type == Message::Type::Physics)
+    {
+        if (msg.physics.event == Message::PhysicsEvent::Collided)
+        {
+            m_collisionCount++;
+        }
+    }
 }
 
 void Scene::addEntity(Entity::Ptr& entity, Layer layer)

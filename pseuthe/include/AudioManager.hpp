@@ -25,35 +25,36 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//simulates the physics and applies the results to physics components
+#ifndef AUDIO_MANAGER_HPP_
+#define AUDIO_MANAGER_HPP_
 
-#ifndef PHYS_WORLD_HPP_
-#define PHYS_WORLD_HPP_
+#include <SoundPlayer.hpp>
+#include <Music.hpp>
 
-#include <PhysicsComponent.hpp>
-
-#include <vector>
-#include <set>
-
-class PhysicsWorld final
+class Message;
+class AudioManager final
 {
 public:
-    explicit PhysicsWorld(MessageBus&);
-    ~PhysicsWorld() = default;
-    PhysicsWorld(const PhysicsWorld&) = delete;
-    const PhysicsWorld& operator = (const PhysicsWorld&) = delete;
+    AudioManager();
+    ~AudioManager() = default;
+    AudioManager(const AudioManager&) = delete;
+    const AudioManager& operator = (const AudioManager&) = delete;
 
-    PhysicsComponent::Ptr addBody(float);
-    void handleMessages(const Message&);
     void update(float);
+    void handleMessage(const Message&);
+
+    //loadSoundset(const std::string& path);
+
 
 private:
-    using Collision = std::pair<PhysicsComponent*, PhysicsComponent*>;
 
-    std::vector<PhysicsComponent*> m_bodies;
-    std::set<Collision> m_collisions;
+    float m_fadeInTime;
+    float m_currentFadeTime;
 
-    MessageBus& m_messageBus;
+    MusicPlayer m_musicPlayer;
+    SoundPlayer m_soundPlayer;
+
+    std::vector<sf::SoundBuffer> m_sounds;
 };
 
-#endif //PHYS_WORLD_HPP_
+#endif //AUDIO_MANAGER_HPP_

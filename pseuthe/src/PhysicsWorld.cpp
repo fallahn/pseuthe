@@ -26,6 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include <PhysicsWorld.hpp>
+#include <MessageBus.hpp>
 #include <Util.hpp>
 
 namespace
@@ -34,12 +35,13 @@ namespace
     const float elasticity = 0.81f;// 1f;
 }
 
-PhysicsWorld::PhysicsWorld()
+PhysicsWorld::PhysicsWorld(MessageBus& m)
+    : m_messageBus(m)
 {}
 
-PhysicsComponent::Ptr PhysicsWorld::addBody(float radius, MessageBus& m)
+PhysicsComponent::Ptr PhysicsWorld::addBody(float radius)
 {
-    auto body = std::make_unique<PhysicsComponent>(radius, m);
+    auto body = std::make_unique<PhysicsComponent>(radius, m_messageBus);
     m_bodies.push_back(body.get());
     return std::move(body);
 }
@@ -95,6 +97,13 @@ void PhysicsWorld::update(float dt)
         m.normal = -m.normal;
         m.transferForce = m.normal * (impulse / c.first->getMass());
         c.second->resolveCollision(c.first, m);
+
+        Message msg;
+        msg.type = Message::Type::Physics;
+        msg.physics.event = Message::PhysicsEvent::Collided;
+        msg.physics.entityId[0] = c.first->getParentUID();
+        msg.physics.entityId[1] = c.second->getParentUID();
+        m_messageBus.send(msg);
     }
 
     //update bodies

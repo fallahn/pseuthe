@@ -35,7 +35,7 @@ namespace
     const float density = 2.5f;
     const float PI = 3.142f;
 
-    const int maxVelocity = 400;
+    const int maxVelocity = 100;
     const int maxPositionX = 1920;
     const int maxPositionY = 1080;
 
@@ -69,7 +69,14 @@ void PhysicsComponent::entityUpdate(Entity& e, float dt)
 
 void PhysicsComponent::handleMessage(const Message& msg)
 {
-
+    if (msg.type == Message::Type::Entity)
+    {
+        if (msg.entity.maxCollisionsReached)
+        {
+            m_velocity.x = static_cast<float>(Util::Random::value(-maxVelocity, maxVelocity));
+            m_velocity.y = static_cast<float>(Util::Random::value(-maxVelocity, maxVelocity));
+        }
+    }
 }
 
 void PhysicsComponent::physicsUpdate(float dt, const sf::FloatRect& bounds)
@@ -92,7 +99,8 @@ void PhysicsComponent::physicsUpdate(float dt, const sf::FloatRect& bounds)
             Message msg;
             msg.type = Message::Type::Physics;
             msg.physics.event = Message::PhysicsEvent::Collided;
-            msg.physics.entityId = getParentUID();
+            msg.physics.entityId[0] = getParentUID();
+            msg.physics.entityId[1] = 0u;
             sendMessage(msg);
         }
         else if (m_position.y > bounds.top
@@ -113,11 +121,11 @@ void PhysicsComponent::resolveCollision(PhysicsComponent* other, const Manifold&
     m_velocity += m.transferForce;
     m_position -= (other->m_mass / (other->m_mass + m_mass) * m.penetration) * m.normal;
 
-    Message msg;
-    msg.type = Message::Type::Physics;
-    msg.physics.event = Message::PhysicsEvent::Collided;
-    msg.physics.entityId = getParentUID();
-    sendMessage(msg);
+    //Message msg;
+    //msg.type = Message::Type::Physics;
+    //msg.physics.event = Message::PhysicsEvent::Collided;
+    //msg.physics.entityId = getParentUID();
+    //sendMessage(msg);
 }
 
 void PhysicsComponent::applyForce(const sf::Vector2f& force)

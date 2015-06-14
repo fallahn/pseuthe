@@ -53,6 +53,7 @@ add_executable(
 	pseuthe src/main.cpp
 	src/Affectors.cpp
 	src/App.cpp
+	src/AudioManager.cpp
 	src/CircleDrawable.cpp
 	src/Component.cpp
 	src/EchoDrawable.cpp

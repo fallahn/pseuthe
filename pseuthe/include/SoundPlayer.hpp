@@ -40,10 +40,6 @@ source distribution.
 class SoundPlayer final
 {
 public:
-    enum class AudioId
-    {
-        
-    };
 
     SoundPlayer();
     ~SoundPlayer() = default;
@@ -51,20 +47,17 @@ public:
     const SoundPlayer& operator = (const SoundPlayer&) = delete;
 
     void update();
-    void play(AudioId id);
-    void play(AudioId id, const sf::Vector2f& position, bool loop = false);
-    void play(AudioId, const sf::Vector3f& position);
+    void play(const sf::SoundBuffer&, bool = false);
     
     void setListenerPosition(const sf::Vector2f& position);
     sf::Vector2f getListenerPosition() const;
-    void cacheSound(AudioId, const std::string&);
 
     static void setVolume(float volume);
     static float getVolume();
 
 private:
 
-    std::map<AudioId, sf::SoundBuffer> m_buffers;
+    //std::map<AudioId, sf::SoundBuffer> m_buffers;
     std::list<sf::Sound> m_sounds;
 
     void flushSounds();

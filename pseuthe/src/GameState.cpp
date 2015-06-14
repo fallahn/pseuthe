@@ -42,7 +42,10 @@ namespace
 }
 
 GameState::GameState(StateStack& stateStack, Context context)
-    : State(stateStack, context)
+    : State     (stateStack, context),
+    m_messageBus(),
+    m_scene     (m_messageBus),
+    m_physWorld (m_messageBus)
 {
     context.renderWindow.setView(context.defaultView);
     
@@ -65,10 +68,12 @@ bool GameState::update(float dt)
     while (!m_messageBus.empty())
     {
         Message msg = m_messageBus.poll();
+        m_audioManager.handleMessage(msg);
         m_physWorld.handleMessages(msg);
         m_scene.handleMessages(msg);
     }
 
+    m_audioManager.update(dt);
     m_physWorld.update(dt);
     m_scene.update(dt);
 
@@ -91,12 +96,12 @@ Entity::Ptr GameState::createEntity(const sf::Color& colour)
 {
     float size = static_cast<float>(Util::Random::value(10, 50));
 
-    Entity::Ptr e = std::make_unique<Entity>();
+    Entity::Ptr e = std::make_unique<Entity>(m_messageBus);
     CircleDrawable::Ptr cd = std::make_unique<CircleDrawable>(size, m_messageBus);
     cd->setColour(colour);
     e->addComponent<CircleDrawable>(cd);
 
-    PhysicsComponent::Ptr pc = m_physWorld.addBody(size, m_messageBus);
+    PhysicsComponent::Ptr pc = m_physWorld.addBody(size);
     e->addComponent<PhysicsComponent>(pc); 
 
     ParticleSystem::Ptr ps = ParticleSystem::create(Particle::Type::Echo, m_messageBus);
@@ -110,7 +115,7 @@ Entity::Ptr GameState::createEntity(const sf::Color& colour)
     ps = ParticleSystem::create(Particle::Type::Trail, m_messageBus);
     ps->setTexture(getContext().appInstance.getTexture("assets/images/particles/circle.png"));
 
-    Entity::Ptr f = std::make_unique<Entity>();
+    Entity::Ptr f = std::make_unique<Entity>(m_messageBus);
     f->addComponent<ParticleSystem>(ps);
     e->addChild(f);
 

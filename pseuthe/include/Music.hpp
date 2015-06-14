@@ -42,11 +42,13 @@ public:
     MusicPlayer(const MusicPlayer&) = delete;
     const MusicPlayer& operator = (const MusicPlayer&) = delete;
 
-    void play(const std::string& file, bool loop = true);
+    void play(const std::string& file, bool loop = false);
     void stop();
     void setPaused(bool paused);
     void setVolume(float volume);
     float getVolume() const;
+
+    void update(float);
 
 private:
 
