@@ -25,55 +25,33 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//root class containing scene entities
+//abstract base class for full screen post process effects
 
-#ifndef SCENE_HPP_
-#define SCENE_HPP_
+#ifndef POST_PROCESS_HPP_
+#define POST_PROCESS_HPP_
 
-#include <Entity.hpp>
-#include <PostBloom.hpp>
+namespace sf
+{
+    class RenderTarget;
+    class RenderTexture;
+    class Shader;
+}
 
-#include <SFML/Graphics/Drawable.hpp>
-
-#include <vector>
-
-class Scene final : public sf::Drawable
+class PostProcess
 {
 public:
-    enum Layer
-    {
-        BackRear = 0,
-        BackMiddle,
-        BackFront,
-        FrontRear,
-        FrontMiddle,
-        FrontFront,
-        Count
-    };
+    PostProcess();
+    virtual ~PostProcess() = default;
+    PostProcess(const PostProcess&) = delete;
+    const PostProcess& operator = (const PostProcess&) = delete;
 
-    explicit Scene(MessageBus&);
-    ~Scene() = default;
-    Scene(const Scene&) = delete;
-    const Scene& operator = (const Scene&) = delete;
+    virtual void apply(const sf::RenderTexture&, sf::RenderTarget&) = 0;
 
-    void update(float);
-    void handleMessages(const Message&);
-    void addEntity(Entity::Ptr&, Layer);
-    Entity& getLayer(Layer);
+    static bool supported();
 
-    void setView(const sf::View& v);
-
-private:
-    std::vector<Entity::Ptr> m_layers;
-
-    int m_collisionCount;
-    MessageBus& m_messageBus;
-
-    mutable sf::RenderTexture m_sceneBuffer;
-    mutable PostBloom m_bloomEffect;
-
-    void draw(sf::RenderTarget&, sf::RenderStates) const override;
-
+protected:
+    static void applyShader(const sf::Shader&, sf::RenderTarget&);
 };
 
-#endif //SCENE_HPP_
+
+#endif //POST_PROCESS_HPP_

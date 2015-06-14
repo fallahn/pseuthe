@@ -29,6 +29,7 @@ source distribution.
 #include <MenuState.hpp>
 #include <GameState.hpp>
 #include <PauseState.hpp>
+#include <PostProcess.hpp>
 
 #include <SFML/Window/Event.hpp>
 
@@ -72,6 +73,12 @@ App::App()
 //public
 void App::run()
 {
+    if (!PostProcess::supported())
+    {
+        Logger::Log("Sufficient shader support not found.", Logger::Type::Error, Logger::Output::File);
+        return;
+    }
+
     frameClock.restart();
     while (m_renderWindow.isOpen())
     {

@@ -25,55 +25,35 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//root class containing scene entities
+#include <PostProcess.hpp>
 
-#ifndef SCENE_HPP_
-#define SCENE_HPP_
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/Shader.hpp>
+#include <SFML/Graphics/VertexArray.hpp>
 
-#include <Entity.hpp>
-#include <PostBloom.hpp>
+PostProcess::PostProcess(){}
 
-#include <SFML/Graphics/Drawable.hpp>
-
-#include <vector>
-
-class Scene final : public sf::Drawable
+//public
+void PostProcess::applyShader(const sf::Shader& shader, sf::RenderTarget& dest)
 {
-public:
-    enum Layer
-    {
-        BackRear = 0,
-        BackMiddle,
-        BackFront,
-        FrontRear,
-        FrontMiddle,
-        FrontFront,
-        Count
-    };
+    auto outputSize = static_cast<sf::Vector2f>(dest.getSize());
 
-    explicit Scene(MessageBus&);
-    ~Scene() = default;
-    Scene(const Scene&) = delete;
-    const Scene& operator = (const Scene&) = delete;
+    sf::VertexArray verts(sf::TrianglesStrip, 4);
+    verts[0] = { {}, { 0.f, 1.f } };
+    verts[1] = { { outputSize.x, 0.f }, { 1.f, 1.f } };
+    verts[2] = { { 0.f, outputSize.y }, sf::Vector2f() };
+    verts[3] = { outputSize, { 1.f, 0 } };
 
-    void update(float);
-    void handleMessages(const Message&);
-    void addEntity(Entity::Ptr&, Layer);
-    Entity& getLayer(Layer);
+    //All the seagulls are belong to us.
+    sf::RenderStates states;
+    states.shader = &shader;
+    states.blendMode = sf::BlendNone;
 
-    void setView(const sf::View& v);
+    dest.draw(verts, states);
+}
 
-private:
-    std::vector<Entity::Ptr> m_layers;
-
-    int m_collisionCount;
-    MessageBus& m_messageBus;
-
-    mutable sf::RenderTexture m_sceneBuffer;
-    mutable PostBloom m_bloomEffect;
-
-    void draw(sf::RenderTarget&, sf::RenderStates) const override;
-
-};
-
-#endif //SCENE_HPP_
+bool PostProcess::supported()
+{
+    return sf::Shader::isAvailable();
+}
+//protected

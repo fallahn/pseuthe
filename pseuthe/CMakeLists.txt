@@ -70,7 +70,10 @@ add_executable(
 	src/PauseState.cpp
 	src/PhysicsComponent.cpp
 	src/PhysicsWorld.cpp
+	src/PostBloom.cpp
+	src/PostProcess.cpp
 	src/Scene.cpp
+	src/ShaderResource.cpp
 	src/SoundPlayer.cpp
 	src/State.cpp
 	src/StateStack.cpp)

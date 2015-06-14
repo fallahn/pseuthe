@@ -33,7 +33,7 @@ source distribution.
 
 namespace
 {
-    const sf::Uint8 alpha = 180u;
+    const sf::Uint8 alpha = 120u;
 }
 
 CircleDrawable::CircleDrawable(float radius, MessageBus& m)

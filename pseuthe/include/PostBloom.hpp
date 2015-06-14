@@ -25,55 +25,40 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//root class containing scene entities
+//creates a 'bloom' effect via post process
 
-#ifndef SCENE_HPP_
-#define SCENE_HPP_
+#ifndef POST_BLOOM_HPP_
+#define POST_BLOOM_HPP_
 
-#include <Entity.hpp>
-#include <PostBloom.hpp>
+#include <PostProcess.hpp>
+#include <ShaderResource.hpp>
 
-#include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/RenderTexture.hpp>
+#include <SFML/Graphics/Shader.hpp>
 
-#include <vector>
+#include <array>
 
-class Scene final : public sf::Drawable
+class PostBloom final : public PostProcess
 {
 public:
-    enum Layer
-    {
-        BackRear = 0,
-        BackMiddle,
-        BackFront,
-        FrontRear,
-        FrontMiddle,
-        FrontFront,
-        Count
-    };
+    PostBloom();
 
-    explicit Scene(MessageBus&);
-    ~Scene() = default;
-    Scene(const Scene&) = delete;
-    const Scene& operator = (const Scene&) = delete;
-
-    void update(float);
-    void handleMessages(const Message&);
-    void addEntity(Entity::Ptr&, Layer);
-    Entity& getLayer(Layer);
-
-    void setView(const sf::View& v);
+    void apply(const sf::RenderTexture&, sf::RenderTarget&) override;
 
 private:
-    std::vector<Entity::Ptr> m_layers;
+    using RenderTextureArray = std::array<sf::RenderTexture, 2>;
 
-    int m_collisionCount;
-    MessageBus& m_messageBus;
+    ShaderResource m_shaderResource;
+    sf::RenderTexture m_brightnessTexture;
+    RenderTextureArray m_firstPassTextures;
+    RenderTextureArray m_secondPassTextures;
 
-    mutable sf::RenderTexture m_sceneBuffer;
-    mutable PostBloom m_bloomEffect;
-
-    void draw(sf::RenderTarget&, sf::RenderStates) const override;
-
+    void initTextures(const sf::Vector2u&);
+    void filterBright(const sf::RenderTexture&, sf::RenderTexture&);
+    void blurMultipass(RenderTextureArray&);
+    void blur(const sf::RenderTexture&, sf::RenderTexture&, const sf::Vector2f&);
+    void downSample(const sf::RenderTexture&, sf::RenderTexture&);
+    void add(const sf::RenderTexture&, const sf::RenderTexture&, sf::RenderTarget&);
 };
 
-#endif //SCENE_HPP_
+#endif //POST_BLOOM_HPP_

@@ -47,16 +47,16 @@ GameState::GameState(StateStack& stateStack, Context context)
     m_scene     (m_messageBus),
     m_physWorld (m_messageBus)
 {
-    context.renderWindow.setView(context.defaultView);
+    m_scene.setView(context.defaultView);
     
     for (int i = 0; i < 12; ++i)
-        m_scene.addEntity(createEntity(sf::Color::White), Scene::Layer::FrontFront);
+        m_scene.addEntity(createEntity(sf::Color(210u, 210u, 210u)), Scene::Layer::FrontFront);
 
     for (int i = 0; i < 8; ++i)
         m_scene.addEntity(createEntity(sf::Color(170u, 170u, 170u)), Scene::Layer::FrontMiddle);
 
     for (int i = 0; i < 4; ++i)
-        m_scene.addEntity(createEntity(sf::Color(85u, 85u, 85u)), Scene::Layer::FrontRear);
+        m_scene.addEntity(createEntity(sf::Color(130u, 130u, 130u)), Scene::Layer::FrontRear);
 
     //m_scene.addEntity(createEntity(m_messageBus, m_physWorld, sf::Color::White), Scene::Layer::FrontFront);
 
@@ -119,11 +119,6 @@ Entity::Ptr GameState::createEntity(const sf::Color& colour)
     Entity::Ptr f = std::make_unique<Entity>(m_messageBus);
     f->addComponent<ParticleSystem>(ps);
     e->addChild(f);
-
-
-
-
-
 
     return std::move(e);
 }

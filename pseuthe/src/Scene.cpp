@@ -41,6 +41,8 @@ Scene::Scene(MessageBus& mb)
 {
     for (int i = 0; i < Layer::Count; ++i)
         m_layers.emplace_back(std::make_unique<Entity>(mb));
+
+    m_sceneBuffer.create(1920u, 1080u);
 }
 
 //public
@@ -85,9 +87,18 @@ Entity& Scene::getLayer(Layer l)
     return *m_layers[l];
 }
 
+void Scene::setView(const sf::View& v)
+{
+    m_sceneBuffer.setView(v);
+}
+
 //private
 void Scene::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
+    m_sceneBuffer.clear();
     for (const auto& e : m_layers)
-        rt.draw(*e, states);
+        m_sceneBuffer.draw(*e, states);
+    m_sceneBuffer.display();
+
+    m_bloomEffect.apply(m_sceneBuffer, rt);
 }

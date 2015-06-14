@@ -25,55 +25,35 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//root class containing scene entities
+//resource for caching shaders
 
-#ifndef SCENE_HPP_
-#define SCENE_HPP_
+#ifndef SHADER_RESOURCE_HPP_
+#define SHADER_RESOURCE_HPP_
 
-#include <Entity.hpp>
-#include <PostBloom.hpp>
+#include <Shaders.hpp>
 
-#include <SFML/Graphics/Drawable.hpp>
+#include <map>
+#include <memory>
 
-#include <vector>
+namespace sf
+{
+    class Shader;
+}
 
-class Scene final : public sf::Drawable
+class ShaderResource final
 {
 public:
-    enum Layer
-    {
-        BackRear = 0,
-        BackMiddle,
-        BackFront,
-        FrontRear,
-        FrontMiddle,
-        FrontFront,
-        Count
-    };
 
-    explicit Scene(MessageBus&);
-    ~Scene() = default;
-    Scene(const Scene&) = delete;
-    const Scene& operator = (const Scene&) = delete;
+    ShaderResource();
+    ~ShaderResource() = default;
+    ShaderResource(const ShaderResource&) = delete;
+    const ShaderResource& operator = (const ShaderResource&) = delete;
 
-    void update(float);
-    void handleMessages(const Message&);
-    void addEntity(Entity::Ptr&, Layer);
-    Entity& getLayer(Layer);
-
-    void setView(const sf::View& v);
+    sf::Shader& get(Shader::Type);
+    void preload(Shader::Type, const std::string&, const std::string&);
 
 private:
-    std::vector<Entity::Ptr> m_layers;
-
-    int m_collisionCount;
-    MessageBus& m_messageBus;
-
-    mutable sf::RenderTexture m_sceneBuffer;
-    mutable PostBloom m_bloomEffect;
-
-    void draw(sf::RenderTarget&, sf::RenderStates) const override;
-
+    std::map<Shader::Type, std::unique_ptr<sf::Shader>> m_shaders;
 };
 
-#endif //SCENE_HPP_
+#endif //SHADER_RESOURCE_HPP_

@@ -25,55 +25,28 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//root class containing scene entities
+#include <ShaderResource.hpp>
 
-#ifndef SCENE_HPP_
-#define SCENE_HPP_
+#include <SFML/Graphics/Shader.hpp>
 
-#include <Entity.hpp>
-#include <PostBloom.hpp>
+#include <cassert>
 
-#include <SFML/Graphics/Drawable.hpp>
+ShaderResource::ShaderResource(){}
 
-#include <vector>
-
-class Scene final : public sf::Drawable
+//public
+sf::Shader& ShaderResource::get(Shader::Type type)
 {
-public:
-    enum Layer
-    {
-        BackRear = 0,
-        BackMiddle,
-        BackFront,
-        FrontRear,
-        FrontMiddle,
-        FrontFront,
-        Count
-    };
+    auto result = m_shaders.find(type);
+    assert(result != m_shaders.end()); //did you forget to preload this shader?
 
-    explicit Scene(MessageBus&);
-    ~Scene() = default;
-    Scene(const Scene&) = delete;
-    const Scene& operator = (const Scene&) = delete;
+    return *result->second;
+}
 
-    void update(float);
-    void handleMessages(const Message&);
-    void addEntity(Entity::Ptr&, Layer);
-    Entity& getLayer(Layer);
+void ShaderResource::preload(Shader::Type type, const std::string& vertShader, const std::string& fragShader)
+{
+    auto shader = std::make_unique<sf::Shader>();
+    auto result = shader->loadFromMemory(vertShader, fragShader);
+    assert(result);
 
-    void setView(const sf::View& v);
-
-private:
-    std::vector<Entity::Ptr> m_layers;
-
-    int m_collisionCount;
-    MessageBus& m_messageBus;
-
-    mutable sf::RenderTexture m_sceneBuffer;
-    mutable PostBloom m_bloomEffect;
-
-    void draw(sf::RenderTarget&, sf::RenderStates) const override;
-
-};
-
-#endif //SCENE_HPP_
+    m_shaders.insert(std::make_pair(type, std::move(shader)));
+}
