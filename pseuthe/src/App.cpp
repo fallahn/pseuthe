@@ -29,9 +29,9 @@ source distribution.
 #include <MenuState.hpp>
 #include <GameState.hpp>
 #include <PauseState.hpp>
-#include <PostProcess.hpp>
 
 #include <SFML/Window/Event.hpp>
+#include <SFML/Graphics/Shader.hpp>
 
 #include <algorithm>
 
@@ -73,9 +73,9 @@ App::App()
 //public
 void App::run()
 {
-    if (!PostProcess::supported())
+    if (!sf::Shader::isAvailable())
     {
-        Logger::Log("Sufficient shader support not found.", Logger::Type::Error, Logger::Output::File);
+        Logger::Log("Shaders reported as unavailable.", Logger::Type::Error, Logger::Output::File);
         return;
     }
 

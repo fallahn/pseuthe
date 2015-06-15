@@ -74,7 +74,7 @@ public:
     template <typename T>
     void addAffector(T& affector);
 
-    void start(sf::Uint8 releaseCount = 1, float duration = 0.f);
+    void start(sf::Uint8 releaseCount = 1, float delay = 0.f, float duration = 0.f);
     bool started() const;
     void stop();
     void update(float dt);
@@ -91,6 +91,7 @@ private:
     sf::Vector2f m_particleSize;
     sf::Vector2f m_texCoords;
     float m_particleLifetime;
+    float m_startDelay;
 
     sf::Vector2f m_initialVelocity;
     bool m_randVelocity;

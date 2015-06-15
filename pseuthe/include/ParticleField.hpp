@@ -34,6 +34,7 @@ source distribution.
 #include <Component.hpp>
 
 #include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/VertexArray.hpp>
 
 #include <vector>
 
@@ -50,13 +51,15 @@ public:
     void handleMessage(const Message&) override;
 
     void setBlendMode(sf::BlendMode);
-    //void setTexture();
+    void setTexture(sf::Texture&);
 private:
 
     std::vector<Particle> m_particles;
     sf::BlendMode m_blendMode;
+    sf::FloatRect m_bounds;
+    sf::VertexArray m_vertices;
+    sf::Texture* m_texture;
 
-    void addParticle(const sf::Vector2f&);
     void addVertex(const sf::Vector2f&, float, float, const sf::Color&);
     void updateVertices();
     void draw(sf::RenderTarget&, sf::RenderStates) const override;

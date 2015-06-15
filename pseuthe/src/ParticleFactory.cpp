@@ -48,7 +48,7 @@ ParticleSystem::Ptr ParticleSystem::create(Particle::Type type, MessageBus& mb)
 
         ps->setEmitRate(Util::Random::value(0.5f, 2.5f));
         ps->setBlendMode(sf::BlendAdd);
-        ps->start();
+        ps->start(1u, Util::Random::value(0.2f, 1.f));
     }
         break;
 

@@ -41,6 +41,8 @@ source distribution.
 namespace //is this not moot here as the anonymous namespace gets included in any TU which use this?
 {
     static std::default_random_engine rndEngine(static_cast<unsigned long>(std::time(0)));
+    const float PI = 3.1412f;
+    const float degToRad = PI / 180.f;
 }
 
 namespace Util
@@ -125,6 +127,15 @@ namespace Util
         static sf::Vector2f reflect(const sf::Vector2f& velocity, const sf::Vector2f& normal)
         {
             return -2.f * dot(velocity, normal) * normal + velocity;
+        }
+
+        //rotates a vector (not very accurately)
+        static sf::Vector2f rotate(const sf::Vector2f& v, float degrees)
+        {
+            const float rads = degrees * degToRad;
+            auto ca = std::cosf(rads);
+            auto sa = std::sinf(rads);
+            return{ ca*v.x - sa*v.y, sa*v.x + ca*v.y };
         }
 
         //converts a comma delimited string to vector 2

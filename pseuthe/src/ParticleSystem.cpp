@@ -49,6 +49,7 @@ ParticleSystem::ParticleSystem(MessageBus& mb, Particle::Type type)
     m_randVelocity      (false),
     m_emitRate          (30.f),
     m_particleLifetime  (2.f),
+    m_startDelay        (0.f),
     m_started           (false),
     m_accumulator       (0.f),
     m_vertices          (sf::Quads),
@@ -82,7 +83,7 @@ void ParticleSystem::handleMessage(const Message& msg)
         if ((msg.physics.entityId[0] == getParentUID() || msg.physics.entityId[1] == getParentUID())
             && m_type == Particle::Type::Echo)
         {
-            start(1u, 0.02f);
+            start(1u, 0.f, 0.02f);
         }
         break;
     default:break;
@@ -159,13 +160,14 @@ void ParticleSystem::addAffector(Affector& a)
     m_affectors.push_back(a);
 }
 
-void ParticleSystem::start(sf::Uint8 releaseCount, float duration)
+void ParticleSystem::start(sf::Uint8 releaseCount, float startDelay, float duration)
 {
     assert(releaseCount > 0);
     assert(duration >= 0.f);
     m_releaseCount = releaseCount;
     m_duration = duration;
     m_durationClock.restart();
+    m_startDelay = startDelay;
 
     m_started = true;
 }
@@ -202,6 +204,12 @@ void ParticleSystem::update(float dt)
 
     if (m_started)
     {
+        if (m_startDelay > 0)
+        {
+            m_startDelay -= dt;
+            return;
+        }
+
         emit(dt);
         if (m_duration > 0)
         {

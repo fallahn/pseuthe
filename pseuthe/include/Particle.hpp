@@ -44,6 +44,7 @@ struct Particle final : public sf::Transformable
     sf::Color colour;
     float rotation = 0.f;
     float lifetime = 0.f;
+    sf::FloatRect textureRect;
 };
 
 #endif //PARTICLE_HPP_

@@ -33,7 +33,6 @@ source distribution.
 namespace
 {
     const float density = 2.5f;
-    const float PI = 3.142f;
 
     const int maxVelocity = 100;
     const int maxPositionX = 1920;

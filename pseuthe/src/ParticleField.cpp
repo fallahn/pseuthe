@@ -26,15 +26,43 @@ source distribution.
 *********************************************************************/
 
 #include <ParticleField.hpp>
+#include <Util.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 
+namespace
+{
+    const sf::Uint16 maxParticles = 100;
+    const sf::Vector2f defaultVelocity(10.f, -25.f);
+    const float defaultSize = 16.f;
+    const sf::Color defaultColour(190u, 190u, 190u, 140u);
+}
+
 ParticleField::ParticleField(const sf::FloatRect& bounds, MessageBus& mb)
     : Component (mb),
-    m_blendMode (sf::BlendAdd)
+    m_blendMode (sf::BlendAdd),
+    m_bounds    (bounds),
+    m_vertices  (sf::Quads),
+    m_texture   (nullptr)
 {
-    //TODO create a bunc of random positions and add particles there
+    //create particles
+    for (auto i = 0u; i < maxParticles; ++i)
+    {
+        const float scale = Util::Random::value(0.2f, 1.f);
+
+        Particle p;
+        p.colour = defaultColour;
+        p.colour.a = static_cast<sf::Uint8>(scale * static_cast<float>(defaultColour.a));
+        p.rotation = static_cast<float>(Util::Random::value(-120, 120));
+        p.velocity = scale * defaultVelocity;
+        p.setScale(scale, scale);
+        //ew. casts. but random floats don't appear as well distributed
+        p.setPosition(static_cast<float>(Util::Random::value((int)bounds.left, (int)bounds.left + (int)bounds.width)),
+                    static_cast<float>(Util::Random::value((int)bounds.top, (int)bounds.top + (int)bounds.height)));
+        p.setRotation(static_cast<float>(Util::Random::value(0, 360)));
+        m_particles.push_back(p);
+    }
 }
 
 //public
@@ -45,16 +73,41 @@ Component::Type ParticleField::type() const
 
 void ParticleField::entityUpdate(Entity&, float dt)
 {
-    //TODO update all the particle positions
+    //update particles
+    for (auto& p : m_particles)
+    {
+        p.move(p.velocity * dt);
+        p.rotate(p.rotation * dt);
 
-    //TODO update all the rotations / scales
+        auto position = p.getPosition();
+        if (!m_bounds.contains(position))
+        {
+            float moveX = 0.f;
+            float moveY = 0.f;
 
-    //TODO rebuild vertex array
+            if (position.x > (m_bounds.left + m_bounds.width))
+                moveX = -m_bounds.width;
+            else if (position.x < m_bounds.left)
+                moveX = m_bounds.width;
+
+            if (position.y >(m_bounds.top + m_bounds.height))
+                moveY = -m_bounds.height;
+            else if (position.y < m_bounds.top)
+                moveY = m_bounds.height;
+
+            p.move(moveX, moveY);
+        }
+
+        p.velocity = Util::Vector::rotate(p.velocity, 2.f * dt);
+    }
+
+    //rebuild vertex array
+    updateVertices();
 }
 
 void ParticleField::handleMessage(const Message& msg)
 {
-
+    //TODO update the velocity or somesuch?
 }
 
 void ParticleField::setBlendMode(sf::BlendMode mode)
@@ -62,25 +115,47 @@ void ParticleField::setBlendMode(sf::BlendMode mode)
     m_blendMode = mode;
 }
 
-//private
-void ParticleField::addParticle(const sf::Vector2f& position)
+void ParticleField::setTexture(sf::Texture& t)
 {
-    //TODO randomly scale size and relatively velocity
-
-    //TODO set random roation in degs per sec
+    //currently we expect a texture with fixed
+    //size subrects of 16px (because sfml texcoords works in pixels *sigh*)
+    for (auto& p : m_particles)
+    {
+        p.textureRect.left = Util::Random::value(0, 3) * defaultSize;
+        p.textureRect.width = defaultSize;
+        p.textureRect.height = defaultSize;
+    }
+    m_texture = &t;
 }
 
+//private
 void ParticleField::addVertex(const sf::Vector2f& position, float u, float v, const sf::Color& colour)
 {
+    sf::Vertex vert;
+    vert.position = position;
+    vert.texCoords = { u, v };
+    vert.color = colour;
 
+    m_vertices.append(vert);
 }
 
 void ParticleField::updateVertices()
 {
+    sf::Vector2f halfSize(defaultSize / 2.f, defaultSize / 2.f);
 
+    m_vertices.clear();
+    for (auto& p : m_particles)
+    {
+        auto t = p.getTransform();
+        addVertex(t.transformPoint(-halfSize.x, -halfSize.y), p.textureRect.left, p.textureRect.top, p.colour);
+        addVertex(t.transformPoint(halfSize.x, -halfSize.y), p.textureRect.left + p.textureRect.width, p.textureRect.top, p.colour);
+        addVertex(t.transformPoint(halfSize), p.textureRect.left + p.textureRect.width, p.textureRect.top + p.textureRect.height, p.colour);
+        addVertex(t.transformPoint(-halfSize.x, halfSize.y), p.textureRect.left, p.textureRect.top + p.textureRect.height, p.colour);
+    }
 }
 
 void ParticleField::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
-
+    if (m_texture) states.texture = m_texture;
+    rt.draw(m_vertices, states);
 }

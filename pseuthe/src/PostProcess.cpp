@@ -33,7 +33,7 @@ source distribution.
 
 PostProcess::PostProcess(){}
 
-//public
+//protected
 void PostProcess::applyShader(const sf::Shader& shader, sf::RenderTarget& dest)
 {
     auto outputSize = static_cast<sf::Vector2f>(dest.getSize());
@@ -51,9 +51,3 @@ void PostProcess::applyShader(const sf::Shader& shader, sf::RenderTarget& dest)
 
     dest.draw(verts, states);
 }
-
-bool PostProcess::supported()
-{
-    return sf::Shader::isAvailable();
-}
-//protected

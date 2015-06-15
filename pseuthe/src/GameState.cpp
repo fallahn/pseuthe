@@ -29,6 +29,7 @@ source distribution.
 #include <CircleDrawable.hpp>
 #include <GradientDrawable.hpp>
 #include <ParticleSystem.hpp>
+#include <ParticleField.hpp>
 #include <App.hpp>
 #include <Log.hpp>
 #include <Util.hpp>
@@ -47,9 +48,9 @@ GameState::GameState(StateStack& stateStack, Context context)
     m_scene     (m_messageBus),
     m_physWorld (m_messageBus)
 {
-    /*m_scene.setView(context.defaultView);
+    m_scene.setView(context.defaultView);
     
-    for (int i = 0; i < 12; ++i)
+    /*for (int i = 0; i < 12; ++i)
         m_scene.addEntity(createEntity(), Scene::Layer::FrontFront);
 
     for (int i = 0; i < 8; ++i)
@@ -62,6 +63,10 @@ GameState::GameState(StateStack& stateStack, Context context)
         m_scene.addEntity(createEntity(), Scene::Layer::FrontFront);
 
     m_scene.getLayer(Scene::Layer::BackRear).addComponent<GradientDrawable>(std::make_unique<GradientDrawable>(m_messageBus));
+
+    auto particleField = std::make_unique<ParticleField>(sf::FloatRect(-30.f, -30.f, 1980.f, 1140.f), m_messageBus);
+    particleField->setTexture(context.appInstance.getTexture("assets/images/particles/field.png"));
+    m_scene.getLayer(Scene::Layer::BackFront).addComponent<ParticleField>(particleField);
 }
 
 bool GameState::update(float dt)
@@ -115,6 +120,8 @@ Entity::Ptr GameState::createEntity()
 
     ps = ParticleSystem::create(Particle::Type::Trail, m_messageBus);
     ps->setTexture(getContext().appInstance.getTexture("assets/images/particles/circle.png"));
+    particleSize = size / 12.f;
+    ps->setParticleSize({ particleSize, particleSize });
 
     Entity::Ptr f = std::make_unique<Entity>(m_messageBus);
     f->addComponent<ParticleSystem>(ps);

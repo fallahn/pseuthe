@@ -47,8 +47,6 @@ public:
 
     virtual void apply(const sf::RenderTexture&, sf::RenderTarget&) = 0;
 
-    static bool supported();
-
 protected:
     static void applyShader(const sf::Shader&, sf::RenderTarget&);
 };
