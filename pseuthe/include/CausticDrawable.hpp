@@ -48,8 +48,6 @@ public:
     void entityUpdate(Entity&, float) override;
     void handleMessage(const Message&) override;
 
-    void setTexture(sf::Texture&);
-
 private:
 
     class Ray : public sf::Transformable
@@ -60,12 +58,14 @@ private:
         std::vector<sf::Vertex> vertices;
         void update(float);
     private:
-        //TODO wavetables for motion
+        //wavetable for motion
+        std::vector<float> m_wavetable;
+        int m_currentIndex;
+        float m_amplitude;
     };
 
     sf::VertexArray m_vertexArray;
     std::vector<Ray> m_rays;
-    sf::Texture* m_texture;
 
     void updateVertexArray();
     void draw(sf::RenderTarget&, sf::RenderStates) const override;

@@ -43,6 +43,7 @@ namespace //is this not moot here as the anonymous namespace gets included in an
     static std::default_random_engine rndEngine(static_cast<unsigned long>(std::time(0)));
     const float PI = 3.1412f;
     const float degToRad = PI / 180.f;
+    const float TAU = PI * 2.f;
 }
 
 namespace Util
@@ -194,6 +195,11 @@ namespace Util
         static T clamp(const T& n, const T& lower, const T& upper)
         {
             return std::max(lower, std::min(n, upper));
+        }
+
+        static float round(float v)
+        {
+            return std::floorf(v + 0.5f);
         }
     }
 }

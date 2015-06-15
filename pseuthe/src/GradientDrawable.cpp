@@ -42,7 +42,6 @@ namespace
         sf::Color(52u, 32u, 102u, alpha)
     };
 
-    const float TAU = 3.14159f * 2.f;
     std::vector<sf::Vector2f> createPoints(const sf::Vector2f& centre, int pointCount, float radius)
     {
         std::vector<sf::Vector2f> retVal;

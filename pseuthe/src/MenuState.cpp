@@ -26,11 +26,15 @@ source distribution.
 *********************************************************************/
 
 #include <MenuState.hpp>
+#include <Util.hpp>
+#include <App.hpp>
 
 MenuState::MenuState(StateStack& stateStack, Context context)
     : State(stateStack, context)
 {
-
+    m_menuSprite.setTexture(context.appInstance.getTexture("assets/images/main_menu.png"));
+    m_menuSprite.setPosition(context.defaultView.getCenter());
+    Util::Position::centreOrigin(m_menuSprite);
 }
 
 //public
@@ -41,7 +45,8 @@ bool MenuState::update(float dt)
 
 void MenuState::draw()
 {
-
+    getContext().renderWindow.setView(getContext().defaultView);
+    getContext().renderWindow.draw(m_menuSprite);
 }
 
 bool MenuState::handleEvent(const sf::Event& evt)

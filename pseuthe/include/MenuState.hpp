@@ -32,6 +32,8 @@ source distribution.
 
 #include <State.hpp>
 
+#include <SFML/Graphics/Sprite.hpp>
+
 class MenuState final : public State
 {
 public:
@@ -43,6 +45,8 @@ public:
     bool handleEvent(const sf::Event& evt) override;
 
 private:
+    sf::Sprite m_menuSprite;
+
 };
 
 #endif //MENU_STATE_HPP_

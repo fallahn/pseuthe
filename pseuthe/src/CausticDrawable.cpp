@@ -26,6 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include <CausticDrawable.hpp>
+#include <Util.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
@@ -33,16 +34,21 @@ source distribution.
 
 namespace
 {
-    const sf::Vertex emptyVertex(sf::Vector2f(), sf::Color::Transparent);
-    const sf::Color rayColour(255u, 250u, 190u, 60u);
+    const int rayCount = 7;
 }
 
 CausticDrawable::CausticDrawable(MessageBus& mb)
     : Component     (mb),
-    m_vertexArray   (sf::PrimitiveType::TrianglesStrip),
-    m_texture       (nullptr)
+    m_vertexArray   (sf::PrimitiveType::Quads)
 {
-    m_rays.emplace_back();
+    float rotation = -42.f;
+    int maxAngle = 100 / rayCount;
+    for (auto i = 0; i < rayCount; ++i)
+    {
+        rotation += static_cast<float>(Util::Random::value(4, maxAngle));
+        m_rays.emplace_back();
+        m_rays.back().rotate(rotation);
+    }
 }
 
 //public
@@ -62,19 +68,6 @@ void CausticDrawable::entityUpdate(Entity&, float dt)
 void CausticDrawable::handleMessage(const Message&)
 {}
 
-void CausticDrawable::setTexture(sf::Texture& t)
-{
-    m_texture = &t;
-    sf::Vector2f texCoords(t.getSize());
-
-    for (auto& ray : m_rays)
-    {
-        //set tex coords (because they aren't normalised in sfml)
-        ray.vertices[1].texCoords = { texCoords.x, 0.f };
-        ray.vertices[2].texCoords = texCoords;
-        ray.vertices[3].texCoords = { 0.f, texCoords.y };
-    }
-}
 
 //private
 void CausticDrawable::updateVertexArray()
@@ -90,35 +83,66 @@ void CausticDrawable::updateVertexArray()
             newVert.position = transform.transformPoint(newVert.position);
             m_vertexArray.append(newVert);
         }
-        //provide spacing between rays (should this be 4 ?)
-        //m_vertexArray.append(emptyVertex);
-        //m_vertexArray.append(emptyVertex);
     }
 }
 
 void CausticDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
-    states.texture = m_texture;
-    //states.blendMode = sf::BlendAdd;
+    states.blendMode = sf::BlendAdd;
     rt.draw(m_vertexArray, states);
 }
 
 
 ////////////ray class////////////
-CausticDrawable::Ray::Ray()
+namespace
 {
-    //TODO create wavetables with random amp / freq to animate bottom vertices
-    //TODO better way to define these dimensions than plucking them out of the air
+    const float falloffSize = 100.f;
+    const float rayLength = 3000.f;
+
+    const sf::Color rayColour(255u, 250u, 190u, 18u);
+}
+
+CausticDrawable::Ray::Ray()
+    : m_currentIndex(0)
+{
+    //create wavetables with random amp / freq to animate vertices
+    //60 is our fixed step time
+    float stepCount = 60.f / static_cast<float>(Util::Random::value(2, 3));
+    float step = TAU / stepCount;
+    for (float i = 0.f; i < stepCount; ++i)
+    {
+        m_wavetable.push_back(std::sinf(step * i));
+    }
+
+    m_currentIndex = Util::Random::value(0, static_cast<int>(stepCount) - 1);
+    m_amplitude = static_cast<float>(Util::Random::value(3, 10));
     
-    vertices.emplace_back(sf::Vector2f(-450.f, 1000.f), sf::Color::White);
-    vertices.emplace_back(sf::Vector2f(-250.f, 0.f), sf::Color::White);
-    vertices.emplace_back(sf::Vector2f(0.f, 1000.f), sf::Color::Red);
-    vertices.emplace_back(sf::Vector2f(), sf::Color::Red);
-    vertices.emplace_back(sf::Vector2f(450.f, 1000.f), sf::Color::White);
-    vertices.emplace_back(sf::Vector2f(250.f, 0.f), sf::Color::White);
+    //TODO tidy up some of these magic numbers
+    vertices.emplace_back(sf::Vector2f(-falloffSize, 0.f), sf::Color::Transparent);
+    vertices.emplace_back(sf::Vector2f(-1.f, 0.f), rayColour);
+    vertices.emplace_back(sf::Vector2f(-1.f, rayLength), rayColour);
+    vertices.emplace_back(sf::Vector2f(-falloffSize, rayLength), rayColour);
+
+    vertices.emplace_back(sf::Vector2f(-1.f, 0.f), rayColour);
+    vertices.emplace_back(sf::Vector2f(1.f, 0.f), rayColour);
+    vertices.emplace_back(sf::Vector2f(1.f, rayLength), rayColour);
+    vertices.emplace_back(sf::Vector2f(-1.f, rayLength), rayColour);
+
+    vertices.emplace_back(sf::Vector2f(1.f, rayLength), rayColour);
+    vertices.emplace_back(sf::Vector2f(1.f, 0.f), rayColour);
+    vertices.emplace_back(sf::Vector2f(falloffSize, 0.f), sf::Color::Transparent);
+    vertices.emplace_back(sf::Vector2f(falloffSize, rayLength), rayColour);
 }
 
 void CausticDrawable::Ray::update(float dt)
 {
-    //TODO animate vertices 0 and 4 based on wave tables
+    //animate vertices 0 and 3 based on wave tables, 10 and 11
+    const float value = m_wavetable[m_currentIndex] * m_amplitude;
+    vertices[0].position.x = -falloffSize + value;
+    vertices[3].position.x = vertices[0].position.x;
+
+    vertices[10].position.x = falloffSize - value;
+    vertices[11].position.x = vertices[10].position.x;
+
+    m_currentIndex = (m_currentIndex + 1) % m_wavetable.size();
 }

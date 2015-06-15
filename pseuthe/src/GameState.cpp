@@ -69,7 +69,9 @@ GameState::GameState(StateStack& stateStack, Context context)
     auto caustics = std::make_unique<CausticDrawable>(m_messageBus);
     //caustics->setTexture(context.appInstance.getTexture("assets/images/ray.png"));
     m_scene.getLayer(Scene::Layer::BackMiddle).addComponent<CausticDrawable>(caustics);
-    m_scene.getLayer(Scene::Layer::BackMiddle).setPosition(960, 0.f);
+    float xPos = static_cast<float>(Util::Random::value(0, 1920));
+    m_scene.getLayer(Scene::Layer::BackMiddle).setPosition(xPos, -200.f);
+    m_scene.getLayer(Scene::Layer::BackMiddle).setRotation(((xPos / 1920.f) * 90.f) - 45.f);
 
     auto particleField = std::make_unique<ParticleField>(sf::FloatRect(-30.f, -30.f, 1980.f, 1140.f), m_messageBus);
     particleField->setTexture(context.appInstance.getTexture("assets/images/particles/field.png"));
@@ -97,6 +99,7 @@ bool GameState::update(float dt)
 
 void GameState::draw()
 {
+    getContext().renderWindow.setView(getContext().renderWindow.getDefaultView());
     getContext().renderWindow.draw(m_scene);
 }
 

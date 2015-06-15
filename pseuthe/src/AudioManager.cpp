@@ -49,6 +49,7 @@ AudioManager::AudioManager()
     m_musicPlayer.setVolume(0.f);
     m_musicPlayer.play("assets/sound/background.ogg", true);
 
+    m_soundPlayer.setVolume(0.f);
     auto files = FileSystem::listFiles(impactSoundPath);
     for (const auto& file : files)
     {
