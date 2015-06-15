@@ -58,6 +58,7 @@ add_executable(
 	src/Component.cpp
 	src/EchoDrawable.cpp
 	src/Entity.cpp
+	src/FadeDrawable.hpp
 	src/FileSystem.cpp
 	src/FontResource.cpp
 	src/GameState.cpp

@@ -30,6 +30,7 @@ source distribution.
 #include <GradientDrawable.hpp>
 #include <ParticleSystem.hpp>
 #include <ParticleField.hpp>
+#include <FadeDrawable.hpp>
 #include <App.hpp>
 #include <Log.hpp>
 #include <Util.hpp>
@@ -60,13 +61,15 @@ GameState::GameState(StateStack& stateStack, Context context)
         m_scene.addEntity(createEntity(), Scene::Layer::FrontRear);*/
 
     for (int i = 0; i < nubbinCount; ++i)
-        m_scene.addEntity(createEntity(), Scene::Layer::FrontFront);
+        m_scene.addEntity(createEntity(), Scene::Layer::FrontMiddle);
 
     m_scene.getLayer(Scene::Layer::BackRear).addComponent<GradientDrawable>(std::make_unique<GradientDrawable>(m_messageBus));
 
     auto particleField = std::make_unique<ParticleField>(sf::FloatRect(-30.f, -30.f, 1980.f, 1140.f), m_messageBus);
     particleField->setTexture(context.appInstance.getTexture("assets/images/particles/field.png"));
     m_scene.getLayer(Scene::Layer::BackFront).addComponent<ParticleField>(particleField);
+
+    m_scene.getLayer(Scene::Layer::FrontFront).addComponent<FadeDrawable>(std::make_unique<FadeDrawable>(m_messageBus));
 }
 
 bool GameState::update(float dt)

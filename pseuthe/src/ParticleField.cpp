@@ -34,9 +34,10 @@ source distribution.
 namespace
 {
     const sf::Uint16 maxParticles = 100;
-    const sf::Vector2f defaultVelocity(10.f, -25.f);
+    const int maxVelLength = 30;
     const float defaultSize = 16.f;
-    const sf::Color defaultColour(190u, 190u, 190u, 140u);
+    const float alpha = 150.f;
+    const float colour = 190.f;
 }
 
 ParticleField::ParticleField(const sf::FloatRect& bounds, MessageBus& mb)
@@ -46,14 +47,19 @@ ParticleField::ParticleField(const sf::FloatRect& bounds, MessageBus& mb)
     m_vertices  (sf::Quads),
     m_texture   (nullptr)
 {
+    sf::Vector2f defaultVelocity;
+    defaultVelocity.x = static_cast<float>(Util::Random::value(-maxVelLength, maxVelLength));
+    defaultVelocity.y = static_cast<float>(Util::Random::value(-maxVelLength, maxVelLength));
+
     //create particles
     for (auto i = 0u; i < maxParticles; ++i)
     {
-        const float scale = Util::Random::value(0.2f, 1.f);
-
+        const float scale = static_cast<float>(Util::Random::value(2, 10)) / 10.f;
+        const sf::Uint8 colourByte = static_cast<sf::Uint8>(scale * colour);
+        
         Particle p;
-        p.colour = defaultColour;
-        p.colour.a = static_cast<sf::Uint8>(scale * static_cast<float>(defaultColour.a));
+        p.colour = { colourByte, colourByte, colourByte };
+        p.colour.a = static_cast<sf::Uint8>(scale * alpha);
         p.rotation = static_cast<float>(Util::Random::value(-120, 120));
         p.velocity = scale * defaultVelocity;
         p.setScale(scale, scale);
@@ -98,7 +104,7 @@ void ParticleField::entityUpdate(Entity&, float dt)
             p.move(moveX, moveY);
         }
 
-        p.velocity = Util::Vector::rotate(p.velocity, 2.f * dt);
+        p.velocity = Util::Vector::rotate(p.velocity, -2.f * dt);
     }
 
     //rebuild vertex array
@@ -122,6 +128,7 @@ void ParticleField::setTexture(sf::Texture& t)
     for (auto& p : m_particles)
     {
         p.textureRect.left = Util::Random::value(0, 3) * defaultSize;
+        p.textureRect.top = Util::Random::value(0, 3) * defaultSize;
         p.textureRect.width = defaultSize;
         p.textureRect.height = defaultSize;
     }

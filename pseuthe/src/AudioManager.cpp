@@ -37,12 +37,13 @@ namespace
 {
     float musicVolume = 100.f;
     float fxVolume = 60.f;
+    float fadeDelay = 2.f; //delay starting the fade while the initial state is loaded
     const std::string impactSoundPath = "assets/sound/chimes01/";
     const std::string fxSoundPath = "assets/sound/fx/";
 }
 
 AudioManager::AudioManager()
-    : m_fadeInTime      (2.f),
+    : m_fadeInTime      (4.f),
     m_currentFadeTime   (0.f)
 {   
     m_musicPlayer.setVolume(0.f);
@@ -75,7 +76,11 @@ AudioManager::AudioManager()
 //public
 void AudioManager::update(float dt)
 {
-    if (m_currentFadeTime < m_fadeInTime)
+    if (fadeDelay > 0)
+    {
+        fadeDelay -= dt;
+    }
+    else if (m_currentFadeTime < m_fadeInTime)
     {
         float ratio = std::min(m_currentFadeTime / m_fadeInTime, 1.f);
         m_musicPlayer.setVolume(musicVolume * ratio);
