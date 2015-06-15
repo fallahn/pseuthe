@@ -31,6 +31,7 @@ source distribution.
 #include <ParticleSystem.hpp>
 #include <ParticleField.hpp>
 #include <FadeDrawable.hpp>
+#include <CausticDrawable.hpp>
 #include <App.hpp>
 #include <Log.hpp>
 #include <Util.hpp>
@@ -64,6 +65,11 @@ GameState::GameState(StateStack& stateStack, Context context)
         m_scene.addEntity(createEntity(), Scene::Layer::FrontMiddle);
 
     m_scene.getLayer(Scene::Layer::BackRear).addComponent<GradientDrawable>(std::make_unique<GradientDrawable>(m_messageBus));
+    
+    auto caustics = std::make_unique<CausticDrawable>(m_messageBus);
+    //caustics->setTexture(context.appInstance.getTexture("assets/images/ray.png"));
+    m_scene.getLayer(Scene::Layer::BackMiddle).addComponent<CausticDrawable>(caustics);
+    m_scene.getLayer(Scene::Layer::BackMiddle).setPosition(960, 0.f);
 
     auto particleField = std::make_unique<ParticleField>(sf::FloatRect(-30.f, -30.f, 1980.f, 1140.f), m_messageBus);
     particleField->setTexture(context.appInstance.getTexture("assets/images/particles/field.png"));

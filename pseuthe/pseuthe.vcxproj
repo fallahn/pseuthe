@@ -75,6 +75,7 @@
     <ClCompile Include="src\Affectors.cpp" />
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\AudioManager.cpp" />
+    <ClCompile Include="src\CausticDrawable.cpp" />
     <ClCompile Include="src\CircleDrawable.cpp" />
     <ClCompile Include="src\Component.cpp" />
     <ClCompile Include="src\EchoDrawable.cpp" />
@@ -106,6 +107,7 @@
     <ClInclude Include="include\Affectors.hpp" />
     <ClInclude Include="include\App.hpp" />
     <ClInclude Include="include\AudioManager.hpp" />
+    <ClInclude Include="include\CausticDrawable.hpp" />
     <ClInclude Include="include\CircleDrawable.hpp" />
     <ClInclude Include="include\Component.hpp" />
     <ClInclude Include="include\EchoDrawable.hpp" />

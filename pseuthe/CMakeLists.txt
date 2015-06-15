@@ -54,6 +54,7 @@ add_executable(
 	src/Affectors.cpp
 	src/App.cpp
 	src/AudioManager.cpp
+	src/CausticDrawable.cpp
 	src/CircleDrawable.cpp
 	src/Component.cpp
 	src/EchoDrawable.cpp

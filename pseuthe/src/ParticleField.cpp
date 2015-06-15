@@ -163,6 +163,6 @@ void ParticleField::updateVertices()
 
 void ParticleField::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
-    if (m_texture) states.texture = m_texture;
+    states.texture = m_texture;
     rt.draw(m_vertices, states);
 }
