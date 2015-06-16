@@ -25,54 +25,40 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//abstract base class for entity components
+#include <LightPosition.hpp>
+#include <Entity.hpp>
 
-#ifndef COMPONENT_HPP_
-#define COMPONENT_HPP_
-
-#include <SFML/Config.hpp>
-
-#include <memory>
-
-class Entity;
-class Message;
-class MessageBus;
-class Component
+namespace
 {
-public:
-    using Ptr = std::unique_ptr<Component>;
+    //TODO these consts are used in several places (caustic drawable)
+    //need to collate somewhere.
+    const float min = -30.f;
+    const float max = 1980.f;
+    const float moveSpeed = 10.f;
+}
 
-    enum class Type
-    {
-        Drawable,
-        Physics,
-        Script
-    };
+LightPosition::LightPosition(MessageBus& mb)
+    : Component(mb)
+{
 
-    explicit Component(MessageBus&);
-    virtual ~Component() = default;
+}
 
-    virtual Type type() const = 0;
-    //this is called once per frame by the component's parent entity
-    //providing the opportinuty to update each other
-    virtual void entityUpdate(Entity&, float) = 0;
-    virtual void handleMessage(const Message&) = 0;
+//public
+Component::Type LightPosition::type() const
+{
+    return Component::Type::Script;
+}
 
-    void destroy();
-    bool destroyed() const;
+void LightPosition::entityUpdate(Entity& entity, float dt)
+{
+    entity.move(moveSpeed * dt, 0.f);
 
-    void setParentUID(sf::Uint64 uid);
-    sf::Uint64 getParentUID() const;
+    const float xPos = entity.getPosition().x;
+    if (xPos > max) entity.setPosition(xPos - (max - min), entity.getPosition().y);
+    entity.setRotation(((entity.getPosition().x / max) * 90.f) - 45.f);
+}
 
-protected:
-    void sendMessage(const Message&);
-    MessageBus& getMessageBus() const;
+void LightPosition::handleMessage(const Message&)
+{
 
-private:
-    MessageBus& m_messageBus;
-    bool m_destroyed;
-
-    sf::Uint64 m_parentUID;
-};
-
-#endif //COMPONENT_HPP_
+}

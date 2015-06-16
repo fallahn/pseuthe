@@ -31,6 +31,7 @@ source distribution.
 #define CAUSTIC_DRAWABLE_HPP_
 
 #include <Component.hpp>
+#include <ShaderResource.hpp>
 
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Transformable.hpp>
@@ -66,6 +67,8 @@ private:
 
     sf::VertexArray m_vertexArray;
     std::vector<Ray> m_rays;
+    ShaderResource m_shaders;
+    sf::Shader* m_shader;
 
     void updateVertexArray();
     void draw(sf::RenderTarget&, sf::RenderStates) const override;

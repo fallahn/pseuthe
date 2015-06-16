@@ -26,20 +26,28 @@ source distribution.
 *********************************************************************/
 
 #include <CausticDrawable.hpp>
+#include <Entity.hpp>
 #include <Util.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
-#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Shader.hpp>
 
 namespace
 {
     const int rayCount = 7;
+    const float distanceToFullBright = 150.f;
+
+    //TODO these constas are also used in the light mover
+    //need to bring them together
+    const float min = -30.f;
+    const float max = 1980.f;
 }
 
 CausticDrawable::CausticDrawable(MessageBus& mb)
     : Component     (mb),
-    m_vertexArray   (sf::PrimitiveType::Quads)
+    m_vertexArray   (sf::PrimitiveType::Quads),
+    m_shader        (nullptr)
 {
     float rotation = -42.f;
     int maxAngle = 100 / rayCount;
@@ -49,6 +57,9 @@ CausticDrawable::CausticDrawable(MessageBus& mb)
         m_rays.emplace_back();
         m_rays.back().rotate(rotation);
     }
+
+    m_shaders.preload(Shader::Type::LightRay, Shader::FullPass::vertex, Shader::LightRay::fragment);
+    m_shader = &m_shaders.get(Shader::Type::LightRay);
 }
 
 //public
@@ -57,12 +68,21 @@ Component::Type CausticDrawable::type() const
     return Component::Type::Drawable;
 }
 
-void CausticDrawable::entityUpdate(Entity&, float dt)
+void CausticDrawable::entityUpdate(Entity& entity, float dt)
 {
     for (auto& ray : m_rays)
         ray.update(dt);
 
     updateVertexArray();
+
+    //get entity position and update alpha
+    auto position = entity.getPosition();
+    float currentDistance = (position.x < 960) ? 
+        currentDistance = min + position.x :
+        currentDistance = max - position.x;
+
+    const float alpha = std::min(currentDistance / distanceToFullBright, 1.f);
+    m_shader->setParameter("u_alpha", alpha);
 }
 
 void CausticDrawable::handleMessage(const Message&)
@@ -89,6 +109,7 @@ void CausticDrawable::updateVertexArray()
 void CausticDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     states.blendMode = sf::BlendAdd;
+    states.shader = m_shader;
     rt.draw(m_vertexArray, states);
 }
 

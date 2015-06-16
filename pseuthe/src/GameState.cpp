@@ -32,6 +32,7 @@ source distribution.
 #include <ParticleField.hpp>
 #include <FadeDrawable.hpp>
 #include <CausticDrawable.hpp>
+#include <LightPosition.hpp>
 #include <App.hpp>
 #include <Log.hpp>
 #include <Util.hpp>
@@ -51,27 +52,17 @@ GameState::GameState(StateStack& stateStack, Context context)
     m_physWorld (m_messageBus)
 {
     m_scene.setView(context.defaultView);
-    
-    /*for (int i = 0; i < 12; ++i)
-        m_scene.addEntity(createEntity(), Scene::Layer::FrontFront);
-
-    for (int i = 0; i < 8; ++i)
-        m_scene.addEntity(createEntity(), Scene::Layer::FrontMiddle);
-
-    for (int i = 0; i < 4; ++i)
-        m_scene.addEntity(createEntity(), Scene::Layer::FrontRear);*/
 
     for (int i = 0; i < nubbinCount; ++i)
         m_scene.addEntity(createEntity(), Scene::Layer::FrontMiddle);
 
     m_scene.getLayer(Scene::Layer::BackRear).addComponent<GradientDrawable>(std::make_unique<GradientDrawable>(m_messageBus));
     
-    auto caustics = std::make_unique<CausticDrawable>(m_messageBus);
-    //caustics->setTexture(context.appInstance.getTexture("assets/images/ray.png"));
-    m_scene.getLayer(Scene::Layer::BackMiddle).addComponent<CausticDrawable>(caustics);
+    //auto caustics = std::make_unique<CausticDrawable>(m_messageBus);
+    m_scene.getLayer(Scene::Layer::BackMiddle).addComponent<CausticDrawable>(std::make_unique<CausticDrawable>(m_messageBus));
     float xPos = static_cast<float>(Util::Random::value(0, 1920));
     m_scene.getLayer(Scene::Layer::BackMiddle).setPosition(xPos, -200.f);
-    m_scene.getLayer(Scene::Layer::BackMiddle).setRotation(((xPos / 1920.f) * 90.f) - 45.f);
+    m_scene.getLayer(Scene::Layer::BackMiddle).addComponent<LightPosition>(std::make_unique<LightPosition>(m_messageBus));
 
     auto particleField = std::make_unique<ParticleField>(sf::FloatRect(-30.f, -30.f, 1980.f, 1140.f), m_messageBus);
     particleField->setTexture(context.appInstance.getTexture("assets/images/particles/field.png"));

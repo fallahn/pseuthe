@@ -39,7 +39,8 @@ namespace Shader
         PostBrightnessExtract,
         PostDownSample,
         PostGaussianBlur,
-        PostAdditiveBlend
+        PostAdditiveBlend,
+        LightRay
     };
 
     namespace FullPass
@@ -50,6 +51,7 @@ namespace Shader
             "{\n" \
             "    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\n" \
             "    gl_TexCoord[0] = gl_MultiTexCoord0;\n" \
+            "    gl_FrontColor = gl_Color;\n" \
             "}";
     }
 
@@ -129,6 +131,18 @@ namespace Shader
             "void main()\n" \
             "{\n" \
             "    gl_FragColor = texture2D(u_sourceTexture, gl_TexCoord[0].xy) + texture2D(u_bloomTexture, gl_TexCoord[0].xy);\n" \
+            "}";
+    }
+
+    namespace LightRay
+    {
+        static const std::string fragment =
+            "#version 120\n" \
+            "uniform float u_alpha = 1.0;\n" \
+            "void main()\n " \
+            "{\n" \
+            "    gl_FragColor = gl_Color;\n" \
+            "    gl_FragColor.a *= u_alpha;\n" \
             "}";
     }
 }

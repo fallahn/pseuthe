@@ -25,54 +25,24 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//abstract base class for entity components
+//used to control the entity with light attached
 
-#ifndef COMPONENT_HPP_
-#define COMPONENT_HPP_
+#ifndef LIGHT_POSITION_HPP_
+#define LIGHT_POSITION_HPP_
 
-#include <SFML/Config.hpp>
+#include <Component.hpp>
 
-#include <memory>
-
-class Entity;
-class Message;
-class MessageBus;
-class Component
+class LightPosition final : public Component
 {
 public:
-    using Ptr = std::unique_ptr<Component>;
+    explicit LightPosition(MessageBus&);
+    ~LightPosition() = default;
+    LightPosition(const LightPosition&) = delete;
+    const LightPosition& operator = (const LightPosition&) = delete;
 
-    enum class Type
-    {
-        Drawable,
-        Physics,
-        Script
-    };
-
-    explicit Component(MessageBus&);
-    virtual ~Component() = default;
-
-    virtual Type type() const = 0;
-    //this is called once per frame by the component's parent entity
-    //providing the opportinuty to update each other
-    virtual void entityUpdate(Entity&, float) = 0;
-    virtual void handleMessage(const Message&) = 0;
-
-    void destroy();
-    bool destroyed() const;
-
-    void setParentUID(sf::Uint64 uid);
-    sf::Uint64 getParentUID() const;
-
-protected:
-    void sendMessage(const Message&);
-    MessageBus& getMessageBus() const;
-
-private:
-    MessageBus& m_messageBus;
-    bool m_destroyed;
-
-    sf::Uint64 m_parentUID;
+    Component::Type type() const override;
+    void entityUpdate(Entity&, float) override;
+    void handleMessage(const Message&) override;
 };
 
-#endif //COMPONENT_HPP_
+#endif //LIGHT_POSITION_HPP_
