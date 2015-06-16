@@ -138,19 +138,47 @@ namespace Shader
     {
         static const std::string fragment =
             "#version 120\n" \
+            /*"#define BLUR\n" \*/
             "uniform sampler2D u_sourceTexture;\n" \
-            "const float maxOffset = 1.0 / 540.0;\n" \
-            "const float multiplier = maxOffset * 2.0;\n" \
+            
+            "#if defined(BLUR)\n" \
+            "const float maxOffset = 1.0 / 35.0;\n" \
+            "#define KERNEL_SIZE 9\n" \
+            "const vec2 kernel[KERNEL_SIZE] = vec2[KERNEL_SIZE]\n" \
+            "(\n" \
+            "    vec2(0.0000000000000000000, 0.04416589065853191),\n" \
+            "    vec2(0.10497808951021347),\n" \
+            "    vec2(0.0922903086524308425, 0.04416589065853191),\n" \
+            "    vec2(0.0112445223775533675, 0.10497808951021347)," \
+            "    vec2(0.40342407932501833),\n" \
+            "    vec2(0.1987116566428735725, 0.10497808951021347),\n" \
+            "    vec2(0.0000000000000000000, 0.04416589065853191),\n" \
+            "    vec2(0.10497808951021347),\n" \
+            "    vec2(0.0922903086524308425, 0.04416589065853191)\n" \
+            ");\n" \
+            "#else\n" \
+            "const float maxOffset = 1.0 / 450.0;\n" \
+            "#endif\n" \
+
+
             "void main()\n" \
             "{\n" \
             "    vec2 texCoord = gl_TexCoord[0].xy;\n" \
-            "    vec2 redOffset = vec2(max(maxOffset - (texCoord.x * multiplier), 0.0), max(maxOffset - (texCoord.y * multiplier), 0.0));\n" \
-            "    vec2 greenOffset = vec2((maxOffset / 2.0) - (texCoord.x * maxOffset), (maxOffset / 2.0) - (texCoord.y * maxOffset));\n" \
-            "    vec2 blueOffset = vec2(min(maxOffset - (texCoord.x * multiplier), 0.0), min(maxOffset - (texCoord.y * multiplier), 0.0));\n" \
+            "    vec2 offset = vec2((maxOffset / 2.0) - (texCoord.x * maxOffset), (maxOffset / 2.0) - (texCoord.y * maxOffset));\n"
             "    vec3 colour = vec3(0.0);\n" \
-            "    colour.r = texture2D(u_sourceTexture, texCoord + redOffset).r;\n" \
-            "    colour.g = texture2D(u_sourceTexture, texCoord + greenOffset).g;\n" \
-            "    colour.b = texture2D(u_sourceTexture, texCoord + blueOffset).b;\n" \
+            "#if defined(BLUR)\n" \
+            "    for(int i = 0; i < KERNEL_SIZE; ++i)\n" \
+            "    {\n" \
+            "        colour.r += texture2D(u_sourceTexture, texCoord + (offset * kernel[i])).r;\n" \
+            "        colour.g += texture2D(u_sourceTexture, texCoord).g;\n" \
+            "        colour.b += texture2D(u_sourceTexture, texCoord - (offset * kernel[i])).b;\n" \
+            "    }\n" \
+            "    colour /= KERNEL_SIZE;\n"
+            "#else\n" \
+            "    colour.r = texture2D(u_sourceTexture, texCoord + offset).r;\n" \
+            "    colour.g = texture2D(u_sourceTexture, texCoord).g;\n" \
+            "    colour.b = texture2D(u_sourceTexture, texCoord - offset).b;\n" \
+            "#endif\n" \
             "    gl_FragColor = vec4(colour, 1.0);" \
             "}";
     }

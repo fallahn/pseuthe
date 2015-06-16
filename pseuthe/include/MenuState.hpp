@@ -33,6 +33,7 @@ source distribution.
 #include <State.hpp>
 
 #include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Text.hpp>
 
 class MenuState final : public State
 {
@@ -46,7 +47,7 @@ public:
 
 private:
     sf::Sprite m_menuSprite;
-
+    std::vector<sf::Text> m_texts;
 };
 
 #endif //MENU_STATE_HPP_

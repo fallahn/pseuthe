@@ -69,6 +69,14 @@ GameState::GameState(StateStack& stateStack, Context context)
     m_scene.getLayer(Scene::Layer::BackFront).addComponent<ParticleField>(particleField);
 
     m_scene.getLayer(Scene::Layer::FrontFront).addComponent<FadeDrawable>(std::make_unique<FadeDrawable>(m_messageBus));
+
+    m_vignette.setSize({ 1920.f, 1080.f });
+    m_vignette.setTexture(&context.appInstance.getTexture("assets/images/vignette.png"));
+
+    m_versionText.setFont(context.appInstance.getFont("assets/fonts/VeraMono.ttf"));
+    m_versionText.setString("version 0.4.3");
+    m_versionText.setCharacterSize(14u);
+    m_versionText.setPosition(10.f, 10.f);
 }
 
 bool GameState::update(float dt)
@@ -92,11 +100,22 @@ void GameState::draw()
 {
     getContext().renderWindow.setView(getContext().renderWindow.getDefaultView());
     getContext().renderWindow.draw(m_scene);
+    getContext().renderWindow.draw(m_vignette, sf::BlendMultiply);
+    getContext().renderWindow.draw(m_versionText);
 }
 
 bool GameState::handleEvent(const sf::Event& evt)
 {
-
+    if (evt.type == sf::Event::KeyReleased)
+    {
+        switch (evt.key.code)
+        {
+        case sf::Keyboard::Space:
+            requestStackPush(States::ID::Menu);
+            break;
+        default: break;
+        }
+    }
     return true;
 }
 

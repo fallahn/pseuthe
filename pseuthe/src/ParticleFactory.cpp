@@ -30,6 +30,23 @@ source distribution.
 #include <ParticleSystem.hpp>
 #include <Util.hpp>
 
+namespace
+{
+    std::vector<sf::Vector2f> trailVelocities =
+    {
+        { -7.f, -5.f },
+        { -5.f, -7.f },
+        { 0.f, -10.f },
+        { 5.f, -7.f },
+        { 7.f, -5.f },
+        { -12.f, -15.f },
+        { -10.f, -16.f },
+        { -7.f, -10.f },
+        { 7.f, -11.f },
+        { 10.f, -15.f }
+    };
+}
+
 ParticleSystem::Ptr ParticleSystem::create(Particle::Type type, MessageBus& mb)
 {
     auto ps = std::make_unique<ParticleSystem>(mb, type);
@@ -38,16 +55,17 @@ ParticleSystem::Ptr ParticleSystem::create(Particle::Type type, MessageBus& mb)
     {
     case Particle::Type::Trail:
     {
-        const float scale = Util::Random::value(4.f, 6.f);
+        const float scale = Util::Random::value(2.f, 4.f);
         ScaleAffector sa({ scale, scale });
         ps->addAffector<ScaleAffector>(sa);
-
 
         ForceAffector fa({ 0.f, -190.f });
         ps->addAffector<ForceAffector>(fa);
 
         ps->setEmitRate(Util::Random::value(0.5f, 2.5f));
         ps->setBlendMode(sf::BlendAdd);
+        ps->setEmitRate(3.f);
+        ps->setRandomInitialVelocity(trailVelocities);
         ps->start(1u, Util::Random::value(0.2f, 1.f));
     }
         break;

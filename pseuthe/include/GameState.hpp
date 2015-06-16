@@ -37,6 +37,9 @@ source distribution.
 #include <PhysicsWorld.hpp>
 #include <AudioManager.hpp>
 
+#include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
+
 #include <vector>
 
 namespace sf
@@ -60,6 +63,9 @@ private :
     Scene m_scene;
     PhysicsWorld m_physWorld;
     AudioManager m_audioManager;
+
+    sf::RectangleShape m_vignette;
+    sf::Text m_versionText;
 
     Entity::Ptr createEntity();
 };

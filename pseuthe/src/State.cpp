@@ -49,7 +49,7 @@ void State::requestStackPush(States::ID id)
     m_stateStack.pushState(id);
 }
 
-void State::requestStatckPop()
+void State::requestStackPop()
 {
     m_stateStack.popState();
 }

@@ -68,7 +68,7 @@ public:
 
 protected:
     void requestStackPush(States::ID id);
-    void requestStatckPop();
+    void requestStackPop();
     void requestStackClear();
 
     Context getContext() const;

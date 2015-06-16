@@ -70,7 +70,8 @@ private:
     int m_collisionCount;
     MessageBus& m_messageBus;
 
-    mutable sf::RenderTexture m_sceneBuffer;
+    mutable sf::RenderTexture m_sceneBufferA;
+    mutable sf::RenderTexture m_sceneBufferB;
     mutable PostBloom m_bloomEffect;
     mutable PostChromeAb m_chromeAbEffect;
 

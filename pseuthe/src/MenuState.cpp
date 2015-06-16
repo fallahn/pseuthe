@@ -29,12 +29,26 @@ source distribution.
 #include <Util.hpp>
 #include <App.hpp>
 
+#include <SFML/Window/Event.hpp>
+
 MenuState::MenuState(StateStack& stateStack, Context context)
     : State(stateStack, context)
 {
     m_menuSprite.setTexture(context.appInstance.getTexture("assets/images/main_menu.png"));
     m_menuSprite.setPosition(context.defaultView.getCenter());
     Util::Position::centreOrigin(m_menuSprite);
+
+    m_texts.emplace_back("Press Space to Toggle Menu", context.appInstance.getFont("assets/fonts/VeraMono.ttf"));
+    auto& spaceText = m_texts.back();
+    Util::Position::centreOrigin(spaceText);
+    spaceText.setPosition(context.defaultView.getCenter());
+    spaceText.move(0.f, 500.f);
+
+    m_texts.emplace_back("Volume:", *spaceText.getFont(), 20u);
+    m_texts.back().setPosition(540.f, 430.f);
+
+    m_texts.emplace_back("https://github.com/fallahn/pseuthe", context.appInstance.getFont("assets/fonts/VeraMono.ttf"), 14u);
+    m_texts.back().setPosition(1620.f, 1050.f);
 }
 
 //public
@@ -47,9 +61,25 @@ void MenuState::draw()
 {
     getContext().renderWindow.setView(getContext().defaultView);
     getContext().renderWindow.draw(m_menuSprite);
+
+    for (const auto& t : m_texts)
+    {
+        getContext().renderWindow.draw(t);
+    }
 }
 
 bool MenuState::handleEvent(const sf::Event& evt)
 {
-    return true;
+    if (evt.type == sf::Event::KeyReleased)
+    {
+        switch (evt.key.code)
+        {
+        case sf::Keyboard::Space:
+            requestStackPop();
+            break;
+        default: break;
+        }
+    }
+    
+    return false; //consume events
 }

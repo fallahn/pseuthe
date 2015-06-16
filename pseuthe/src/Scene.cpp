@@ -42,7 +42,8 @@ Scene::Scene(MessageBus& mb)
     for (int i = 0; i < Layer::Count; ++i)
         m_layers.emplace_back(std::make_unique<Entity>(mb));
 
-    m_sceneBuffer.create(1920u, 1080u);
+    m_sceneBufferA.create(1920u, 1080u);
+    m_sceneBufferB.create(1920u, 1080u);
 }
 
 //public
@@ -89,17 +90,17 @@ Entity& Scene::getLayer(Layer l)
 
 void Scene::setView(const sf::View& v)
 {
-    m_sceneBuffer.setView(v);
+    m_sceneBufferA.setView(v);
 }
 
 //private
 void Scene::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
-    m_sceneBuffer.clear();
+    m_sceneBufferA.clear();
     for (const auto& e : m_layers)
-        m_sceneBuffer.draw(*e, states);
-    m_sceneBuffer.display();
+        m_sceneBufferA.draw(*e, states);
+    m_sceneBufferA.display();
 
-    //m_bloomEffect.apply(m_sceneBuffer, rt);
-    m_chromeAbEffect.apply(m_sceneBuffer, rt);
+    m_chromeAbEffect.apply(m_sceneBufferA, m_sceneBufferB);
+    m_bloomEffect.apply(m_sceneBufferB, rt);
 }
