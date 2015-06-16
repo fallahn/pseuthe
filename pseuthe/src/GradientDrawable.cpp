@@ -87,6 +87,7 @@ GradientDrawable::GradientDrawable(MessageBus& mb)
         m_vertexArray.append({ p, m_colour });
 
     setPosition(960.f, 540.f);
+    setRotation(-90.f);
 }
 
 Component::Type GradientDrawable::type() const
@@ -127,7 +128,7 @@ void GradientDrawable::entityUpdate(Entity&, float dt)
         if (scale.x > 1.f) shrink = true;
     }
     setScale(scale);
-    rotate(rotationSpeed * dt);
+    //rotate(rotationSpeed * dt);
 }
 
 void GradientDrawable::handleMessage(const Message&)

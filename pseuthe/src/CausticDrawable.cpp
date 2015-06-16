@@ -38,7 +38,7 @@ namespace
     const int rayCount = 7;
     const float distanceToFullBright = 150.f;
 
-    //TODO these constas are also used in the light mover
+    //TODO these consts are also used in the light mover
     //need to bring them together
     const float min = -30.f;
     const float max = 1980.f;
@@ -58,7 +58,7 @@ CausticDrawable::CausticDrawable(MessageBus& mb)
         m_rays.back().rotate(rotation);
     }
 
-    m_shaders.preload(Shader::Type::LightRay, Shader::FullPass::vertex, Shader::LightRay::fragment);
+    m_shaders.preload(Shader::Type::LightRay, Shader::LightRay::vertex, Shader::LightRay::fragment);
     m_shader = &m_shaders.get(Shader::Type::LightRay);
 }
 
@@ -118,9 +118,8 @@ void CausticDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 namespace
 {
     const float falloffSize = 100.f;
+    const sf::Color rayColour(255u, 250u, 190u, 38u);
     const float rayLength = 3000.f;
-
-    const sf::Color rayColour(255u, 250u, 190u, 18u);
 }
 
 CausticDrawable::Ray::Ray()

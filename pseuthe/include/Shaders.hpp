@@ -51,7 +51,6 @@ namespace Shader
             "{\n" \
             "    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\n" \
             "    gl_TexCoord[0] = gl_MultiTexCoord0;\n" \
-            "    gl_FrontColor = gl_Color;\n" \
             "}";
     }
 
@@ -136,13 +135,38 @@ namespace Shader
 
     namespace LightRay
     {
+        static const std::string vertex =
+            "#version 120\n" \
+            "uniform vec3 u_lightPosition;\n" \
+            "varying vec2 v_vertPosition;\n" \
+
+            "void main()\n" \
+            "{\n" \
+            "    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\n" \
+            "    v_vertPosition = gl_Vertex.xy;\n" \
+            "    gl_FrontColor = gl_Color;\n" \
+            "}";
+
         static const std::string fragment =
             "#version 120\n" \
             "uniform float u_alpha = 1.0;\n" \
+
+            "varying vec2 v_vertPosition;\n" \
+
+            "const float falloffStart = 800.0;\n" \
+            "const float falloffDistance = 700.0;\n" \
+
             "void main()\n " \
             "{\n" \
+            "    float falloffAlpha = 1.0;\n" \
+            "    float length = length(v_vertPosition);\n" \
+            "    if(length > falloffStart)\n" \
+            "    {\n" \
+            "        falloffAlpha -= min((length - falloffStart) / falloffDistance , 1.0);\n" \
+            "    }\n" \
+            /*"    gl_FragColor = vec4(falloffAlpha);\n" \*/
             "    gl_FragColor = gl_Color;\n" \
-            "    gl_FragColor.a *= u_alpha;\n" \
+            "    gl_FragColor.a *= u_alpha * falloffAlpha;\n" \
             "}";
     }
 }
