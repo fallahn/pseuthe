@@ -25,57 +25,20 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//root class containing scene entities
-
-#ifndef SCENE_HPP_
-#define SCENE_HPP_
-
-#include <Entity.hpp>
-#include <PostBloom.hpp>
 #include <PostChromeAb.hpp>
 
-#include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Shader.hpp>
+#include <SFML/Graphics/RenderTexture.hpp>
 
-#include <vector>
-
-class Scene final : public sf::Drawable
+PostChromeAb::PostChromeAb()
 {
-public:
-    enum Layer
-    {
-        BackRear = 0,
-        BackMiddle,
-        BackFront,
-        FrontRear,
-        FrontMiddle,
-        FrontFront,
-        Count
-    };
+    m_shaderResource.preload(Shader::Type::PostChromeAb, Shader::FullPass::vertex, Shader::PostChromeAb::fragment);
+}
 
-    explicit Scene(MessageBus&);
-    ~Scene() = default;
-    Scene(const Scene&) = delete;
-    const Scene& operator = (const Scene&) = delete;
-
-    void update(float);
-    void handleMessages(const Message&);
-    void addEntity(Entity::Ptr&, Layer);
-    Entity& getLayer(Layer);
-
-    void setView(const sf::View& v);
-
-private:
-    std::vector<Entity::Ptr> m_layers;
-
-    int m_collisionCount;
-    MessageBus& m_messageBus;
-
-    mutable sf::RenderTexture m_sceneBuffer;
-    mutable PostBloom m_bloomEffect;
-    mutable PostChromeAb m_chromeAbEffect;
-
-    void draw(sf::RenderTarget&, sf::RenderStates) const override;
-
-};
-
-#endif //SCENE_HPP_
+//public
+void PostChromeAb::apply(const sf::RenderTexture& src, sf::RenderTarget& dst)
+{
+    auto& shader = m_shaderResource.get(Shader::Type::PostChromeAb);
+    shader.setParameter("u_sourceTexture", src.getTexture());
+    applyShader(shader, dst);
+}

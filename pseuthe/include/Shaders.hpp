@@ -40,6 +40,7 @@ namespace Shader
         PostDownSample,
         PostGaussianBlur,
         PostAdditiveBlend,
+        PostChromeAb,
         LightRay
     };
 
@@ -130,6 +131,27 @@ namespace Shader
             "void main()\n" \
             "{\n" \
             "    gl_FragColor = texture2D(u_sourceTexture, gl_TexCoord[0].xy) + texture2D(u_bloomTexture, gl_TexCoord[0].xy);\n" \
+            "}";
+    }
+
+    namespace PostChromeAb
+    {
+        static const std::string fragment =
+            "#version 120\n" \
+            "uniform sampler2D u_sourceTexture;\n" \
+            "const float maxOffset = 1.0 / 540.0;\n" \
+            "const float multiplier = maxOffset * 2.0;\n" \
+            "void main()\n" \
+            "{\n" \
+            "    vec2 texCoord = gl_TexCoord[0].xy;\n" \
+            "    vec2 redOffset = vec2(max(maxOffset - (texCoord.x * multiplier), 0.0), max(maxOffset - (texCoord.y * multiplier), 0.0));\n" \
+            "    vec2 greenOffset = vec2((maxOffset / 2.0) - (texCoord.x * maxOffset), (maxOffset / 2.0) - (texCoord.y * maxOffset));\n" \
+            "    vec2 blueOffset = vec2(min(maxOffset - (texCoord.x * multiplier), 0.0), min(maxOffset - (texCoord.y * multiplier), 0.0));\n" \
+            "    vec3 colour = vec3(0.0);\n" \
+            "    colour.r = texture2D(u_sourceTexture, texCoord + redOffset).r;\n" \
+            "    colour.g = texture2D(u_sourceTexture, texCoord + greenOffset).g;\n" \
+            "    colour.b = texture2D(u_sourceTexture, texCoord + blueOffset).b;\n" \
+            "    gl_FragColor = vec4(colour, 1.0);" \
             "}";
     }
 

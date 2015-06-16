@@ -97,6 +97,7 @@
     <ClCompile Include="src\PhysicsComponent.cpp" />
     <ClCompile Include="src\PhysicsWorld.cpp" />
     <ClCompile Include="src\PostBloom.cpp" />
+    <ClCompile Include="src\PostChromeAb.cpp" />
     <ClCompile Include="src\PostProcess.cpp" />
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\ShaderResource.cpp" />
@@ -129,6 +130,7 @@
     <ClInclude Include="include\PhysicsComponent.hpp" />
     <ClInclude Include="include\PhysicsWorld.hpp" />
     <ClInclude Include="include\PostBloom.hpp" />
+    <ClInclude Include="include\PostChromeAb.hpp" />
     <ClInclude Include="include\PostProcess.hpp" />
     <ClInclude Include="include\Resource.hpp" />
     <ClInclude Include="include\Scene.hpp" />

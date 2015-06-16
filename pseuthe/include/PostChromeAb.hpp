@@ -25,57 +25,23 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//root class containing scene entities
+//simulates chromatic aberration
 
-#ifndef SCENE_HPP_
-#define SCENE_HPP_
+#ifndef POST_CHROMEAB_HPP_
+#define POST_CHROMEAB_HPP_
 
-#include <Entity.hpp>
-#include <PostBloom.hpp>
-#include <PostChromeAb.hpp>
+#include <PostProcess.hpp>
+#include <ShaderResource.hpp>
 
-#include <SFML/Graphics/Drawable.hpp>
-
-#include <vector>
-
-class Scene final : public sf::Drawable
+class PostChromeAb final : public PostProcess
 {
 public:
-    enum Layer
-    {
-        BackRear = 0,
-        BackMiddle,
-        BackFront,
-        FrontRear,
-        FrontMiddle,
-        FrontFront,
-        Count
-    };
+    PostChromeAb();
 
-    explicit Scene(MessageBus&);
-    ~Scene() = default;
-    Scene(const Scene&) = delete;
-    const Scene& operator = (const Scene&) = delete;
-
-    void update(float);
-    void handleMessages(const Message&);
-    void addEntity(Entity::Ptr&, Layer);
-    Entity& getLayer(Layer);
-
-    void setView(const sf::View& v);
+    void apply(const sf::RenderTexture&, sf::RenderTarget&) override;
 
 private:
-    std::vector<Entity::Ptr> m_layers;
-
-    int m_collisionCount;
-    MessageBus& m_messageBus;
-
-    mutable sf::RenderTexture m_sceneBuffer;
-    mutable PostBloom m_bloomEffect;
-    mutable PostChromeAb m_chromeAbEffect;
-
-    void draw(sf::RenderTarget&, sf::RenderStates) const override;
-
+    ShaderResource m_shaderResource;
 };
 
-#endif //SCENE_HPP_
+#endif //POST_CHROMEAB_HPP_

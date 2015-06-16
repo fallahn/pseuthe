@@ -75,6 +75,7 @@ add_executable(
 	src/PhysicsComponent.cpp
 	src/PhysicsWorld.cpp
 	src/PostBloom.cpp
+	src/PostChromeAb.cpp
 	src/PostProcess.cpp
 	src/Scene.cpp
 	src/ShaderResource.cpp

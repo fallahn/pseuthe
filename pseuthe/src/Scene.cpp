@@ -100,5 +100,6 @@ void Scene::draw(sf::RenderTarget& rt, sf::RenderStates states) const
         m_sceneBuffer.draw(*e, states);
     m_sceneBuffer.display();
 
-    m_bloomEffect.apply(m_sceneBuffer, rt);
+    //m_bloomEffect.apply(m_sceneBuffer, rt);
+    m_chromeAbEffect.apply(m_sceneBuffer, rt);
 }

@@ -118,7 +118,7 @@ void CausticDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 namespace
 {
     const float falloffSize = 100.f;
-    const sf::Color rayColour(255u, 250u, 190u, 38u);
+    const sf::Color rayColour(255u, 250u, 190u, 28u);
     const float rayLength = 3000.f;
 }
 
