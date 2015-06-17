@@ -81,7 +81,12 @@ add_executable(
 	src/ShaderResource.cpp
 	src/SoundPlayer.cpp
 	src/State.cpp
-	src/StateStack.cpp)
+	src/StateStack.cpp
+	src/UICheckBox.cpp
+	src/UIComboBox.cpp
+	src/UIContainer.cpp
+	src/UIControl.cpp
+	src/UISlider.cpp)
 
 #copy resources to output directory
 #file(COPY ${CMAKE_SOURCE_DIR}/res DESTINATION ${CMAKE_DESTDIR})

@@ -43,7 +43,7 @@ source distribution.
 namespace
 {
     const int nubbinCount = 24;
-    const std::string version("version 0.4.4");
+    const std::string version("version 0.4.5");
 }
 
 GameState::GameState(StateStack& stateStack, Context context)

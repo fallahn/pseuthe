@@ -104,6 +104,11 @@
     <ClCompile Include="src\SoundPlayer.cpp" />
     <ClCompile Include="src\State.cpp" />
     <ClCompile Include="src\StateStack.cpp" />
+    <ClCompile Include="src\UICheckBox.cpp" />
+    <ClCompile Include="src\UIComboBox.cpp" />
+    <ClCompile Include="src\UIContainer.cpp" />
+    <ClCompile Include="src\UIControl.cpp" />
+    <ClCompile Include="src\UISlider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Affectors.hpp" />
@@ -140,6 +145,11 @@
     <ClInclude Include="include\State.hpp" />
     <ClInclude Include="include\StateIds.hpp" />
     <ClInclude Include="include\StateStack.hpp" />
+    <ClInclude Include="include\UICheckBox.hpp" />
+    <ClInclude Include="include\UIComboBox.hpp" />
+    <ClInclude Include="include\UIContainer.hpp" />
+    <ClInclude Include="include\UIControl.hpp" />
+    <ClInclude Include="include\UISlider.hpp" />
     <ClInclude Include="include\Util.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
