@@ -43,12 +43,12 @@ source distribution.
 namespace
 {
     const int nubbinCount = 24;
-    const std::string version("version 0.4.5");
+    const std::string version("version 0.4.7");
 }
 
 GameState::GameState(StateStack& stateStack, Context context)
     : State     (stateStack, context),
-    m_messageBus(),
+    m_messageBus(context.appInstance.getMessageBus()),
     m_scene     (m_messageBus),
     m_physWorld (m_messageBus)
 {
@@ -81,15 +81,7 @@ GameState::GameState(StateStack& stateStack, Context context)
 }
 
 bool GameState::update(float dt)
-{    
-    while (!m_messageBus.empty())
-    {
-        Message msg = m_messageBus.poll();
-        m_audioManager.handleMessage(msg);
-        m_physWorld.handleMessages(msg);
-        m_scene.handleMessages(msg);
-    }
-
+{   
     m_audioManager.update(dt);
     m_physWorld.update(dt);
     m_scene.update(dt);
@@ -118,6 +110,13 @@ bool GameState::handleEvent(const sf::Event& evt)
         }
     }
     return true;
+}
+
+void GameState::handleMessage(const Message& msg)
+{
+    m_audioManager.handleMessage(msg);
+    m_physWorld.handleMessage(msg);
+    m_scene.handleMessage(msg);
 }
 
 //private

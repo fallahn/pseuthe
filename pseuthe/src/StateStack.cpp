@@ -61,6 +61,11 @@ void StateStack::handleEvent(const sf::Event& evt)
     applyPendingChanges();
 }
 
+void StateStack::handleMessage(const Message& msg)
+{
+    for (auto& s : m_stack) s->handleMessage(msg);
+}
+
 void StateStack::pushState(States::ID id)
 {
     m_pendingChanges.emplace_back(Action::Push, id);

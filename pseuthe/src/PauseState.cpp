@@ -47,3 +47,8 @@ bool PauseState::handleEvent(const sf::Event& evt)
 {
     return true;
 }
+
+void PauseState::handleMessage(const Message&)
+{
+
+}

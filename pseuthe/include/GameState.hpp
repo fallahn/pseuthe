@@ -31,7 +31,6 @@ source distribution.
 #define GAME_STATE_HPP_
 
 #include <State.hpp>
-#include <MessageBus.hpp>
 #include <Entity.hpp>
 #include <Scene.hpp>
 #include <PhysicsWorld.hpp>
@@ -56,10 +55,11 @@ public:
     bool update(float dt) override;
     void draw() override;
     bool handleEvent(const sf::Event& evt) override;
+    void handleMessage(const Message&) override;
 
 private :
 
-    MessageBus m_messageBus;
+    MessageBus& m_messageBus;
     Scene m_scene;
     PhysicsWorld m_physWorld;
     AudioManager m_audioManager;

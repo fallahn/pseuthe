@@ -160,7 +160,8 @@ void Slider::handleEvent(const sf::Event& e, const sf::Vector2f& mousePos)
             localPos.y = std::min(localPos.y, m_length);
             localPos.y = std::max(localPos.y, 0.f);
             m_handleSprite.setPosition(m_handleSprite.getPosition().x, localPos.y);
-        }        
+        }
+        if (m_valueChanged) m_valueChanged(this);
     }
 }
 
@@ -263,6 +264,7 @@ void Slider::setValue(float value)
         pos.y = (m_length / m_maxValue) * value;
     }
     m_handleSprite.setPosition(pos);
+    if (m_valueChanged) m_valueChanged(this);
 }
 
 float Slider::getValue() const

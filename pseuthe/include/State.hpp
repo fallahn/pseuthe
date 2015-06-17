@@ -44,6 +44,7 @@ namespace sf
 
 class StateStack;
 class App;
+class Message;
 class State
 {
 public:
@@ -63,6 +64,7 @@ public:
     const State& operator =(const State&) = delete;
 
     virtual bool handleEvent(const sf::Event& evt) = 0;
+    virtual void handleMessage(const Message&) = 0;
     virtual bool update(float dt) = 0;
     virtual void draw() = 0;
 

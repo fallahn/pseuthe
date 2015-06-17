@@ -46,7 +46,7 @@ PhysicsComponent::Ptr PhysicsWorld::addBody(float radius)
     return std::move(body);
 }
 
-void PhysicsWorld::handleMessages(const Message& msg)
+void PhysicsWorld::handleMessage(const Message& msg)
 {
 
 }

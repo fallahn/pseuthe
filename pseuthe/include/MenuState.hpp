@@ -36,6 +36,7 @@ source distribution.
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
 
+class MessageBus;
 class MenuState final : public State
 {
 public:
@@ -45,8 +46,10 @@ public:
     bool update(float dt) override;
     void draw() override;
     bool handleEvent(const sf::Event& evt) override;
+    void handleMessage(const Message&) override;
 
 private:
+    MessageBus& m_messageBus;
     sf::Sprite m_menuSprite;
     std::vector<sf::Text> m_texts;
 

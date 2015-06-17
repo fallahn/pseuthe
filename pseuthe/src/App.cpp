@@ -90,6 +90,7 @@ void App::run()
             timeSinceLastUpdate -= timePerFrame;
 
             handleEvents();
+            handleMessages();
             update(timePerFrame);
         }
         draw();
@@ -123,6 +124,11 @@ sf::Texture& App::getTexture(const std::string& path)
     return m_textureResource.get(path);
 }
 
+MessageBus& App::getMessageBus()
+{
+    return m_messageBus;
+}
+
 //private
 void App::handleEvents()
 {
@@ -152,6 +158,14 @@ void App::handleEvents()
 #endif //_DEBUG_
 
         m_stateStack.handleEvent(evt);
+    }
+}
+
+void App::handleMessages()
+{
+    while (!m_messageBus.empty())
+    {
+        m_stateStack.handleMessage(m_messageBus.poll());
     }
 }
 

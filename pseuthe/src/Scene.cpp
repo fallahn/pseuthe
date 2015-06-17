@@ -66,7 +66,7 @@ void Scene::update(float dt)
     m_chromeAbEffect.update(dt);
 }
 
-void Scene::handleMessages(const Message& msg)
+void Scene::handleMessage(const Message& msg)
 {
     for (auto& e : m_layers)
         e->handleMessage(msg);

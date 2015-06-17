@@ -37,6 +37,7 @@ source distribution.
 #include <SFML/Graphics/Text.hpp>
 
 #include <vector>
+#include <functional>
 
 namespace ui
 {
@@ -44,6 +45,12 @@ namespace ui
     {
     public:
         using Ptr =  std::shared_ptr<CheckBox>;
+        using Callback = std::function<void(const CheckBox*)>;
+
+        enum class Event
+        {
+            CheckChanged
+        };
 
         CheckBox(const sf::Font& font, const sf::Texture& t);
         ~CheckBox() = default;
@@ -67,6 +74,8 @@ namespace ui
         bool checked() const;
         void check(bool checked = true);
         
+        void setCallback(Callback, Event);
+
     private:
         enum State
         {
@@ -82,6 +91,8 @@ namespace ui
         std::vector<sf::IntRect> m_subRects;
         bool m_checked;
         Alignment m_alignment;
+
+        Callback m_checkChanged;
 
         void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
     };

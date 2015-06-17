@@ -69,6 +69,7 @@ public:
     void update(float dt);
     void draw();
     void handleEvent(const sf::Event& evt);
+    void handleMessage(const Message&);
 
     void pushState(States::ID id);
     void popState();

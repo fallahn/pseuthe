@@ -44,7 +44,7 @@ public:
     const PhysicsWorld& operator = (const PhysicsWorld&) = delete;
 
     PhysicsComponent::Ptr addBody(float);
-    void handleMessages(const Message&);
+    void handleMessage(const Message&);
     void update(float);
 
 private:

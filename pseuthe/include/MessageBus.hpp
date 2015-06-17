@@ -42,7 +42,8 @@ public:
         Audio = 1,
         Physics,
         Drawable,
-        Entity
+        Entity,
+        UI
     }type;
 
     struct AudioEvent
@@ -70,12 +71,24 @@ public:
         bool maxCollisionsReached;
     };
 
+    struct UIEvent
+    {
+        enum
+        {
+            RequestVolumeChange,
+            RequestAudioMute,
+            RequestAudioUnmute
+        }type;
+        float value;
+    };
+
     union
     {
         AudioEvent audio;
         PhysicsEvent physics;
         DrawableEvent drawable;
         EntityEvent entity;
+        UIEvent ui;
     };
 };
 
@@ -87,7 +100,7 @@ public:
     MessageBus(const MessageBus&) = delete;
     const MessageBus& operator = (const MessageBus&) = delete;
 
-    //read an despatch all messages on the message stack
+    //read and despatch all messages on the message stack
     Message poll();
     //places a message on the message stack
     void send(const Message& msg);

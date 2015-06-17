@@ -28,6 +28,7 @@ source distribution.
 #include <MenuState.hpp>
 #include <Util.hpp>
 #include <App.hpp>
+#include <Log.hpp>
 
 #include <UISlider.hpp>
 #include <UICheckBox.hpp>
@@ -37,7 +38,8 @@ source distribution.
 #include <SFML/Window/Event.hpp>
 
 MenuState::MenuState(StateStack& stateStack, Context context)
-    : State(stateStack, context)
+    : State     (stateStack, context),
+    m_messageBus(context.appInstance.getMessageBus())
 {
     m_menuSprite.setTexture(context.appInstance.getTexture("assets/images/main_menu.png"));
     m_menuSprite.setPosition(context.defaultView.getCenter());
@@ -116,6 +118,11 @@ bool MenuState::handleEvent(const sf::Event& evt)
     return false; //consume events
 }
 
+void MenuState::handleMessage(const Message&)
+{
+
+}
+
 //private
 void MenuState::buildMenu(const sf::Font& font)
 {
@@ -123,10 +130,17 @@ void MenuState::buildMenu(const sf::Font& font)
     soundSlider->setAlignment(ui::Alignment::TopLeft);
     soundSlider->setPosition(780.f, 550.f);
     soundSlider->setText("Volume");
+    soundSlider->setMaxValue(1.f);
     //TODO get settings for current volume
+    soundSlider->setValue(1.f);
     soundSlider->setCallback([this](const ui::Slider* slider)
     {
-        //TODO send volume setting command
+        //send volume setting command
+        Message msg;
+        msg.type = Message::Type::UI;
+        msg.ui.type = Message::UIEvent::RequestVolumeChange;
+        msg.ui.value = slider->getValue();
+        m_messageBus.send(msg);
     }, ui::Slider::Event::ValueChanged);
     m_uiContainer.addControl(soundSlider);
 
@@ -134,8 +148,16 @@ void MenuState::buildMenu(const sf::Font& font)
     muteCheckbox->setPosition(1100.f, 550.f);
     muteCheckbox->setAlignment(ui::Alignment::Centre);
     muteCheckbox->setText("Mute");
+    muteCheckbox->setCallback([this](const ui::CheckBox* checkBox)
+    {
+        Message msg;
+        msg.type = Message::Type::UI;
+        msg.ui.type = (checkBox->checked()) ? Message::UIEvent::RequestAudioMute : Message::UIEvent::RequestAudioUnmute;
+        m_messageBus.send(msg);
+    }, ui::CheckBox::Event::CheckChanged);
+    //TODO get current state of audio and check accordingly
     m_uiContainer.addControl(muteCheckbox);
-    //TODO add 'check changed' callback
+
 
     auto resolutionBox = std::make_shared<ui::ComboBox>(font, getContext().appInstance.getTexture("assets/images/ui/combobox.png"));
     //resolution->setAlignment(ui::Alignment::Centre);

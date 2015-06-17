@@ -43,6 +43,8 @@ public:
     void update(float);
     void handleMessage(const Message&);
 
+    void mute(bool);
+
 private:
 
     float m_fadeInTime;
@@ -54,6 +56,8 @@ private:
     std::vector<sf::SoundBuffer> m_impactSounds;
     std::vector<sf::SoundBuffer> m_fxSounds;
     sf::SoundBuffer m_switchFx;
+
+    bool m_muted;
 };
 
 #endif //AUDIO_MANAGER_HPP_

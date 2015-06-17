@@ -41,7 +41,7 @@ public:
     bool update(float dt) override;
     void draw() override;
     bool handleEvent(const sf::Event& evt) override;
-
+    void handleMessage(const Message&) override;
 };
 
 #endif //PAUSE_STATE_HPP_

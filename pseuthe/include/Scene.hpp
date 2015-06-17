@@ -58,7 +58,7 @@ public:
     const Scene& operator = (const Scene&) = delete;
 
     void update(float);
-    void handleMessages(const Message&);
+    void handleMessage(const Message&);
     void addEntity(Entity::Ptr&, Layer);
     Entity& getLayer(Layer);
 

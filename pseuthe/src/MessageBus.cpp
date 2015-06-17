@@ -32,11 +32,9 @@ MessageBus::MessageBus(){}
 
 Message MessageBus::poll()
 {
-   /* if (!m_messages.empty())
-    {*/
-        Message m = m_messages.front();
-        m_messages.pop();
-    //}
+    Message m = m_messages.front();
+    m_messages.pop();
+
     return m;
 }
 

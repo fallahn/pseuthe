@@ -44,7 +44,8 @@ namespace
 
 AudioManager::AudioManager()
     : m_fadeInTime      (4.f),
-    m_currentFadeTime   (0.f)
+    m_currentFadeTime   (0.f),
+    m_muted             (false)
 {   
     m_musicPlayer.setVolume(0.f);
     m_musicPlayer.play("assets/sound/background.ogg", true);
@@ -95,18 +96,39 @@ void AudioManager::update(float dt)
 void AudioManager::handleMessage(const Message& msg)
 {
     //You has no seagulls.
-    if (msg.type == Message::Type::Physics)
+    switch (msg.type)
     {
-        { 
+    case Message::Type::Physics:
+        if (m_muted) break;
             m_soundPlayer.play(m_impactSounds[Util::Random::value(0, m_impactSounds.size() - 1)]);
-        }
-    }
-    else if (msg.type == Message::Type::Entity)
-    {
-        if (msg.entity.maxCollisionsReached)
+        break;
+    case Message::Type::Entity:
+        if (!m_muted && msg.entity.maxCollisionsReached)
         {
             //play a swooshy sound :D
             m_soundPlayer.play(m_switchFx);
         }
+        break;
+    case Message::Type::UI:
+        switch (msg.ui.type)
+        {
+        case Message::UIEvent::RequestVolumeChange:
+            //TODO actually handle this without messing up the fade in
+            break;
+        case Message::UIEvent::RequestAudioMute:
+            m_muted = true;
+            break;
+        case Message::UIEvent::RequestAudioUnmute:
+            m_muted = false;
+            break;
+        default: break;
+        }
+        break;
+    default: break;
     }
+}
+
+void AudioManager::mute(bool m)
+{
+    m_muted = m;
 }

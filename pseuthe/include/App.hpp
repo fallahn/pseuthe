@@ -32,6 +32,7 @@ source distribution.
 
 #include <StateStack.hpp>
 #include <Resource.hpp>
+#include <MessageBus.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
@@ -67,7 +68,7 @@ public:
 
     sf::Font& getFont(const std::string& path);
     sf::Texture& getTexture(const std::string& path);
-
+    MessageBus& getMessageBus();
 private:
 
     VideoSettings m_videoSettings;
@@ -78,7 +79,10 @@ private:
     FontResource m_fontResource;
     TextureResource m_textureResource;
 
+    MessageBus m_messageBus;
+
     void handleEvents();
+    void handleMessages();
     std::function<void(float)> update;
     void updateApp(float dt);
     void pauseApp(float dt);
