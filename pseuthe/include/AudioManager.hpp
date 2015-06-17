@@ -43,9 +43,6 @@ public:
     void update(float);
     void handleMessage(const Message&);
 
-    //loadSoundset(const std::string& path);
-
-
 private:
 
     float m_fadeInTime;

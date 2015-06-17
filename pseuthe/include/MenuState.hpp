@@ -31,6 +31,7 @@ source distribution.
 #define MENU_STATE_HPP_
 
 #include <State.hpp>
+#include <UIContainer.hpp>
 
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
@@ -39,7 +40,7 @@ class MenuState final : public State
 {
 public:
     MenuState(StateStack& stateStack, Context context);
-    ~MenuState() = default;
+    ~MenuState();
 
     bool update(float dt) override;
     void draw() override;
@@ -48,6 +49,10 @@ public:
 private:
     sf::Sprite m_menuSprite;
     std::vector<sf::Text> m_texts;
+
+    ui::Container m_uiContainer;
+
+    void buildMenu(const sf::Font&);
 };
 
 #endif //MENU_STATE_HPP_

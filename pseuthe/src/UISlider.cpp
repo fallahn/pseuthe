@@ -37,7 +37,7 @@ using namespace ui;
 
 namespace
 {
-    const float thickness = 5.f;
+    const float thickness = 3.f;
     const sf::Color borderColour(160u, 160u, 160u);
     const float deadzone = 40.f;
 }
@@ -48,9 +48,9 @@ Slider::Slider(const sf::Font& font, const sf::Texture& texture, float length, f
     m_direction     (Direction::Horizontal),
     m_handleSprite  (texture),
     m_slotShape     ({ length, thickness }),
-    m_text          ("", font, 20u),
+    m_text          ("", font, 26u),
     m_borderColour  (160u, 160u, 160u),
-    m_activeColour  (255u, 208u, 0u)
+    m_activeColour  (208, 208u, 208u)
 {
     sf::IntRect subrect(0, 0, texture.getSize().x, texture.getSize().y / 2u);
     m_subRects.push_back(subrect);
@@ -329,7 +329,7 @@ void Slider::draw(sf::RenderTarget& rt, sf::RenderStates states)const
 void Slider::updateText()
 {
     Util::Position::centreOrigin(m_text);
-    m_text.setPosition(m_text.getOrigin().x, -m_text.getLocalBounds().height * 2.f);
+    m_text.setPosition(m_text.getOrigin().x, -m_text.getLocalBounds().height/* * 2.f*/);
 }
 
 void Slider::increase()
