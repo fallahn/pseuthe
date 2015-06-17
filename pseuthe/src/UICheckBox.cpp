@@ -33,12 +33,12 @@ using namespace ui;
 
 namespace
 {
-    const float textPadding = 8.f;
+    const float textPadding = 20.f;
 }
 
 CheckBox::CheckBox(const sf::Font& font, const sf::Texture& t)
     : m_texture (t),
-    m_text      ("", font, 28u),
+    m_text      ("", font, 36u),
     m_checked   (false),
     m_alignment (Alignment::TopLeft)
 {
@@ -52,7 +52,7 @@ CheckBox::CheckBox(const sf::Font& font, const sf::Texture& t)
     m_sprite.setTexture(t);
     m_sprite.setTextureRect(m_subRects[State::Normal]);
 
-    m_text.setPosition(static_cast<float>(m_sprite.getLocalBounds().width) + textPadding, 0.f);
+    m_text.setPosition(static_cast<float>(m_sprite.getLocalBounds().width) + textPadding, -6.f);
 }
 
 //public

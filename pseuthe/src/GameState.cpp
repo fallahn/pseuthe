@@ -43,7 +43,7 @@ source distribution.
 namespace
 {
     const int nubbinCount = 24;
-    const std::string version("version 0.4.7");
+    const std::string version("version 0.4.8");
 }
 
 GameState::GameState(StateStack& stateStack, Context context)
@@ -73,6 +73,8 @@ GameState::GameState(StateStack& stateStack, Context context)
 
     m_vignette.setSize({ 1920.f, 1080.f });
     m_vignette.setTexture(&context.appInstance.getTexture("assets/images/vignette.png"));
+    m_vignette.setOrigin(m_vignette.getSize() / 2.f);
+    m_vignette.setPosition(context.renderWindow.getView().getCenter());
 
     m_versionText.setFont(context.appInstance.getFont("assets/fonts/VeraMono.ttf"));
     m_versionText.setString(version);
@@ -91,10 +93,11 @@ bool GameState::update(float dt)
 
 void GameState::draw()
 {
-    getContext().renderWindow.setView(getContext().renderWindow.getDefaultView());
-    getContext().renderWindow.draw(m_scene);
-    getContext().renderWindow.draw(m_vignette, sf::BlendMultiply);
-    getContext().renderWindow.draw(m_versionText);
+    auto& rw = getContext().renderWindow;
+    rw.setView(getContext().renderWindow.getDefaultView());
+    rw.draw(m_scene);
+    rw.draw(m_vignette, sf::BlendMultiply);
+    rw.draw(m_versionText);
 }
 
 bool GameState::handleEvent(const sf::Event& evt)

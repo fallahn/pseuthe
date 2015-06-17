@@ -37,7 +37,7 @@ using namespace ui;
 
 namespace
 {
-    const float thickness = 3.f;
+    const float thickness = 4.5f;
     const sf::Color borderColour(160u, 160u, 160u);
     const float deadzone = 40.f;
 }
@@ -48,7 +48,7 @@ Slider::Slider(const sf::Font& font, const sf::Texture& texture, float length, f
     m_direction     (Direction::Horizontal),
     m_handleSprite  (texture),
     m_slotShape     ({ length, thickness }),
-    m_text          ("", font, 26u),
+    m_text          ("", font, 36u),
     m_borderColour  (160u, 160u, 160u),
     m_activeColour  (208, 208u, 208u)
 {
@@ -63,7 +63,7 @@ Slider::Slider(const sf::Font& font, const sf::Texture& texture, float length, f
     m_slotShape.setOrigin(0.f, thickness / 2.f);
     m_slotShape.setFillColor(sf::Color::Black);
     m_slotShape.setOutlineColor(m_borderColour);
-    m_slotShape.setOutlineThickness(3.f);
+    m_slotShape.setOutlineThickness(thickness);
 }
 
 //public

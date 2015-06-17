@@ -34,7 +34,7 @@ using namespace ui;
 
 Button::Button(const sf::Font& font, const sf::Texture& texture)
     : m_texture     (texture),
-    m_text          ("", font, 20u),
+    m_text          ("", font, 30u),
     m_toggleButton  (false)
 {
     sf::IntRect subrect({ 0, 0 }, sf::Vector2i(texture.getSize()));

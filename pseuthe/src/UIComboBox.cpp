@@ -46,7 +46,7 @@ ComboBox::ComboBox(const sf::Font& font, const sf::Texture& t)
     m_highlightShape    (m_mainShape.getSize()),
     m_selectedIndex     (0u),
     m_nextIndex         (m_selectedIndex),
-    m_selectedText      ("", font, 20u),
+    m_selectedText      ("", font, 26u),
     m_font              (font)
 {
     m_mainShape.setTexture(&t);

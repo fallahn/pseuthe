@@ -45,6 +45,8 @@ MenuState::MenuState(StateStack& stateStack, Context context)
     m_menuSprite.setPosition(context.defaultView.getCenter());
     Util::Position::centreOrigin(m_menuSprite);
 
+    m_cursorSprite.setTexture(context.appInstance.getTexture("assets/images/ui/cursor.png"));
+
     auto& font = context.appInstance.getFont("assets/fonts/N_E_B.ttf");
 
     m_texts.emplace_back("Press Space to Toggle Menu", font, 35u);
@@ -67,13 +69,6 @@ MenuState::MenuState(StateStack& stateStack, Context context)
     m_texts.back().setPosition(1520.f, 1050.f);
 
     buildMenu(font);
-
-    context.renderWindow.setMouseCursorVisible(true);
-}
-
-MenuState::~MenuState()
-{
-    getContext().renderWindow.setMouseCursorVisible(false);
 }
 
 //public
@@ -94,6 +89,8 @@ void MenuState::draw()
     {
         rw.draw(t);
     }
+
+    rw.draw(m_cursorSprite);
 }
 
 bool MenuState::handleEvent(const sf::Event& evt)
@@ -114,6 +111,7 @@ bool MenuState::handleEvent(const sf::Event& evt)
     auto mousePos = rw.mapPixelToCoords(sf::Mouse::getPosition(rw));
 
     m_uiContainer.handleEvent(evt, mousePos);
+    m_cursorSprite.setPosition(mousePos);
 
     return false; //consume events
 }
@@ -126,9 +124,8 @@ void MenuState::handleMessage(const Message&)
 //private
 void MenuState::buildMenu(const sf::Font& font)
 {
-    auto soundSlider = std::make_shared<ui::Slider>(font, getContext().appInstance.getTexture("assets/images/ui/slider_handle.png"));
-    soundSlider->setAlignment(ui::Alignment::TopLeft);
-    soundSlider->setPosition(780.f, 550.f);
+    auto soundSlider = std::make_shared<ui::Slider>(font, getContext().appInstance.getTexture("assets/images/ui/slider_handle.png"), 375.f);
+    soundSlider->setPosition(600.f, 550.f);
     soundSlider->setText("Volume");
     soundSlider->setMaxValue(1.f);
     //TODO get settings for current volume
@@ -145,8 +142,7 @@ void MenuState::buildMenu(const sf::Font& font)
     m_uiContainer.addControl(soundSlider);
 
     auto muteCheckbox = std::make_shared<ui::CheckBox>(font, getContext().appInstance.getTexture("assets/images/ui/checkbox.png"));
-    muteCheckbox->setPosition(1100.f, 550.f);
-    muteCheckbox->setAlignment(ui::Alignment::Centre);
+    muteCheckbox->setPosition(1100.f, 510.f);
     muteCheckbox->setText("Mute");
     muteCheckbox->setCallback([this](const ui::CheckBox* checkBox)
     {
@@ -160,7 +156,6 @@ void MenuState::buildMenu(const sf::Font& font)
 
 
     auto resolutionBox = std::make_shared<ui::ComboBox>(font, getContext().appInstance.getTexture("assets/images/ui/combobox.png"));
-    //resolution->setAlignment(ui::Alignment::Centre);
     resolutionBox->setPosition(780.f, 600.f);
 
     const auto& modes = getContext().appInstance.getVideoSettings().AvailableVideoModes;
@@ -181,10 +176,19 @@ void MenuState::buildMenu(const sf::Font& font)
 
     m_uiContainer.addControl(resolutionBox);
 
+    auto fullscreenCheckbox = std::make_shared<ui::CheckBox>(font, getContext().appInstance.getTexture("assets/images/ui/checkbox.png"));
+    fullscreenCheckbox->setPosition(1100.f, 600.f);
+    fullscreenCheckbox->setText("Full Screen");
+    fullscreenCheckbox->setCallback([this](const ui::CheckBox*)
+    {
+
+    }, ui::CheckBox::Event::CheckChanged);
+    m_uiContainer.addControl(fullscreenCheckbox);
 
     auto applyButton = std::make_shared<ui::Button>(font, getContext().appInstance.getTexture("assets/images/ui/button.png"));
     applyButton->setText("Apply");
-    applyButton->setPosition(1000.f, 595.f);
+    applyButton->setAlignment(ui::Alignment::Centre);
+    applyButton->setPosition(960.f, 795.f);
     applyButton->setCallback([](){}); //TODO handle click
     m_uiContainer.addControl(applyButton);
 }

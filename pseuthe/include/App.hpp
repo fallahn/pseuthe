@@ -50,7 +50,7 @@ public:
         std::vector<sf::VideoMode> AvailableVideoModes;
 
         VideoSettings()
-            : WindowStyle(sf::Style::Close/* sf::Style::Fullscreen*/),
+            : WindowStyle(sf::Style::Close /*sf::Style::Fullscreen*/),
             VideoMode(1024, 576),
             VSync(true){}
     };

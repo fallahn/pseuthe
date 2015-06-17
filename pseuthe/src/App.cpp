@@ -79,6 +79,8 @@ void App::run()
         return;
     }
 
+    m_renderWindow.setMouseCursorVisible(false);
+
     frameClock.restart();
     while (m_renderWindow.isOpen())
     {

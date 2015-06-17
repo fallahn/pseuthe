@@ -141,8 +141,8 @@ namespace Shader
             /*"#define BLUR\n" \*/
             "uniform sampler2D u_sourceTexture;\n" \
             "uniform float u_time;\n" \
+            "uniform float u_lineCount = 6000.0;\n" \
 
-            "const float lineCount = 10000.0;\n" \
             "const float noiseStrength = 0.7;\n" \
 
             "#if defined(BLUR)\n" \
@@ -189,7 +189,7 @@ namespace Shader
             "    float grain = mod(x, 0.01) - 0.005;\n" \
             "    vec3 result = colour + vec3(clamp(grain * 100.0, 0.0, 0.07));\n" \
             /*scanlines*/
-            "    vec2 sinCos = vec2(sin(texCoord.y * lineCount), cos(texCoord.y * lineCount + u_time));\n" \
+            "    vec2 sinCos = vec2(sin(texCoord.y * u_lineCount), cos(texCoord.y * u_lineCount + u_time));\n" \
             "    result += colour * vec3(sinCos.x, sinCos.y, sinCos.x) * (noiseStrength * 0.08);\n" \
             "    colour += (result - colour) * noiseStrength;\n" \
             "    gl_FragColor = vec4(colour, 1.0);" \

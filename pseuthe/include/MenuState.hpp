@@ -41,7 +41,7 @@ class MenuState final : public State
 {
 public:
     MenuState(StateStack& stateStack, Context context);
-    ~MenuState();
+    ~MenuState() = default;
 
     bool update(float dt) override;
     void draw() override;
@@ -51,6 +51,7 @@ public:
 private:
     MessageBus& m_messageBus;
     sf::Sprite m_menuSprite;
+    sf::Sprite m_cursorSprite;
     std::vector<sf::Text> m_texts;
 
     ui::Container m_uiContainer;
