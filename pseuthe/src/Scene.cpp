@@ -62,6 +62,8 @@ void Scene::update(float dt)
         msg.entity.maxCollisionsReached = true;
         m_messageBus.send(msg);
     }
+
+    m_chromeAbEffect.update(dt);
 }
 
 void Scene::handleMessages(const Message& msg)
@@ -101,6 +103,7 @@ void Scene::draw(sf::RenderTarget& rt, sf::RenderStates states) const
         m_sceneBufferA.draw(*e, states);
     m_sceneBufferA.display();
 
-    m_chromeAbEffect.apply(m_sceneBufferA, m_sceneBufferB);
-    m_bloomEffect.apply(m_sceneBufferB, rt);
+    m_bloomEffect.apply(m_sceneBufferA, m_sceneBufferB);
+    m_chromeAbEffect.apply(m_sceneBufferB, rt);
+
 }

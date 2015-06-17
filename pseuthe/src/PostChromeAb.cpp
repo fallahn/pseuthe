@@ -30,6 +30,11 @@ source distribution.
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
 
+namespace
+{
+    float time = 0.f;
+}
+
 PostChromeAb::PostChromeAb()
 {
     m_shaderResource.preload(Shader::Type::PostChromeAb, Shader::FullPass::vertex, Shader::PostChromeAb::fragment);
@@ -40,5 +45,11 @@ void PostChromeAb::apply(const sf::RenderTexture& src, sf::RenderTarget& dst)
 {
     auto& shader = m_shaderResource.get(Shader::Type::PostChromeAb);
     shader.setParameter("u_sourceTexture", src.getTexture());
+    shader.setParameter("u_time", time * 100.f);
     applyShader(shader, dst);
+}
+
+void PostChromeAb::update(float dt)
+{
+    time += dt;
 }

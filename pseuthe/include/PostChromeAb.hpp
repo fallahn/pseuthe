@@ -39,6 +39,7 @@ public:
     PostChromeAb();
 
     void apply(const sf::RenderTexture&, sf::RenderTarget&) override;
+    void update(float);
 
 private:
     ShaderResource m_shaderResource;

@@ -140,7 +140,11 @@ namespace Shader
             "#version 120\n" \
             /*"#define BLUR\n" \*/
             "uniform sampler2D u_sourceTexture;\n" \
-            
+            "uniform float u_time;\n" \
+
+            "const float lineCount = 10000.0;\n" \
+            "const float noiseStrength = 0.7;\n" \
+
             "#if defined(BLUR)\n" \
             "const float maxOffset = 1.0 / 35.0;\n" \
             "#define KERNEL_SIZE 9\n" \
@@ -179,6 +183,15 @@ namespace Shader
             "    colour.g = texture2D(u_sourceTexture, texCoord).g;\n" \
             "    colour.b = texture2D(u_sourceTexture, texCoord - offset).b;\n" \
             "#endif\n" \
+            /*noise*/
+            "    float x = (texCoord.x + 4.0) * texCoord.y * u_time * 10.0;\n" \
+            "    x = mod(x, 13.0) * mod(x, 123.0);\n" \
+            "    float grain = mod(x, 0.01) - 0.005;\n" \
+            "    vec3 result = colour + vec3(clamp(grain * 100.0, 0.0, 0.07));\n" \
+            /*scanlines*/
+            "    vec2 sinCos = vec2(sin(texCoord.y * lineCount), cos(texCoord.y * lineCount + u_time));\n" \
+            "    result += colour * vec3(sinCos.x, sinCos.y, sinCos.x) * (noiseStrength * 0.08);\n" \
+            "    colour += (result - colour) * noiseStrength;\n" \
             "    gl_FragColor = vec4(colour, 1.0);" \
             "}";
     }

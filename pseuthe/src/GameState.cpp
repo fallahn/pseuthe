@@ -43,6 +43,7 @@ source distribution.
 namespace
 {
     const int nubbinCount = 24;
+    const std::string version("version 0.4.4");
 }
 
 GameState::GameState(StateStack& stateStack, Context context)
@@ -74,7 +75,7 @@ GameState::GameState(StateStack& stateStack, Context context)
     m_vignette.setTexture(&context.appInstance.getTexture("assets/images/vignette.png"));
 
     m_versionText.setFont(context.appInstance.getFont("assets/fonts/VeraMono.ttf"));
-    m_versionText.setString("version 0.4.3");
+    m_versionText.setString(version);
     m_versionText.setCharacterSize(14u);
     m_versionText.setPosition(10.f, 10.f);
 }
