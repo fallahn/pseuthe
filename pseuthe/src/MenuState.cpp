@@ -55,16 +55,6 @@ MenuState::MenuState(StateStack& stateStack, Context context)
     spaceText.setPosition(context.defaultView.getCenter());
     spaceText.move(0.f, 400.f);
 
-    //m_texts.emplace_back("Options", font, 35u);
-    //auto& optionsText = m_texts.back();
-    //Util::Position::centreOrigin(optionsText);
-    //optionsText.setPosition(context.defaultView.getCenter());
-    //optionsText.move(0.f, -100.f);
-    //optionsText.setStyle(sf::Text::Bold);
-
-    //m_texts.emplace_back("Volume:", *spaceText.getFont(), 30u);
-    //m_texts.back().setPosition(540.f, 430.f);
-
     m_texts.emplace_back("https://github.com/fallahn/pseuthe", context.appInstance.getFont("assets/fonts/VeraMono.ttf"), 18u);
     m_texts.back().setPosition(1520.f, 1050.f);
 
@@ -128,8 +118,6 @@ void MenuState::buildMenu(const sf::Font& font)
     soundSlider->setPosition(600.f, 550.f);
     soundSlider->setText("Volume");
     soundSlider->setMaxValue(1.f);
-    //TODO get settings for current volume
-    soundSlider->setValue(1.f);
     soundSlider->setCallback([this](const ui::Slider* slider)
     {
         //send volume setting command
@@ -139,6 +127,7 @@ void MenuState::buildMenu(const sf::Font& font)
         msg.ui.value = slider->getValue();
         m_messageBus.send(msg);
     }, ui::Slider::Event::ValueChanged);
+    soundSlider->setValue(getContext().appInstance.getAudioSettings().volume); //set this *after* callback is set
     m_uiContainer.addControl(soundSlider);
 
     auto muteCheckbox = std::make_shared<ui::CheckBox>(font, getContext().appInstance.getTexture("assets/images/ui/checkbox.png"));
@@ -151,12 +140,12 @@ void MenuState::buildMenu(const sf::Font& font)
         msg.ui.type = (checkBox->checked()) ? Message::UIEvent::RequestAudioMute : Message::UIEvent::RequestAudioUnmute;
         m_messageBus.send(msg);
     }, ui::CheckBox::Event::CheckChanged);
-    //TODO get current state of audio and check accordingly
+    muteCheckbox->check(getContext().appInstance.getAudioSettings().muted);
     m_uiContainer.addControl(muteCheckbox);
 
 
     auto resolutionBox = std::make_shared<ui::Selection>(font, getContext().appInstance.getTexture("assets/images/ui/scroll_arrow.png"), 375.f);
-    resolutionBox->setPosition(600.f, 600.f);
+    resolutionBox->setPosition(600.f, 640.f);
 
     const auto& modes = getContext().appInstance.getVideoSettings().AvailableVideoModes;
     auto i = 0u;
@@ -177,19 +166,29 @@ void MenuState::buildMenu(const sf::Font& font)
     m_uiContainer.addControl(resolutionBox);
 
     auto fullscreenCheckbox = std::make_shared<ui::CheckBox>(font, getContext().appInstance.getTexture("assets/images/ui/checkbox.png"));
-    fullscreenCheckbox->setPosition(1100.f, 600.f);
+    fullscreenCheckbox->setPosition(1100.f, 640.f);
     fullscreenCheckbox->setText("Full Screen");
     fullscreenCheckbox->setCallback([this](const ui::CheckBox*)
     {
 
     }, ui::CheckBox::Event::CheckChanged);
+    fullscreenCheckbox->check((getContext().appInstance.getVideoSettings().WindowStyle & sf::Style::Fullscreen) != 0);
     m_uiContainer.addControl(fullscreenCheckbox);
 
     auto applyButton = std::make_shared<ui::Button>(font, getContext().appInstance.getTexture("assets/images/ui/button.png"));
     applyButton->setText("Apply");
     applyButton->setAlignment(ui::Alignment::Centre);
     applyButton->setPosition(860.f, 795.f);
-    applyButton->setCallback([](){}); //TODO handle click
+    applyButton->setCallback([fullscreenCheckbox, resolutionBox, this]()
+    {
+        auto res = resolutionBox->getSelectedValue();
+
+        App::VideoSettings settings;
+        settings.VideoMode.width = res >> 16;
+        settings.VideoMode.height = res & 0xFFFF;
+        settings.WindowStyle = (fullscreenCheckbox->checked()) ? sf::Style::Fullscreen : sf::Style::Close;
+        getContext().appInstance.applyVideoSettings(settings);
+    });
     m_uiContainer.addControl(applyButton);
 
     auto quitButton = std::make_shared<ui::Button>(font, getContext().appInstance.getTexture("assets/images/ui/button.png"));

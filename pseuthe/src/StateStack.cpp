@@ -26,6 +26,8 @@ source distribution.
 *********************************************************************/
 
 #include <StateStack.hpp>
+#include <App.hpp>
+#include <Log.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
@@ -92,18 +94,20 @@ sf::View StateStack::updateView()
     m_context.defaultView.setSize(1920.f, 1080.f);
     m_context.defaultView.setCenter(960.f, 540.f);
 
-    float ratioX = static_cast<float>(m_context.renderWindow.getSize().x) / 16.f;
-    float ratioY = static_cast<float>(m_context.renderWindow.getSize().y) / ratioX;
+    auto vModeWidth = static_cast<float>(m_context.appInstance.getVideoSettings().VideoMode.width);
+    auto vModeHeight = static_cast<float>(m_context.appInstance.getVideoSettings().VideoMode.height);
 
-    if (ratioY != 9)
-    {
-        auto winSize = static_cast<sf::Vector2f>(m_context.renderWindow.getSize());
-        float windowRatio = winSize.x / winSize.y;
-        float viewRatio = 16.f / 9.f;
+    auto winSize = sf::Vector2f(vModeWidth, vModeHeight);
+    float windowRatio = winSize.x / winSize.y;
+    float viewRatio = 16.f / 9.f;
 
-        float sizeY = windowRatio / viewRatio;
-        m_context.defaultView.setViewport({ { 0.f, (1.f - sizeY) / 2.f }, { 1.f, sizeY } });
-    }
+    float sizeY = windowRatio / viewRatio;
+    float top = (1.f - sizeY) / 2.f;
+
+    m_context.defaultView.setViewport({ { 0.f, top }, { 1.f, sizeY } });
+
+    for (auto& state : m_stack)
+        state->setContext(m_context);
 
     return m_context.defaultView;
 }

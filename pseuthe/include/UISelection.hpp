@@ -33,6 +33,7 @@ source distribution.
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 
 namespace ui
 {
@@ -93,6 +94,8 @@ namespace ui
 
         sf::Sprite m_prevArrow;
         sf::Sprite m_nextArrow;
+
+        sf::RectangleShape m_background;
 
         enum class SelectedButton
         {

@@ -51,8 +51,23 @@ public:
 
         VideoSettings()
             : WindowStyle(sf::Style::Close /*sf::Style::Fullscreen*/),
-            VideoMode(1024, 576),
+            VideoMode(1024, 768),
             VSync(true){}
+
+        bool operator == (const VideoSettings& vs)
+        {
+            if (&vs == this) return true;
+            return
+                (vs.VideoMode == this->VideoMode
+                && vs.VSync == this->VSync
+                && vs.WindowStyle == this->WindowStyle);
+        }
+    };
+
+    struct AudioSettings final
+    {
+        bool muted = false;
+        float volume = 1.f;
     };
 
     App();
@@ -64,12 +79,17 @@ public:
     void pause();
     void resume();
 
+    const AudioSettings& getAudioSettings() const;
+    void setAudioSettings(AudioSettings);
+
     const VideoSettings& getVideoSettings() const;
+    void applyVideoSettings(const VideoSettings&);
 
     sf::Font& getFont(const std::string& path);
     sf::Texture& getTexture(const std::string& path);
     MessageBus& getMessageBus();
 private:
+    AudioSettings m_audioSettings;
 
     VideoSettings m_videoSettings;
     sf::RenderWindow m_renderWindow;

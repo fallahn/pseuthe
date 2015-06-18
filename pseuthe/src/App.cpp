@@ -111,9 +111,34 @@ void App::resume()
     timeSinceLastUpdate = 0.f;
 }
 
+const App::AudioSettings& App::getAudioSettings() const
+{
+    return m_audioSettings;
+}
+
+void App::setAudioSettings(AudioSettings as)
+{
+    m_audioSettings = as;
+}
+
 const App::VideoSettings& App::getVideoSettings() const
 {
     return m_videoSettings;
+}
+
+void App::applyVideoSettings(const VideoSettings& settings)
+{
+    if (m_videoSettings == settings) return;
+
+    auto availableModes = m_videoSettings.AvailableVideoModes;
+
+    m_renderWindow.create(settings.VideoMode, windowTitle, settings.WindowStyle);
+    m_renderWindow.setVerticalSyncEnabled(settings.VSync);
+    m_renderWindow.setMouseCursorVisible(false);
+    //TODO test validity and restore old settings if possible
+    m_videoSettings = settings;
+    m_videoSettings.AvailableVideoModes = availableModes;
+    m_stateStack.updateView();
 }
 
 sf::Font& App::getFont(const std::string& path)

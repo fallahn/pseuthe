@@ -68,6 +68,8 @@ public:
     virtual bool update(float dt) = 0;
     virtual void draw() = 0;
 
+    void setContext(Context);
+
 protected:
     void requestStackPush(States::ID id);
     void requestStackPop();

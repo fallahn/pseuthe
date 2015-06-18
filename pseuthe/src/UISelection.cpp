@@ -40,14 +40,17 @@ using namespace ui;
 namespace
 {
     sf::Vector2f currentMousePos;
+    const sf::Color borderColour(160u, 160u, 160u);
+    const float borderThickness = 4.f;
 }
 
 Selection::Selection(const sf::Font& font, const sf::Texture& texture, float length)
     : m_length          (length),
     m_selectedIndex     (0u),
-    m_selectedText      ("", font, 30),
+    m_selectedText      ("", font, 36),
+    m_prevArrow         (texture),
     m_nextArrow         (texture),
-    m_prevArrow         (texture)
+    m_background        ()
 {
     sf::IntRect subrect({ 0, 0 }, sf::Vector2i(texture.getSize()));
     subrect.height /= State::Count;
@@ -67,6 +70,13 @@ Selection::Selection(const sf::Font& font, const sf::Texture& texture, float len
 
     m_bounds.width = m_length;
     m_bounds.height = static_cast<float>(subrect.height);
+
+    //m_background.setFillColor(sf::Color::Black);
+    //m_background.setOutlineColor(borderColour);
+    //m_background.setOutlineThickness(-borderThickness);
+    //m_background.setSize({ m_length - static_cast<float>(subrect.width * 2.f), m_bounds.height - (borderThickness * 2.f) });
+    //m_background.setOrigin(m_background.getSize() / 2.f);
+    //m_background.setPosition(m_bounds.width / 2.f, m_bounds.height / 2.f);
 }
 
 //public
@@ -225,6 +235,7 @@ void Selection::selectItem(sf::Uint16 val)
 void Selection::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     states.transform *= getTransform();
+    //rt.draw(m_background, states);
     rt.draw(m_prevArrow, states);
     rt.draw(m_nextArrow, states);
     rt.draw(m_selectedText, states);
@@ -233,7 +244,7 @@ void Selection::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 void Selection::updateText()
 {
     Util::Position::centreOrigin(m_selectedText);
-    m_selectedText.setPosition(m_length / 2.f, m_selectedText.getLocalBounds().height / 2.f);
+    m_selectedText.setPosition(m_length / 2.f, m_selectedText.getLocalBounds().height / 4.f);
 }
 
 ///---------///

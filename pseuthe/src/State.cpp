@@ -43,6 +43,11 @@ State::State(StateStack& stateStack, Context context)
 
 }
 
+void State::setContext(Context c)
+{
+    m_context.defaultView = c.defaultView;
+}
+
 //protected
 void State::requestStackPush(States::ID id)
 {

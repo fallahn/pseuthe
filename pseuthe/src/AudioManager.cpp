@@ -35,8 +35,11 @@ source distribution.
 
 namespace
 {
+    const float maxMusicVolume = 100.f;
     float musicVolume = 100.f;
+    const float maxFxVolume = 65.f;
     float fxVolume = 60.f;
+
     float fadeDelay = 2.f; //delay starting the fade while the initial state is loaded
     const std::string impactSoundPath = "assets/sound/chimes01/";
     const std::string fxSoundPath = "assets/sound/fx/";
@@ -113,7 +116,15 @@ void AudioManager::handleMessage(const Message& msg)
         switch (msg.ui.type)
         {
         case Message::UIEvent::RequestVolumeChange:
-            //TODO actually handle this without messing up the fade in
+            musicVolume = std::min(maxMusicVolume * msg.ui.value, maxMusicVolume);
+            fxVolume = std::min(maxFxVolume * msg.ui.value, maxFxVolume);
+
+            if (fadeDelay <= 0)
+            {
+                m_musicPlayer.setVolume(musicVolume);
+                m_soundPlayer.setVolume(fxVolume);
+            }
+
             break;
         case Message::UIEvent::RequestAudioMute:
             m_muted = true;

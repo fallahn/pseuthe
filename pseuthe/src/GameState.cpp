@@ -43,7 +43,7 @@ source distribution.
 namespace
 {
     const int nubbinCount = 24;
-    const std::string version("version 0.4.10");
+    const std::string version("version 0.4.11");
 }
 
 GameState::GameState(StateStack& stateStack, Context context)
@@ -52,8 +52,6 @@ GameState::GameState(StateStack& stateStack, Context context)
     m_scene     (m_messageBus),
     m_physWorld (m_messageBus)
 {
-    m_scene.setView(context.defaultView);
-
     for (int i = 0; i < nubbinCount; ++i)
     {
         auto ent = createEntity();
@@ -80,7 +78,7 @@ GameState::GameState(StateStack& stateStack, Context context)
     m_vignette.setSize({ 1920.f, 1080.f });
     m_vignette.setTexture(&context.appInstance.getTexture("assets/images/vignette.png"));
     m_vignette.setOrigin(m_vignette.getSize() / 2.f);
-    m_vignette.setPosition(context.renderWindow.getView().getCenter());
+    
 
     m_versionText.setFont(context.appInstance.getFont("assets/fonts/VeraMono.ttf"));
     m_versionText.setString(version);
@@ -90,6 +88,10 @@ GameState::GameState(StateStack& stateStack, Context context)
 
 bool GameState::update(float dt)
 {
+    //probably ok to do here, although we could always raise an event when resizing window
+    m_vignette.setPosition(getContext().renderWindow.getDefaultView().getCenter());    
+    m_scene.setView(getContext().defaultView);
+
     m_audioManager.update(dt);
     m_physWorld.update(dt);
     m_scene.update(dt);
