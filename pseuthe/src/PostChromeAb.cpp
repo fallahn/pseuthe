@@ -32,7 +32,7 @@ source distribution.
 
 namespace
 {
-    float time = 0.f;
+    float atime = 0.f;
     const float scanlineCount = 5500.f;
 }
 
@@ -45,10 +45,10 @@ PostChromeAb::PostChromeAb()
 void PostChromeAb::apply(const sf::RenderTexture& src, sf::RenderTarget& dst)
 {
     float windowRatio = static_cast<float>(dst.getSize().y) / static_cast<float>(src.getSize().y);
-    
+
     auto& shader = m_shaderResource.get(Shader::Type::PostChromeAb);
     shader.setParameter("u_sourceTexture", src.getTexture());
-    shader.setParameter("u_time", time * (10.f * windowRatio));
+    shader.setParameter("u_time", atime * (10.f * windowRatio));
     shader.setParameter("u_lineCount", windowRatio  * scanlineCount);
 
     applyShader(shader, dst);
@@ -56,5 +56,5 @@ void PostChromeAb::apply(const sf::RenderTexture& src, sf::RenderTarget& dst)
 
 void PostChromeAb::update(float dt)
 {
-    time += dt;
+    atime += dt;
 }

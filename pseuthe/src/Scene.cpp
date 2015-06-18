@@ -82,7 +82,7 @@ void Scene::handleMessage(const Message& msg)
 
 void Scene::addEntity(Entity::Ptr& entity, Layer layer)
 {
-    m_layers[layer]->addChild(std::move(entity));
+    m_layers[layer]->addChild(entity);
 }
 
 Entity& Scene::getLayer(Layer l)

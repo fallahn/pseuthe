@@ -44,7 +44,7 @@ namespace
 PhysicsComponent::PhysicsComponent(float radius, MessageBus& m)
     : Component     (m),
     m_radius        (radius),
-    m_mass          ((std::powf(radius, 2.f) * PI * density / 2.f)),
+    m_mass          ((std::pow(radius, 2.f) * PI * density / 2.f)),
     m_inverseMass   (1.f / m_mass)
 {
     m_velocity.x = static_cast<float>(Util::Random::value(-maxVelocity, maxVelocity));
@@ -85,7 +85,7 @@ void PhysicsComponent::physicsUpdate(float dt, const sf::FloatRect& bounds)
 
     if (!bounds.contains(m_position))
     {
-        if (m_position.x > bounds.left 
+        if (m_position.x > bounds.left
             && m_position.x < bounds.left + bounds.width)
         {
             //we're off the top or bottom, so bounce
@@ -106,7 +106,7 @@ void PhysicsComponent::physicsUpdate(float dt, const sf::FloatRect& bounds)
             && m_position.y < bounds.top + bounds.height)
         {
             //off the edge so reposition somewhere
-            (m_velocity.x > 0) ? m_position.x -= bounds.width : m_position.x += bounds.width;           
+            (m_velocity.x > 0) ? m_position.x -= bounds.width : m_position.x += bounds.width;
         }
         else
         {

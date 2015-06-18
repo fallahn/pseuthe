@@ -87,7 +87,7 @@ void PhysicsWorld::update(float dt)
 
         PhysicsComponent::Manifold m;
         m.normal = Util::Vector::normalise(collisionVec);
-        m.penetration = std::sqrtf((c.first->getRadiusSquared() + c.second->getRadiusSquared()) - Util::Vector::lengthSquared(collisionVec)) / 2.f;
+        m.penetration = std::sqrt((c.first->getRadiusSquared() + c.second->getRadiusSquared()) - Util::Vector::lengthSquared(collisionVec)) / 2.f;
 
         float relForce = -Util::Vector::dot(m.normal, c.first->getVelocity() - c.second->getVelocity());
         float impulse = (elasticity * relForce) / (c.first->getInverseMass() + c.second->getInverseMass());

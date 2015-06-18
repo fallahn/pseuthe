@@ -43,7 +43,7 @@ source distribution.
 namespace
 {
     const int nubbinCount = 24;
-    const std::string version("version 0.4.9");
+    const std::string version("version 0.4.10");
 }
 
 GameState::GameState(StateStack& stateStack, Context context)
@@ -55,21 +55,27 @@ GameState::GameState(StateStack& stateStack, Context context)
     m_scene.setView(context.defaultView);
 
     for (int i = 0; i < nubbinCount; ++i)
-        m_scene.addEntity(createEntity(), Scene::Layer::FrontMiddle);
+    {
+        auto ent = createEntity();
+        m_scene.addEntity(ent, Scene::Layer::FrontMiddle);
+    }
 
-    m_scene.getLayer(Scene::Layer::BackRear).addComponent<GradientDrawable>(std::make_unique<GradientDrawable>(m_messageBus));
-    
-    //auto caustics = std::make_unique<CausticDrawable>(m_messageBus);
-    m_scene.getLayer(Scene::Layer::BackMiddle).addComponent<CausticDrawable>(std::make_unique<CausticDrawable>(m_messageBus));
+    auto grad = std::make_unique<GradientDrawable>(m_messageBus);
+    m_scene.getLayer(Scene::Layer::BackRear).addComponent<GradientDrawable>(grad);
+
+    auto caustics = std::make_unique<CausticDrawable>(m_messageBus);
+    m_scene.getLayer(Scene::Layer::BackMiddle).addComponent<CausticDrawable>(caustics);
     float xPos = static_cast<float>(Util::Random::value(0, 1920));
     m_scene.getLayer(Scene::Layer::BackMiddle).setPosition(xPos, -200.f);
-    m_scene.getLayer(Scene::Layer::BackMiddle).addComponent<LightPosition>(std::make_unique<LightPosition>(m_messageBus));
+    auto lightPos = std::make_unique<LightPosition>(m_messageBus);
+    m_scene.getLayer(Scene::Layer::BackMiddle).addComponent<LightPosition>(lightPos);
 
     auto particleField = std::make_unique<ParticleField>(sf::FloatRect(-30.f, -30.f, 1980.f, 1140.f), m_messageBus);
     particleField->setTexture(context.appInstance.getTexture("assets/images/particles/field.png"));
     m_scene.getLayer(Scene::Layer::BackFront).addComponent<ParticleField>(particleField);
 
-    m_scene.getLayer(Scene::Layer::FrontFront).addComponent<FadeDrawable>(std::make_unique<FadeDrawable>(m_messageBus));
+    auto fade = std::make_unique<FadeDrawable>(m_messageBus);
+    m_scene.getLayer(Scene::Layer::FrontFront).addComponent<FadeDrawable>(fade);
 
     m_vignette.setSize({ 1920.f, 1080.f });
     m_vignette.setTexture(&context.appInstance.getTexture("assets/images/vignette.png"));
@@ -83,7 +89,7 @@ GameState::GameState(StateStack& stateStack, Context context)
 }
 
 bool GameState::update(float dt)
-{   
+{
     m_audioManager.update(dt);
     m_physWorld.update(dt);
     m_scene.update(dt);
@@ -134,7 +140,7 @@ Entity::Ptr GameState::createEntity()
     e->addComponent<CircleDrawable>(cd);
 
     PhysicsComponent::Ptr pc = m_physWorld.addBody(size);
-    e->addComponent<PhysicsComponent>(pc); 
+    e->addComponent<PhysicsComponent>(pc);
 
     ParticleSystem::Ptr ps = ParticleSystem::create(Particle::Type::Echo, m_messageBus);
     ps->setTexture(getContext().appInstance.getTexture("assets/images/particles/circle.png"));
