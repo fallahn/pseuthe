@@ -65,7 +65,7 @@ App::App()
     {
         return (!vm.isValid() || vm.bitsPerPixel != 32);
     }), m_videoSettings.AvailableVideoModes.end());
-
+    std::reverse(m_videoSettings.AvailableVideoModes.begin(), m_videoSettings.AvailableVideoModes.end());
 
     update = std::bind(&App::updateApp, this, _1);
 }

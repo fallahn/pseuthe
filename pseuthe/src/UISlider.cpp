@@ -49,6 +49,7 @@ Slider::Slider(const sf::Font& font, const sf::Texture& texture, float length, f
     m_handleSprite  (texture),
     m_slotShape     ({ length, thickness }),
     m_text          ("", font, 36u),
+    m_valueText     ("0", font, 36u),
     m_borderColour  (160u, 160u, 160u),
     m_activeColour  (208, 208u, 208u)
 {
@@ -64,6 +65,8 @@ Slider::Slider(const sf::Font& font, const sf::Texture& texture, float length, f
     m_slotShape.setFillColor(sf::Color::Black);
     m_slotShape.setOutlineColor(m_borderColour);
     m_slotShape.setOutlineThickness(thickness);
+
+    m_valueChanged.push_back(std::bind(&Slider::valueChanged, this, std::placeholders::_1));
 }
 
 //public
@@ -161,7 +164,7 @@ void Slider::handleEvent(const sf::Event& e, const sf::Vector2f& mousePos)
             localPos.y = std::max(localPos.y, 0.f);
             m_handleSprite.setPosition(m_handleSprite.getPosition().x, localPos.y);
         }
-        if (m_valueChanged) m_valueChanged(this);
+        for (auto& c : m_valueChanged) c(this);
     }
 }
 
@@ -264,7 +267,7 @@ void Slider::setValue(float value)
         pos.y = (m_length / m_maxValue) * value;
     }
     m_handleSprite.setPosition(pos);
-    if (m_valueChanged) m_valueChanged(this);
+    for (auto& c : m_valueChanged) c(this);
 }
 
 float Slider::getValue() const
@@ -311,7 +314,7 @@ void Slider::setCallback(Slider::Callback c, Event e)
         m_setInactive = std::move(c);
         break;
     case Event::ValueChanged:
-        m_valueChanged = std::move(c);
+        m_valueChanged.push_back(std::move(c));
         break;
     default: break;
     }
@@ -326,12 +329,17 @@ void Slider::draw(sf::RenderTarget& rt, sf::RenderStates states)const
     states.blendMode = sf::BlendAlpha;
     rt.draw(m_handleSprite, states);
     rt.draw(m_text, states);
+    rt.draw(m_valueText, states);
 }
 
 void Slider::updateText()
 {
     Util::Position::centreOrigin(m_text);
     m_text.setPosition(m_text.getOrigin().x, -m_text.getLocalBounds().height/* * 2.f*/);
+
+    Util::Position::centreOrigin(m_valueText);
+    m_valueText.setPosition(m_text.getPosition());
+    m_valueText.move(m_length - ((m_text.getLocalBounds().width + m_valueText.getLocalBounds().width) / 2.f), 0.f);
 }
 
 void Slider::increase()
@@ -347,7 +355,7 @@ void Slider::increase()
     }
     m_handleSprite.setPosition(pos);
 
-    if (m_valueChanged) m_valueChanged(this);
+    for (auto& c : m_valueChanged) c(this);
 }
 
 void Slider::decrease()
@@ -363,5 +371,11 @@ void Slider::decrease()
     }
     m_handleSprite.setPosition(pos);
 
-    if (m_valueChanged) m_valueChanged(this);
+    for (auto& c : m_valueChanged) c(this);
+}
+
+void Slider::valueChanged(const Slider*)
+{
+    m_valueText.setString(std::to_string(static_cast<int>(getValue() * (100.f / m_maxValue))));
+    updateText();
 }

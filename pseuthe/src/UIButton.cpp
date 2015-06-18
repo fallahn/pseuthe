@@ -38,9 +38,9 @@ Button::Button(const sf::Font& font, const sf::Texture& texture)
     m_toggleButton  (false)
 {
     sf::IntRect subrect({ 0, 0 }, sf::Vector2i(texture.getSize()));
-    subrect.height /= 3;
+    subrect.height /= State::Count;
 
-    for (auto i = 0u; i < 3u; ++i)
+    for (auto i = 0; i < State::Count; ++i)
     {
         m_subRects.push_back(subrect);
         subrect.top += subrect.height;

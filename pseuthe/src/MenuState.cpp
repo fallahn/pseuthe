@@ -32,7 +32,7 @@ source distribution.
 
 #include <UISlider.hpp>
 #include <UICheckBox.hpp>
-#include <UIComboBox.hpp>
+#include <UISelection.hpp>
 #include <UIButton.hpp>
 
 #include <SFML/Window/Event.hpp>
@@ -155,8 +155,8 @@ void MenuState::buildMenu(const sf::Font& font)
     m_uiContainer.addControl(muteCheckbox);
 
 
-    auto resolutionBox = std::make_shared<ui::ComboBox>(font, getContext().appInstance.getTexture("assets/images/ui/combobox.png"));
-    resolutionBox->setPosition(780.f, 600.f);
+    auto resolutionBox = std::make_shared<ui::Selection>(font, getContext().appInstance.getTexture("assets/images/ui/scroll_arrow.png"), 375.f);
+    resolutionBox->setPosition(600.f, 600.f);
 
     const auto& modes = getContext().appInstance.getVideoSettings().AvailableVideoModes;
     auto i = 0u;
@@ -188,7 +188,17 @@ void MenuState::buildMenu(const sf::Font& font)
     auto applyButton = std::make_shared<ui::Button>(font, getContext().appInstance.getTexture("assets/images/ui/button.png"));
     applyButton->setText("Apply");
     applyButton->setAlignment(ui::Alignment::Centre);
-    applyButton->setPosition(960.f, 795.f);
+    applyButton->setPosition(860.f, 795.f);
     applyButton->setCallback([](){}); //TODO handle click
     m_uiContainer.addControl(applyButton);
+
+    auto quitButton = std::make_shared<ui::Button>(font, getContext().appInstance.getTexture("assets/images/ui/button.png"));
+    quitButton->setText("Quit");
+    quitButton->setAlignment(ui::Alignment::Centre);
+    quitButton->setPosition(1060.f, 795.f);
+    quitButton->setCallback([this]()
+    {
+        getContext().renderWindow.close();
+    });
+    m_uiContainer.addControl(quitButton);
 }

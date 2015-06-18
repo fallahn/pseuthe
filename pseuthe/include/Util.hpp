@@ -134,8 +134,8 @@ namespace Util
         static sf::Vector2f rotate(const sf::Vector2f& v, float degrees)
         {
             const float rads = degrees * degToRad;
-            auto ca = std::cosf(rads);
-            auto sa = std::sinf(rads);
+            auto ca = std::cos(rads);
+            auto sa = std::sin(rads);
             return{ ca*v.x - sa*v.y, sa*v.x + ca*v.y };
         }
 
@@ -199,7 +199,7 @@ namespace Util
 
         static float round(float v)
         {
-            return std::floorf(v + 0.5f);
+            return std::floor(v + 0.5f);
         }
     }
 }

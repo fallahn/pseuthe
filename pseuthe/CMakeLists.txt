@@ -59,7 +59,7 @@ add_executable(
 	src/Component.cpp
 	src/EchoDrawable.cpp
 	src/Entity.cpp
-	src/FadeDrawable.hpp
+	src/FadeDrawable.cpp
 	src/FileSystem.cpp
 	src/FontResource.cpp
 	src/GameState.cpp
@@ -87,6 +87,7 @@ add_executable(
 	src/UIComboBox.cpp
 	src/UIContainer.cpp
 	src/UIControl.cpp
+	src/UISelection.cpp
 	src/UISlider.cpp)
 
 #copy resources to output directory

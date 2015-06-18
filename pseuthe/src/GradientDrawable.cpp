@@ -48,7 +48,7 @@ namespace
         float increment = TAU / static_cast<float>(pointCount);
 
         for (float angle = 0.f; angle <= TAU; angle += increment)
-            retVal.emplace_back(centre.x + radius * std::cosf(angle), centre.y + radius * std::sinf(angle));
+            retVal.emplace_back(centre.x + radius * std::cos(angle), centre.y + radius * std::sin(angle));
 
         return retVal;
     }

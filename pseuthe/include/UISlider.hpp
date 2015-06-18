@@ -104,11 +104,12 @@ namespace ui
         sf::RectangleShape m_slotShape;
         std::vector<sf::IntRect> m_subRects;
         sf::Text m_text;
+        sf::Text m_valueText;
 
         sf::Color m_borderColour;
         sf::Color m_activeColour;
 
-        Callback m_valueChanged;
+        std::vector<Callback> m_valueChanged;
         Callback m_setActive;
         Callback m_setInactive;
 
@@ -117,6 +118,8 @@ namespace ui
 
         void increase();
         void decrease();
+
+        void valueChanged(const Slider*);
     };
 }
 

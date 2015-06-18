@@ -131,7 +131,7 @@ CausticDrawable::Ray::Ray()
     float step = TAU / stepCount;
     for (float i = 0.f; i < stepCount; ++i)
     {
-        m_wavetable.push_back(std::sinf(step * i));
+        m_wavetable.push_back(std::sin(step * i));
     }
 
     m_currentIndex = Util::Random::value(0, static_cast<int>(stepCount) - 1);
