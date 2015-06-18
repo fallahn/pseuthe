@@ -62,6 +62,11 @@ void MusicPlayer::setPaused(bool paused)
     (paused) ? m_music.pause() : m_music.play();
 }
 
+bool MusicPlayer::playing() const
+{
+    return (m_music.getStatus() == sf::SoundSource::Playing);
+}
+
 void MusicPlayer::setVolume(float volume)
 {
     assert(volume >= 0.f && volume <= 100.f);

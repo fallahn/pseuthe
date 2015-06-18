@@ -109,6 +109,9 @@ private:
     void draw();
 
     void registerStates();
+
+    void loadSettings();
+    void saveSettings();
 };
 
 #endif //APP_HPP_

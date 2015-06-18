@@ -43,7 +43,7 @@ source distribution.
 namespace
 {
     const int nubbinCount = 24;
-    const std::string version("version 0.4.11");
+    const std::string version("version 0.4.12");
 }
 
 GameState::GameState(StateStack& stateStack, Context context)
@@ -79,11 +79,12 @@ GameState::GameState(StateStack& stateStack, Context context)
     m_vignette.setTexture(&context.appInstance.getTexture("assets/images/vignette.png"));
     m_vignette.setOrigin(m_vignette.getSize() / 2.f);
     
-
     m_versionText.setFont(context.appInstance.getFont("assets/fonts/VeraMono.ttf"));
     m_versionText.setString(version);
     m_versionText.setCharacterSize(14u);
     m_versionText.setPosition(10.f, 10.f);
+
+    m_audioManager.mute(context.appInstance.getAudioSettings().muted);
 }
 
 bool GameState::update(float dt)

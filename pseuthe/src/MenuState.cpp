@@ -126,6 +126,11 @@ void MenuState::buildMenu(const sf::Font& font)
         msg.ui.type = Message::UIEvent::RequestVolumeChange;
         msg.ui.value = slider->getValue();
         m_messageBus.send(msg);
+
+        auto audioSettings = getContext().appInstance.getAudioSettings();
+        audioSettings.volume = slider->getValue();
+        getContext().appInstance.setAudioSettings(audioSettings);
+
     }, ui::Slider::Event::ValueChanged);
     soundSlider->setValue(getContext().appInstance.getAudioSettings().volume); //set this *after* callback is set
     m_uiContainer.addControl(soundSlider);
@@ -139,6 +144,10 @@ void MenuState::buildMenu(const sf::Font& font)
         msg.type = Message::Type::UI;
         msg.ui.type = (checkBox->checked()) ? Message::UIEvent::RequestAudioMute : Message::UIEvent::RequestAudioUnmute;
         m_messageBus.send(msg);
+
+        auto audioSettings = getContext().appInstance.getAudioSettings();
+        audioSettings.muted = checkBox->checked();
+        getContext().appInstance.setAudioSettings(audioSettings);
     }, ui::CheckBox::Event::CheckChanged);
     muteCheckbox->check(getContext().appInstance.getAudioSettings().muted);
     m_uiContainer.addControl(muteCheckbox);

@@ -29,11 +29,13 @@ source distribution.
 #include <MenuState.hpp>
 #include <GameState.hpp>
 #include <PauseState.hpp>
+#include <Util.hpp>
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/Shader.hpp>
 
 #include <algorithm>
+#include <fstream>
 
 using namespace std::placeholders;
 
@@ -45,6 +47,8 @@ namespace
     float timeSinceLastUpdate = 0.f;
 
     const std::string windowTitle("pseuthe");
+
+    const std::string settingsFile("settings.set");
 }
 
 App::App()
@@ -55,6 +59,8 @@ App::App()
     registerStates();
     m_stateStack.pushState(States::ID::Main);
     m_stateStack.pushState(States::ID::Menu);
+
+    loadSettings();
 
     m_renderWindow.setVerticalSyncEnabled(m_videoSettings.VSync);
 
@@ -97,6 +103,8 @@ void App::run()
         }
         draw();
     }
+
+    saveSettings();
 }
 
 void App::pause()
@@ -218,4 +226,71 @@ void App::registerStates()
     m_stateStack.registerState<MenuState>(States::ID::Menu); 
     m_stateStack.registerState<GameState>(States::ID::Main);
     m_stateStack.registerState<PauseState>(States::ID::Pause);
+}
+
+void App::loadSettings()
+{
+    std::fstream file(settingsFile, std::ios::binary | std::ios::in);
+    if (!file.good() || !file.is_open() || file.fail())
+    {
+        Logger::Log("failed to open settings file for reading", Logger::Type::Error, Logger::Output::All);
+        file.close();
+        return;
+    }
+
+    //check file size
+    file.seekg(0, std::ios::end);
+    int fileSize = static_cast<int>(file.tellg());
+    file.seekg(0, std::ios::beg);
+
+    int expectedSize = sizeof(m_videoSettings.VideoMode) + sizeof(m_videoSettings.WindowStyle) + sizeof(AudioSettings);
+
+    if (fileSize != expectedSize)
+    {
+        Logger::Log("settings file not expectred file size", Logger::Type::Error, Logger::Output::All);
+        file.close();
+        return;
+    }
+
+    std::vector<char> data(expectedSize);
+    file.read(&data[0], expectedSize);
+    file.close();
+
+    VideoSettings  newVideoSettings;
+
+    char* dataPtr = &data[0];
+    std::memcpy(&newVideoSettings.VideoMode, dataPtr, sizeof(m_videoSettings.VideoMode));
+    dataPtr += sizeof(m_videoSettings.VideoMode);
+
+    std::memcpy(&newVideoSettings.WindowStyle, dataPtr, sizeof(m_videoSettings.WindowStyle));
+    dataPtr += sizeof(m_videoSettings.WindowStyle);
+
+    std::memcpy(&m_audioSettings, dataPtr, sizeof(m_audioSettings));
+    m_audioSettings.volume = Util::Math::clamp(m_audioSettings.volume, 0.f, 1.f);
+
+    applyVideoSettings(newVideoSettings);
+}
+
+void App::saveSettings()
+{
+    std::fstream file(settingsFile, std::ios::binary | std::ios::out);
+    if (!file.good() || !file.is_open() || file.fail())
+    {
+        Logger::Log("failed to open settings file for writing", Logger::Type::Error, Logger::Output::All);
+        file.close();
+        return;
+    }
+
+    std::vector<char> data(sizeof(m_videoSettings.VideoMode) + sizeof(m_videoSettings.WindowStyle) + sizeof(AudioSettings));
+    char* dataPtr = &data[0];
+    std::memcpy(dataPtr, &m_videoSettings.VideoMode, sizeof(m_videoSettings.VideoMode));
+    dataPtr += sizeof(m_videoSettings.VideoMode);
+
+    std::memcpy(dataPtr, &m_videoSettings.WindowStyle, sizeof(m_videoSettings.WindowStyle));
+    dataPtr += sizeof(m_videoSettings.WindowStyle);
+
+    std::memcpy(dataPtr, &m_audioSettings, sizeof(m_audioSettings));
+
+    file.write(&data[0], data.size());
+    file.close();
 }

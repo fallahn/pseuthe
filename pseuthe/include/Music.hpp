@@ -45,6 +45,7 @@ public:
     void play(const std::string& file, bool loop = false);
     void stop();
     void setPaused(bool paused);
+    bool playing() const;
     void setVolume(float volume);
     float getVolume() const;
 
