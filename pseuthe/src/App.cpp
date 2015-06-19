@@ -36,6 +36,7 @@ source distribution.
 
 #include <algorithm>
 #include <fstream>
+#include <cstring>
 
 using namespace std::placeholders;
 
@@ -192,6 +193,12 @@ void App::handleEvents()
         }
 #endif //_DEBUG_
 
+        if (evt.type == sf::Event::KeyPressed
+            && evt.key.code == sf::Keyboard::F5)
+        {
+            saveScreenshot();
+        }
+
         m_stateStack.handleEvent(evt);
     }
 }
@@ -293,4 +300,22 @@ void App::saveSettings()
 
     file.write(&data[0], data.size());
     file.close();
+}
+
+void App::saveScreenshot()
+{
+    std::time_t time = std::time(NULL);
+    struct tm* timeInfo;
+
+    timeInfo = std::localtime(&time);
+
+    char buffer[40];
+    std::string fileName;
+
+    strftime(buffer, 40, "screenshot%d_%m_%y_%H_%M_%S.png", timeInfo);
+
+    fileName.assign(buffer);
+
+    sf::Image screenCap = m_renderWindow.capture();
+    if (!screenCap.saveToFile(fileName)) Logger::Log("failed to save " + fileName, Logger::Type::Error, Logger::Output::File);
 }

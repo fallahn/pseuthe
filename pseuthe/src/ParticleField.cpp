@@ -34,7 +34,7 @@ source distribution.
 namespace
 {
     const sf::Uint16 maxParticles = 100;
-    const int maxVelLength = 30;
+    const int maxVelLength = 40;
     const float defaultSize = 16.f;
     const float alpha = 150.f;
     const float colour = 190.f;
@@ -61,7 +61,7 @@ ParticleField::ParticleField(const sf::FloatRect& bounds, MessageBus& mb)
         p.colour = { colourByte, colourByte, colourByte };
         p.colour.a = static_cast<sf::Uint8>(scale * alpha);
         p.rotation = static_cast<float>(Util::Random::value(-120, 120));
-        p.velocity = scale * defaultVelocity;
+        p.velocity = scale * scale * defaultVelocity;
         p.setScale(scale, scale);
         //ew. casts. but random floats don't appear as well distributed
         p.setPosition(static_cast<float>(Util::Random::value((int)bounds.left, (int)bounds.left + (int)bounds.width)),

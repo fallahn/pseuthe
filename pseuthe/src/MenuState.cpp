@@ -44,6 +44,7 @@ MenuState::MenuState(StateStack& stateStack, Context context)
     m_menuSprite.setTexture(context.appInstance.getTexture("assets/images/main_menu.png"));
     m_menuSprite.setPosition(context.defaultView.getCenter());
     Util::Position::centreOrigin(m_menuSprite);
+    m_menuSprite.move(0.f, -40.f);
 
     m_cursorSprite.setTexture(context.appInstance.getTexture("assets/images/ui/cursor.png"));
 
@@ -115,7 +116,7 @@ void MenuState::handleMessage(const Message&)
 void MenuState::buildMenu(const sf::Font& font)
 {
     auto soundSlider = std::make_shared<ui::Slider>(font, getContext().appInstance.getTexture("assets/images/ui/slider_handle.png"), 375.f);
-    soundSlider->setPosition(600.f, 550.f);
+    soundSlider->setPosition(600.f, 510.f);
     soundSlider->setText("Volume");
     soundSlider->setMaxValue(1.f);
     soundSlider->setCallback([this](const ui::Slider* slider)
@@ -136,7 +137,7 @@ void MenuState::buildMenu(const sf::Font& font)
     m_uiContainer.addControl(soundSlider);
 
     auto muteCheckbox = std::make_shared<ui::CheckBox>(font, getContext().appInstance.getTexture("assets/images/ui/checkbox.png"));
-    muteCheckbox->setPosition(1100.f, 510.f);
+    muteCheckbox->setPosition(1100.f, 470.f);
     muteCheckbox->setText("Mute");
     muteCheckbox->setCallback([this](const ui::CheckBox* checkBox)
     {
@@ -154,7 +155,7 @@ void MenuState::buildMenu(const sf::Font& font)
 
 
     auto resolutionBox = std::make_shared<ui::Selection>(font, getContext().appInstance.getTexture("assets/images/ui/scroll_arrow.png"), 375.f);
-    resolutionBox->setPosition(600.f, 640.f);
+    resolutionBox->setPosition(600.f, 600.f);
 
     const auto& modes = getContext().appInstance.getVideoSettings().AvailableVideoModes;
     auto i = 0u;
@@ -175,7 +176,7 @@ void MenuState::buildMenu(const sf::Font& font)
     m_uiContainer.addControl(resolutionBox);
 
     auto fullscreenCheckbox = std::make_shared<ui::CheckBox>(font, getContext().appInstance.getTexture("assets/images/ui/checkbox.png"));
-    fullscreenCheckbox->setPosition(1100.f, 640.f);
+    fullscreenCheckbox->setPosition(1100.f, 600.f);
     fullscreenCheckbox->setText("Full Screen");
     fullscreenCheckbox->setCallback([this](const ui::CheckBox*)
     {
@@ -187,7 +188,7 @@ void MenuState::buildMenu(const sf::Font& font)
     auto applyButton = std::make_shared<ui::Button>(font, getContext().appInstance.getTexture("assets/images/ui/button.png"));
     applyButton->setText("Apply");
     applyButton->setAlignment(ui::Alignment::Centre);
-    applyButton->setPosition(860.f, 795.f);
+    applyButton->setPosition(840.f, 755.f);
     applyButton->setCallback([fullscreenCheckbox, resolutionBox, this]()
     {
         auto res = resolutionBox->getSelectedValue();
@@ -203,7 +204,7 @@ void MenuState::buildMenu(const sf::Font& font)
     auto quitButton = std::make_shared<ui::Button>(font, getContext().appInstance.getTexture("assets/images/ui/button.png"));
     quitButton->setText("Quit");
     quitButton->setAlignment(ui::Alignment::Centre);
-    quitButton->setPosition(1060.f, 795.f);
+    quitButton->setPosition(1080.f, 755.f);
     quitButton->setCallback([this]()
     {
         getContext().renderWindow.close();

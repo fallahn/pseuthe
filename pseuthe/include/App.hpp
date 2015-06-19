@@ -112,6 +112,8 @@ private:
 
     void loadSettings();
     void saveSettings();
+
+    void saveScreenshot();
 };
 
 #endif //APP_HPP_

@@ -38,7 +38,8 @@ using namespace ui;
 namespace
 {
     const float thickness = 4.5f;
-    const sf::Color borderColour(160u, 160u, 160u);
+    const sf::Color fillColour(255u, 255u, 255u, 70u);
+    const sf::Color borderColour(250u, 250u, 250u, 100u);
     const float deadzone = 40.f;
 }
 
@@ -50,8 +51,8 @@ Slider::Slider(const sf::Font& font, const sf::Texture& texture, float length, f
     m_slotShape     ({ length, thickness }),
     m_text          ("", font, 36u),
     m_valueText     ("0", font, 36u),
-    m_borderColour  (160u, 160u, 160u),
-    m_activeColour  (208, 208u, 208u)
+    m_borderColour  (borderColour),
+    m_activeColour  (255u, 255u, 255u, 120u)
 {
     sf::IntRect subrect(0, 0, texture.getSize().x, texture.getSize().y / 2u);
     m_subRects.push_back(subrect);
@@ -62,9 +63,9 @@ Slider::Slider(const sf::Font& font, const sf::Texture& texture, float length, f
 
     Util::Position::centreOrigin(m_handleSprite);
     m_slotShape.setOrigin(0.f, thickness / 2.f);
-    m_slotShape.setFillColor(sf::Color::Black);
+    m_slotShape.setFillColor(fillColour);
     m_slotShape.setOutlineColor(m_borderColour);
-    m_slotShape.setOutlineThickness(thickness);
+    m_slotShape.setOutlineThickness(thickness / 2);
 
     m_valueChanged.push_back(std::bind(&Slider::valueChanged, this, std::placeholders::_1));
 }
@@ -324,7 +325,7 @@ void Slider::setCallback(Slider::Callback c, Event e)
 void Slider::draw(sf::RenderTarget& rt, sf::RenderStates states)const
 {
     states.transform *= getTransform();
-    states.blendMode = sf::BlendMultiply;
+    //states.blendMode = sf::BlendAdd;
     rt.draw(m_slotShape, states);
     states.blendMode = sf::BlendAlpha;
     rt.draw(m_handleSprite, states);
@@ -339,7 +340,7 @@ void Slider::updateText()
 
     Util::Position::centreOrigin(m_valueText);
     m_valueText.setPosition(m_text.getPosition());
-    m_valueText.move(m_length - ((m_text.getLocalBounds().width + m_valueText.getLocalBounds().width) / 2.f), 0.f);
+    m_valueText.move(m_length - ((m_text.getLocalBounds().width + m_valueText.getLocalBounds().width) / 2.f), -10.f);
 }
 
 void Slider::increase()

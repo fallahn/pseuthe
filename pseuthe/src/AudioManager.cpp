@@ -37,7 +37,7 @@ namespace
 {
     const float maxMusicVolume = 100.f;
     float musicVolume = 100.f;
-    const float maxFxVolume = 65.f;
+    const float maxFxVolume = 85.f;
     float fxVolume = 60.f;
 
     float fadeDelay = 2.f; //delay starting the fade while the initial state is loaded
