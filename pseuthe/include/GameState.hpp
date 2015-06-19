@@ -68,6 +68,7 @@ private :
     sf::Text m_versionText;
 
     Entity::Ptr createEntity();
+    void spawnPlayer();
 };
 
 #endif //GAME_STATE_HPP_

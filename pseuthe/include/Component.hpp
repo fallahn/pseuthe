@@ -33,6 +33,7 @@ source distribution.
 #include <SFML/Config.hpp>
 
 #include <memory>
+#include <string>
 
 class Entity;
 class Message;
@@ -58,11 +59,17 @@ public:
     virtual void entityUpdate(Entity&, float) = 0;
     virtual void handleMessage(const Message&) = 0;
 
+    //called when the component is first added to an entity
+    virtual void onStart(Entity&);
+
     void destroy();
     bool destroyed() const;
 
     void setParentUID(sf::Uint64 uid);
     sf::Uint64 getParentUID() const;
+
+    void setName(const std::string&);
+    const std::string& getName() const;
 
 protected:
     void sendMessage(const Message&);
@@ -73,6 +80,8 @@ private:
     bool m_destroyed;
 
     sf::Uint64 m_parentUID;
+
+    std::string m_name;
 };
 
 #endif //COMPONENT_HPP_

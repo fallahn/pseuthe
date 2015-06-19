@@ -91,6 +91,7 @@ bool MenuState::handleEvent(const sf::Event& evt)
         switch (evt.key.code)
         {
         case sf::Keyboard::Space:
+        case sf::Keyboard::Escape:
             requestStackPop();
             return false;
         default: break;
@@ -115,6 +116,14 @@ void MenuState::handleMessage(const Message&)
 //private
 void MenuState::buildMenu(const sf::Font& font)
 {
+    //auto buttonClose = std::make_shared<ui::Button>(font, getContext().appInstance.getTexture("assets/images/ui/close.png"));
+    //buttonClose->setPosition(1421.f, 332.f);
+    //buttonClose->setCallback([this]()
+    //{
+    //    requestStackPop();
+    //});
+    //m_uiContainer.addControl(buttonClose);
+    
     auto soundSlider = std::make_shared<ui::Slider>(font, getContext().appInstance.getTexture("assets/images/ui/slider_handle.png"), 375.f);
     soundSlider->setPosition(600.f, 510.f);
     soundSlider->setText("Volume");

@@ -74,7 +74,32 @@ public:
             m_drawables.push_back(dynamic_cast<sf::Drawable*>(c.get()));
         }
         c->setParentUID(m_uid);
+        c->onStart(*this);
         m_pendingComponents.push_back(std::move(c));
+    }
+
+    template <typename T>
+    T* getComponent(const std::string& name)
+    {
+        if (name.empty()) return nullptr;
+        auto result = std::find_if(m_components.begin(), m_components.end(), [&name](const Component::Ptr& c)
+        {
+            return (c->getName() == name);
+        });
+
+        if (result == m_components.end())
+        {
+            result = std::find_if(m_pendingComponents.begin(), m_pendingComponents.end(), [&name](const Component::Ptr& c)
+            {
+                return (c->getName() == name);
+            });
+
+            if (result == m_pendingComponents.end())
+            {
+                return nullptr;
+            }
+        }
+        return dynamic_cast<T*>(result->get());
     }
 
     void destroy();

@@ -86,6 +86,7 @@
     <ClCompile Include="src\FontResource.cpp" />
     <ClCompile Include="src\GameState.cpp" />
     <ClCompile Include="src\GradientDrawable.cpp" />
+    <ClCompile Include="src\InputComponent.cpp" />
     <ClCompile Include="src\LightPosition.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MenuState.cpp" />
@@ -126,6 +127,7 @@
     <ClInclude Include="include\FileSystem.hpp" />
     <ClInclude Include="include\GameState.hpp" />
     <ClInclude Include="include\GradientDrawable.hpp" />
+    <ClInclude Include="include\InputComponent.hpp" />
     <ClInclude Include="include\LightPosition.hpp" />
     <ClInclude Include="include\Log.hpp" />
     <ClInclude Include="include\MenuState.hpp" />

@@ -25,60 +25,28 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
+//handles real time input for player
+
+#ifndef INPUT_COMPONENT_HPP_
+#define INPUT_COMPONENT_HPP_
+
 #include <Component.hpp>
-#include <MessageBus.hpp>
 
-Component::Component(MessageBus& m)
-    : m_messageBus  (m),
-    m_destroyed     (false),
-    m_parentUID     (0u)
+class PhysicsComponent;
+class InputComponent final : public Component
 {
+public:
+    explicit InputComponent(MessageBus&);
+    ~InputComponent() = default;
 
-}
+    Component::Type type() const override;
+    void entityUpdate(Entity&, float) override;
+    void handleMessage(const Message&) override;
+    void onStart(Entity&) override;
 
-//public
-void Component::onStart(Entity&)
-{
+private:
 
-}
+    PhysicsComponent* m_physicsComponent;
+};
 
-void Component::destroy()
-{
-    m_destroyed = true;
-}
-
-bool Component::destroyed() const
-{
-    return m_destroyed;
-}
-
-void Component::setParentUID(sf::Uint64 uid)
-{
-    m_parentUID = uid;
-}
-
-void Component::setName(const std::string& name)
-{
-    m_name = name;
-}
-
-const std::string& Component::getName() const
-{
-    return m_name;
-}
-
-//protected
-void Component::sendMessage(const Message& m)
-{
-    m_messageBus.send(m);
-}
-
-MessageBus& Component::getMessageBus() const
-{
-    return m_messageBus;
-}
-
-sf::Uint64 Component::getParentUID() const
-{
-    return m_parentUID;
-}
+#endif //INPUT_COMPONENT_HPP_

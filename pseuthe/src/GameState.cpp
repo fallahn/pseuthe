@@ -33,6 +33,7 @@ source distribution.
 #include <FadeDrawable.hpp>
 #include <CausticDrawable.hpp>
 #include <LightPosition.hpp>
+#include <InputComponent.hpp>
 #include <App.hpp>
 #include <Log.hpp>
 #include <Util.hpp>
@@ -42,8 +43,9 @@ source distribution.
 
 namespace
 {
+    const float playerSize = 20.f;
     const int nubbinCount = 24;
-    const std::string version("version 0.4.13");
+    const std::string version("version 0.5.0");
 }
 
 GameState::GameState(StateStack& stateStack, Context context)
@@ -85,6 +87,8 @@ GameState::GameState(StateStack& stateStack, Context context)
     m_versionText.setPosition(10.f, 10.f);
 
     m_audioManager.mute(context.appInstance.getAudioSettings().muted);
+
+    spawnPlayer();
 }
 
 bool GameState::update(float dt)
@@ -116,6 +120,7 @@ bool GameState::handleEvent(const sf::Event& evt)
         switch (evt.key.code)
         {
         case sf::Keyboard::Space:
+        case sf::Keyboard::Escape:
             requestStackPush(States::ID::Menu);
             break;
         default: break;
@@ -162,4 +167,23 @@ Entity::Ptr GameState::createEntity()
     e->addChild(f);
 
     return std::move(e);
+}
+
+void GameState::spawnPlayer()
+{
+    auto entity = std::make_unique<Entity>(m_messageBus);
+    entity->setPosition(100.f, 100.f);
+
+    auto cd = std::make_unique<CircleDrawable>(playerSize, m_messageBus);
+    cd->setColour(sf::Color::Blue);
+    entity->addComponent<CircleDrawable>(cd);
+
+    auto physComponent = m_physWorld.addBody(playerSize);
+    physComponent->setName("control");
+    entity->addComponent<PhysicsComponent>(physComponent);
+
+    auto controlComponent = std::make_unique<InputComponent>(m_messageBus);
+    entity->addComponent<InputComponent>(controlComponent);
+
+    m_scene.getLayer(Scene::Layer::FrontMiddle).addChild(entity);
 }
