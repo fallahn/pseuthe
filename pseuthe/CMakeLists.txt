@@ -52,6 +52,7 @@ endif(X11_FOUND)
 add_executable(
 	pseuthe src/main.cpp
 	src/Affectors.cpp
+	src/AnimatedDrawable.cpp
 	src/App.cpp
 	src/AudioManager.cpp
 	src/BodypartController.cpp

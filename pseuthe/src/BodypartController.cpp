@@ -34,7 +34,7 @@ source distribution.
 
 namespace
 {
-    const float friction = 0.95f;
+    const float friction = 0.93f;
     const float maxBounds = 1920.f;
     const float minBounds = 0.f;
     const float impactReduction = 0.6f; //reduction of velocity when hitting edges

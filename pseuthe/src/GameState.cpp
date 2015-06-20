@@ -35,6 +35,7 @@ source distribution.
 #include <LightPosition.hpp>
 #include <InputComponent.hpp>
 #include <BodypartController.hpp>
+#include <AnimatedDrawable.hpp>
 #include <App.hpp>
 #include <Log.hpp>
 #include <Util.hpp>
@@ -45,7 +46,7 @@ source distribution.
 namespace
 {
     const int nubbinCount = 19;
-    const std::string version("version 0.5.1");
+    const std::string version("version 0.5.2");
 }
 
 GameState::GameState(StateStack& stateStack, Context context)
@@ -203,9 +204,13 @@ void GameState::spawnPlayer()
         auto bodyPart = std::make_unique<Entity>(m_messageBus);
         bodyPart->setWorldPosition({ spawnPosition.x - (constraintLength * i), spawnPosition.y });
 
-        cd = std::make_unique<CircleDrawable>(nextSize, m_messageBus);
-        cd->setColour(sf::Color::Blue);
-        bodyPart->addComponent<CircleDrawable>(cd);
+        auto drawable = std::make_unique<AnimatedDrawable>(m_messageBus, getContext().appInstance.getTexture("assets/images/player/bird_diffuse.png"));
+        drawable->loadAnimationData("assets/images/player/bird.cra");
+        drawable->setOrigin(sf::Vector2f(drawable->getFrameSize()) / 2.f);
+        drawable->setBlendMode(sf::BlendAdd);
+        //TODO randomise start frame
+        drawable->play(drawable->getAnimations()[0]);
+        bodyPart->addComponent<AnimatedDrawable>(drawable);
 
         physComponent = m_physWorld.attachBody(nextSize, constraintLength, lastPhysComponent);
         physComponent->setPosition(bodyPart->getWorldPosition());

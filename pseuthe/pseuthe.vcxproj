@@ -74,6 +74,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Affectors.cpp" />
+    <ClCompile Include="src\AnimatedDrawable.cpp" />
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\AudioManager.cpp" />
     <ClCompile Include="src\BodypartController.cpp" />
@@ -118,6 +119,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Affectors.hpp" />
+    <ClInclude Include="include\AnimatedDrawable.hpp" />
     <ClInclude Include="include\App.hpp" />
     <ClInclude Include="include\AudioManager.hpp" />
     <ClInclude Include="include\BodypartController.hpp" />
@@ -131,6 +133,7 @@
     <ClInclude Include="include\GameState.hpp" />
     <ClInclude Include="include\GradientDrawable.hpp" />
     <ClInclude Include="include\InputComponent.hpp" />
+    <ClInclude Include="include\JsonUtil.hpp" />
     <ClInclude Include="include\LightPosition.hpp" />
     <ClInclude Include="include\Log.hpp" />
     <ClInclude Include="include\MenuState.hpp" />
