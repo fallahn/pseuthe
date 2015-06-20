@@ -78,6 +78,12 @@ void PhysicsComponent::handleMessage(const Message& msg)
     }
 }
 
+void PhysicsComponent::destroy()
+{
+    Component::destroy();
+    for (auto& c : m_constraints) c->destroy();
+}
+
 void PhysicsComponent::physicsUpdate(float dt, const sf::FloatRect& bounds)
 {
     //bounce off top / bottom bounds, wrap left / right
@@ -165,6 +171,26 @@ float PhysicsComponent::getInverseMass() const
 float PhysicsComponent::getRadiusSquared() const
 {
     return m_radius * m_radius;
+}
+
+void PhysicsComponent::addConstraint(Constraint* constraint)
+{
+    m_constraints.push_back(constraint);
+}
+
+void PhysicsComponent::removeConstraint(Constraint* constraint)
+{
+    auto result = std::find_if(m_constraints.begin(), m_constraints.end(),
+        [constraint](const Constraint* c)
+    {
+        return c == constraint;
+    });
+
+    if (result != m_constraints.end())
+    {
+        (*result)->destroy();
+        m_constraints.erase(result);
+    }
 }
 
 //private

@@ -34,6 +34,7 @@ source distribution.
 #include <CausticDrawable.hpp>
 #include <LightPosition.hpp>
 #include <InputComponent.hpp>
+#include <BodypartController.hpp>
 #include <App.hpp>
 #include <Log.hpp>
 #include <Util.hpp>
@@ -43,9 +44,8 @@ source distribution.
 
 namespace
 {
-    const float playerSize = 20.f;
-    const int nubbinCount = 24;
-    const std::string version("version 0.5.0");
+    const int nubbinCount = 19;
+    const std::string version("version 0.5.1");
 }
 
 GameState::GameState(StateStack& stateStack, Context context)
@@ -169,21 +169,58 @@ Entity::Ptr GameState::createEntity()
     return std::move(e);
 }
 
+namespace
+{
+    const float partScale = 0.9f;
+    const float partPadding = 10.f;
+    const float playerSize = 35.f;
+    const sf::Vector2f spawnPosition(960.f, 540.f);
+}
+
 void GameState::spawnPlayer()
 {
     auto entity = std::make_unique<Entity>(m_messageBus);
-    entity->setPosition(100.f, 100.f);
+    entity->setWorldPosition(spawnPosition);
 
     auto cd = std::make_unique<CircleDrawable>(playerSize, m_messageBus);
-    cd->setColour(sf::Color::Blue);
+    cd->setColour(sf::Color(150u, 150u, 255u));
     entity->addComponent<CircleDrawable>(cd);
 
     auto physComponent = m_physWorld.addBody(playerSize);
     physComponent->setName("control");
+    physComponent->setPosition(entity->getWorldPosition());
+    auto lastPhysComponent = physComponent.get();
     entity->addComponent<PhysicsComponent>(physComponent);
 
     auto controlComponent = std::make_unique<InputComponent>(m_messageBus);
     entity->addComponent<InputComponent>(controlComponent);
 
+    float constraintLength = playerSize * 2.f + partPadding;
+    float nextSize = playerSize * partScale;
+
+    for (auto i = 1; i < 6; ++i)
+    {   
+        auto bodyPart = std::make_unique<Entity>(m_messageBus);
+        bodyPart->setWorldPosition({ spawnPosition.x - (constraintLength * i), spawnPosition.y });
+
+        cd = std::make_unique<CircleDrawable>(nextSize, m_messageBus);
+        cd->setColour(sf::Color::Blue);
+        bodyPart->addComponent<CircleDrawable>(cd);
+
+        physComponent = m_physWorld.attachBody(nextSize, constraintLength, lastPhysComponent);
+        physComponent->setPosition(bodyPart->getWorldPosition());
+        physComponent->setVelocity(lastPhysComponent->getVelocity());
+        physComponent->setName("control");
+        lastPhysComponent = physComponent.get();
+        bodyPart->addComponent<PhysicsComponent>(physComponent);
+
+        auto bpCont = std::make_unique<BodypartController>(m_messageBus);
+        bodyPart->addComponent<BodypartController>(bpCont);
+
+        entity->addChild(bodyPart);
+
+        nextSize *= partScale;
+        constraintLength *= partScale;
+    }
     m_scene.getLayer(Scene::Layer::FrontMiddle).addChild(entity);
 }

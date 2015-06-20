@@ -29,6 +29,8 @@ source distribution.
 #include <MessageBus.hpp>
 #include <Util.hpp>
 
+#include <cassert>
+
 namespace
 {
     const sf::FloatRect bounds(-50.f, 0.f, 2020.f, 1080.f);
@@ -41,9 +43,20 @@ PhysicsWorld::PhysicsWorld(MessageBus& m)
 
 PhysicsComponent::Ptr PhysicsWorld::addBody(float radius)
 {
+    assert(radius > 0);
     auto body = std::make_unique<PhysicsComponent>(radius, m_messageBus);
     m_bodies.push_back(body.get());
     return std::move(body);
+}
+
+PhysicsComponent::Ptr PhysicsWorld::attachBody(float radius, float distance, PhysicsComponent* attachee)
+{
+    assert(radius > 0);
+    assert(attachee);
+
+    auto newBody = addBody(radius);
+    m_constraints.emplace_back(std::make_unique<PhysicsComponent::Constraint>(newBody.get(), attachee, distance));
+    return std::move(newBody);
 }
 
 void PhysicsWorld::handleMessage(const Message& msg)
@@ -53,7 +66,15 @@ void PhysicsWorld::handleMessage(const Message& msg)
 
 void PhysicsWorld::update(float dt)
 {
-    //delete any destroyed bodies
+    //remove any destroyed constraints
+    m_constraints.erase(std::remove_if(m_constraints.begin(), m_constraints.end(),
+        [](const PhysicsComponent::Constraint::Ptr& c)
+    {
+        return c->destroyed();
+    }), m_constraints.end());
+
+
+    //remove any destroyed bodies
     m_bodies.erase(std::remove_if(m_bodies.begin(), m_bodies.end(),
         [](const PhysicsComponent* p)
     {
@@ -104,6 +125,12 @@ void PhysicsWorld::update(float dt)
         msg.physics.entityId[0] = c.first->getParentUID();
         msg.physics.entityId[1] = c.second->getParentUID();
         m_messageBus.send(msg);
+    }
+
+    //resolve constraints
+    for (auto& c : m_constraints)
+    {
+        c->update(dt);
     }
 
     //update bodies

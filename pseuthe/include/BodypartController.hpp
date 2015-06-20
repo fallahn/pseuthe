@@ -25,38 +25,27 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//simulates the physics and applies the results to physics components
+//script component for controlling body part behaviour
 
-#ifndef PHYS_WORLD_HPP_
-#define PHYS_WORLD_HPP_
+#ifndef BODYPART_CONTROLLER_HPP_
+#define BODYPART_CONTROLLER_HPP_
 
-#include <PhysicsComponent.hpp>
+#include <Component.hpp>
 
-#include <vector>
-#include <set>
-
-class PhysicsWorld final
+class PhysicsComponent;
+class BodypartController final : public Component
 {
 public:
-    explicit PhysicsWorld(MessageBus&);
-    ~PhysicsWorld() = default;
-    PhysicsWorld(const PhysicsWorld&) = delete;
-    const PhysicsWorld& operator = (const PhysicsWorld&) = delete;
+    explicit BodypartController(MessageBus&);
+    ~BodypartController() = default;
 
-    PhysicsComponent::Ptr addBody(float radius);
-    PhysicsComponent::Ptr attachBody(float radius, float constraintLength, PhysicsComponent*);
-
-    void handleMessage(const Message&);
-    void update(float);
+    Component::Type type() const override;
+    void entityUpdate(Entity&, float) override;
+    void handleMessage(const Message&) override;
+    void onStart(Entity&) override;
 
 private:
-    using Collision = std::pair<PhysicsComponent*, PhysicsComponent*>;
-
-    std::vector<PhysicsComponent::Constraint::Ptr> m_constraints;
-    std::vector<PhysicsComponent*> m_bodies;
-    std::set<Collision> m_collisions;
-
-    MessageBus& m_messageBus;
+    PhysicsComponent* m_physComponent;
 };
 
-#endif //PHYS_WORLD_HPP_
+#endif //BODYPART_COPNTROLLER_HPP_

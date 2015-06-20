@@ -36,9 +36,13 @@ source distribution.
 
 namespace
 {
-    const float force = 10.f;
+    const float force = 600.f;
     const float speed = 500.f;
     const float maxSpeed = speed * speed;
+
+    const float maxBounds = 1920.f;
+    const float minBounds = 0.f;
+    const float impactReduction = 0.6f; //reduction of velocity when hitting edges
 }
 
 InputComponent::InputComponent(MessageBus& mb)
@@ -80,13 +84,28 @@ void InputComponent::entityUpdate(Entity& entity, float dt)
         forceVec.x += 1.f;
     }
     Util::Vector::normalise(forceVec);
-    forceVec *= force;
+    forceVec *= force * dt;
 
     //limit speed
     if (Util::Vector::lengthSquared(m_physicsComponent->getVelocity() + forceVec) > maxSpeed)
         m_physicsComponent->applyForce(-m_physicsComponent->getVelocity() * 0.01f);
     else
         m_physicsComponent->applyForce(forceVec);
+
+    //check player bounds
+    auto currentPosition = m_physicsComponent->getPosition();
+    if (currentPosition.x < minBounds)
+    {
+        sf::Vector2f normal(1.f, 0.f);
+        m_physicsComponent->setVelocity(Util::Vector::reflect(m_physicsComponent->getVelocity(), normal) * impactReduction);
+        m_physicsComponent->setPosition({ minBounds, currentPosition.y });
+    }
+    else if (currentPosition.x > maxBounds)
+    {
+        sf::Vector2f normal(-1.f, 0.f);
+        m_physicsComponent->setVelocity(Util::Vector::reflect(m_physicsComponent->getVelocity(), normal) * impactReduction);
+        m_physicsComponent->setPosition({ maxBounds, currentPosition.y });
+    }
 }
 
 void InputComponent::handleMessage(const Message& msg)

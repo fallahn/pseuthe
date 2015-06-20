@@ -54,6 +54,7 @@ add_executable(
 	src/Affectors.cpp
 	src/App.cpp
 	src/AudioManager.cpp
+	src/BodypartController.cpp
 	src/CausticDrawable.cpp
 	src/CircleDrawable.cpp
 	src/Component.cpp
@@ -74,6 +75,7 @@ add_executable(
 	src/ParticleSystem.cpp
 	src/PauseState.cpp
 	src/PhysicsComponent.cpp
+	src/PhysicsConstraint.cpp
 	src/PhysicsWorld.cpp
 	src/PostBloom.cpp
 	src/PostChromeAb.cpp

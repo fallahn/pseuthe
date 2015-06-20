@@ -36,6 +36,7 @@ source distribution.
 #include <SFML/Graphics/Rect.hpp>
 
 #include <memory>
+#include <vector>
 
 class PhysicsComponent final : public Component
 {
@@ -55,6 +56,7 @@ public:
     Component::Type type() const override;
     void entityUpdate(Entity&, float) override;
     void handleMessage(const Message&) override;
+    void destroy() override;
 
     void physicsUpdate(float, const sf::FloatRect&);
     void resolveCollision(PhysicsComponent*, const Manifold&);
@@ -70,6 +72,28 @@ public:
 
     float getRadiusSquared() const;
 
+    class Constraint final
+    {
+    public:
+        using Ptr = std::unique_ptr<Constraint>;
+        Constraint(PhysicsComponent*, PhysicsComponent*, float);
+        ~Constraint() = default;
+
+        void update(float);
+
+        void destroy();
+        bool destroyed() const;
+
+    private:
+        bool m_destroyed;
+        PhysicsComponent* m_bodyA;
+        PhysicsComponent* m_bodyB;
+        float m_length;
+    };
+
+    void addConstraint(Constraint*);
+    void removeConstraint(Constraint* constraint);
+
 private:
 
     sf::Vector2f m_position;
@@ -78,7 +102,7 @@ private:
     float m_mass;
     float m_inverseMass;
 
-
+    std::vector<Constraint*> m_constraints;
 };
 
 #endif //PHYS_COMP_HPP_

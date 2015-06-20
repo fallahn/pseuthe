@@ -76,6 +76,7 @@
     <ClCompile Include="src\Affectors.cpp" />
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\AudioManager.cpp" />
+    <ClCompile Include="src\BodypartController.cpp" />
     <ClCompile Include="src\CausticDrawable.cpp" />
     <ClCompile Include="src\CircleDrawable.cpp" />
     <ClCompile Include="src\Component.cpp" />
@@ -97,6 +98,7 @@
     <ClCompile Include="src\ParticleSystem.cpp" />
     <ClCompile Include="src\PauseState.cpp" />
     <ClCompile Include="src\PhysicsComponent.cpp" />
+    <ClCompile Include="src\PhysicsConstraint.cpp" />
     <ClCompile Include="src\PhysicsWorld.cpp" />
     <ClCompile Include="src\PostBloom.cpp" />
     <ClCompile Include="src\PostChromeAb.cpp" />
@@ -118,6 +120,7 @@
     <ClInclude Include="include\Affectors.hpp" />
     <ClInclude Include="include\App.hpp" />
     <ClInclude Include="include\AudioManager.hpp" />
+    <ClInclude Include="include\BodypartController.hpp" />
     <ClInclude Include="include\CausticDrawable.hpp" />
     <ClInclude Include="include\CircleDrawable.hpp" />
     <ClInclude Include="include\Component.hpp" />

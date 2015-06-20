@@ -200,7 +200,6 @@ namespace Shader
     {
         static const std::string vertex =
             "#version 120\n" \
-            "uniform vec3 u_lightPosition;\n" \
             "varying vec2 v_vertPosition;\n" \
 
             "void main()\n" \

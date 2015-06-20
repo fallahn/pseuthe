@@ -52,6 +52,8 @@ public:
 
     explicit Component(MessageBus&);
     virtual ~Component() = default;
+    Component(const Component&) = delete;
+    const Component& operator = (const Component&) = delete;
 
     virtual Type type() const = 0;
     //this is called once per frame by the component's parent entity
@@ -62,7 +64,7 @@ public:
     //called when the component is first added to an entity
     virtual void onStart(Entity&);
 
-    void destroy();
+    virtual void destroy();
     bool destroyed() const;
 
     void setParentUID(sf::Uint64 uid);
