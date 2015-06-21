@@ -46,7 +46,7 @@ source distribution.
 namespace
 {
     const int nubbinCount = 19;
-    const std::string version("version 0.5.3");
+    const std::string version("version 0.5.4");
 }
 
 GameState::GameState(StateStack& stateStack, Context context)
@@ -173,7 +173,7 @@ Entity::Ptr GameState::createEntity()
 namespace
 {
     const float partScale = 0.9f;
-    const float partPadding = 10.f;
+    const float partPadding = 6.f;
     const float playerSize = 32.f;
     const sf::Vector2f spawnPosition(960.f, 540.f);
 }
@@ -213,9 +213,12 @@ void GameState::spawnPlayer()
         drawable->loadAnimationData("assets/images/player/bodypart01.cra");
         drawable->setOrigin(sf::Vector2f(drawable->getFrameSize()) / 2.f);
         drawable->setBlendMode(sf::BlendAdd);
-        //TODO randomise start frame
         drawable->play(drawable->getAnimations()[0], drawable->getFrameCount() / 5 * i);
         drawable->setScale(nextScale, nextScale);
+        drawable->setColour({ 240u, 240u, 240u, 220u });
+
+        //if (Util::Random::value(0, 1) == 1) drawable->rotate(180.f);
+
         bodyPart->addComponent<AnimatedDrawable>(drawable);
 
         physComponent = m_physWorld.attachBody(nextSize, constraintLength, lastPhysComponent);
