@@ -91,8 +91,8 @@ public:
     float getFrameRate() const;
     void setLooped(bool looped);
     bool looped() const;
-    void play(sf::Int16 start = 0, sf::Int16 end = -1);
-    void play(Animation a);
+    void play(sf::Int16 start = 0, sf::Int16 end = -1, sf::Int16 offset= 0);
+    void play(Animation a, sf::Int16 offset = 0);
     bool playing() const;
     void setPaused(bool paused);
 

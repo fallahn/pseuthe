@@ -37,6 +37,7 @@ namespace
 
 Scene::Scene(MessageBus& mb)
     : m_collisionCount  (0),
+    m_countCollisions   (true),
     m_messageBus        (mb)
 {
     for (int i = 0; i < Layer::Count; ++i)
@@ -73,9 +74,23 @@ void Scene::handleMessage(const Message& msg)
 
     if (msg.type == Message::Type::Physics)
     {
-        if (msg.physics.event == Message::PhysicsEvent::Collided)
+        if (msg.physics.event == Message::PhysicsEvent::Collided
+            && m_countCollisions)
         {
             m_collisionCount++;
+        }
+    }
+    else if (msg.type == Message::Type::UI)
+    {
+        switch (msg.ui.type)
+        {
+        case Message::UIEvent::MenuClosed:
+            m_countCollisions = false;
+            break;
+        case Message::UIEvent::MenuOpened:
+            m_countCollisions = true;
+            break;
+        default:break;
         }
     }
 }

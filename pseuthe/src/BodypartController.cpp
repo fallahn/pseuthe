@@ -34,7 +34,7 @@ source distribution.
 
 namespace
 {
-    const float friction = 0.93f;
+    const float stiffness = 0.93f;
     const float maxBounds = 1920.f;
     const float minBounds = 0.f;
     const float impactReduction = 0.6f; //reduction of velocity when hitting edges
@@ -54,9 +54,12 @@ Component::Type BodypartController::type() const
     return Component::Type::Script;
 }
 
-void BodypartController::entityUpdate(Entity&, float dt)
+void BodypartController::entityUpdate(Entity& entity, float dt)
 {
-    m_physComponent->setVelocity(m_physComponent->getVelocity() * friction);
+    auto velocity = m_physComponent->getVelocity();
+    m_physComponent->setVelocity(velocity * stiffness);
+
+    entity.setRotation(Util::Vector::rotation(velocity));
 
     //check bounds
     auto currentPosition = m_physComponent->getPosition();

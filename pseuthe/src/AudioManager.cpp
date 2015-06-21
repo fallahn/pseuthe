@@ -131,8 +131,11 @@ void AudioManager::handleMessage(const Message& msg)
             m_musicPlayer.setPaused(true);
             break;
         case Message::UIEvent::RequestAudioUnmute:
-            m_muted = false;
-            m_musicPlayer.setPaused(false);
+            if (m_muted)
+            {
+                m_muted = false;
+                m_musicPlayer.setPaused(false);
+            }
             break;
         default: break;
         }

@@ -46,7 +46,7 @@ source distribution.
 namespace
 {
     const int nubbinCount = 19;
-    const std::string version("version 0.5.2");
+    const std::string version("version 0.5.3");
 }
 
 GameState::GameState(StateStack& stateStack, Context context)
@@ -174,7 +174,7 @@ namespace
 {
     const float partScale = 0.9f;
     const float partPadding = 10.f;
-    const float playerSize = 35.f;
+    const float playerSize = 32.f;
     const sf::Vector2f spawnPosition(960.f, 540.f);
 }
 
@@ -183,9 +183,13 @@ void GameState::spawnPlayer()
     auto entity = std::make_unique<Entity>(m_messageBus);
     entity->setWorldPosition(spawnPosition);
 
-    auto cd = std::make_unique<CircleDrawable>(playerSize, m_messageBus);
+    auto cd = std::make_unique<AnimatedDrawable>(m_messageBus, getContext().appInstance.getTexture("assets/images/player/head.png"));
     cd->setColour(sf::Color(150u, 150u, 255u));
-    entity->addComponent<CircleDrawable>(cd);
+    cd->loadAnimationData("assets/images/player/head.cra");
+    cd->setOrigin(sf::Vector2f(cd->getFrameSize()) / 2.f);
+    cd->setBlendMode(sf::BlendAdd);
+    cd->play(cd->getAnimations()[0]);
+    entity->addComponent<AnimatedDrawable>(cd);
 
     auto physComponent = m_physWorld.addBody(playerSize);
     physComponent->setName("control");
@@ -198,18 +202,20 @@ void GameState::spawnPlayer()
 
     float constraintLength = playerSize * 2.f + partPadding;
     float nextSize = playerSize * partScale;
+    float nextScale = partScale;
 
     for (auto i = 1; i < 6; ++i)
     {   
         auto bodyPart = std::make_unique<Entity>(m_messageBus);
         bodyPart->setWorldPosition({ spawnPosition.x - (constraintLength * i), spawnPosition.y });
 
-        auto drawable = std::make_unique<AnimatedDrawable>(m_messageBus, getContext().appInstance.getTexture("assets/images/player/bird_diffuse.png"));
-        drawable->loadAnimationData("assets/images/player/bird.cra");
+        auto drawable = std::make_unique<AnimatedDrawable>(m_messageBus, getContext().appInstance.getTexture("assets/images/player/bodypart01.png"));
+        drawable->loadAnimationData("assets/images/player/bodypart01.cra");
         drawable->setOrigin(sf::Vector2f(drawable->getFrameSize()) / 2.f);
         drawable->setBlendMode(sf::BlendAdd);
         //TODO randomise start frame
-        drawable->play(drawable->getAnimations()[0]);
+        drawable->play(drawable->getAnimations()[0], drawable->getFrameCount() / 5 * i);
+        drawable->setScale(nextScale, nextScale);
         bodyPart->addComponent<AnimatedDrawable>(drawable);
 
         physComponent = m_physWorld.attachBody(nextSize, constraintLength, lastPhysComponent);
@@ -225,6 +231,7 @@ void GameState::spawnPlayer()
         entity->addChild(bodyPart);
 
         nextSize *= partScale;
+        nextScale *= partScale;
         constraintLength *= partScale;
     }
     m_scene.getLayer(Scene::Layer::FrontMiddle).addChild(entity);

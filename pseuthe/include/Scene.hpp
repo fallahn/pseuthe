@@ -68,6 +68,7 @@ private:
     std::vector<Entity::Ptr> m_layers;
 
     int m_collisionCount;
+    bool m_countCollisions;
     MessageBus& m_messageBus;
 
     mutable sf::RenderTexture m_sceneBufferA;

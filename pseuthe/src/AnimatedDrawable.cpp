@@ -149,6 +149,11 @@ void AnimatedDrawable::setFrameCount(sf::Uint8 count)
     m_frameCount = count;
 }
 
+sf::Uint8 AnimatedDrawable::getFrameCount() const
+{
+    return m_frameCount;
+}
+
 void AnimatedDrawable::setFrameRate(float rate)
 {
     assert(rate >= 0.f);
@@ -171,22 +176,23 @@ bool AnimatedDrawable::looped() const
     return m_loop;
 }
 
-void AnimatedDrawable::play(sf::Int16 start, sf::Int16 end)
+void AnimatedDrawable::play(sf::Int16 start, sf::Int16 end, sf::Int16 offset)
 {
     assert(start < m_frameCount && (end < m_frameCount));
 
     m_playing = !(start == end);// ? false : true;
-    m_currentFrame = m_firstFrame = static_cast<sf::Uint8>(start);
+    m_firstFrame = static_cast<sf::Uint8>(start);
+    m_currentFrame = m_firstFrame + offset;
     m_lastFrame = (end < 0) ? m_frameCount - 1 : end;
 
     //set position of starting frame / sub rect
-    setFrame(static_cast<sf::Uint8>(start));
+    setFrame(m_currentFrame);
 }
 
-void AnimatedDrawable::play(Animation animation)
+void AnimatedDrawable::play(Animation animation, sf::Int16 offset)
 {
     setLooped(animation.m_loop);
-    play(animation.m_startFrame, animation.m_endFrame);
+    play(animation.m_startFrame, animation.m_endFrame, offset);
 }
 
 bool AnimatedDrawable::playing() const

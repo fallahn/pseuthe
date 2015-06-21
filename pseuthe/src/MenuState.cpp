@@ -60,6 +60,14 @@ MenuState::MenuState(StateStack& stateStack, Context context)
     m_texts.back().setPosition(1520.f, 1050.f);
 
     buildMenu(font);
+
+    m_cursorSprite.setPosition(context.renderWindow.mapPixelToCoords(sf::Mouse::getPosition(context.renderWindow)));
+
+    Message msg;
+    msg.type = Message::Type::UI;
+    msg.ui.type = Message::UIEvent::MenuOpened;
+    msg.ui.value = 0.f;
+    m_messageBus.send(msg);
 }
 
 //public
@@ -93,6 +101,12 @@ bool MenuState::handleEvent(const sf::Event& evt)
         case sf::Keyboard::Space:
         case sf::Keyboard::Escape:
             requestStackPop();
+
+            Message msg;
+            msg.type = Message::Type::UI;
+            msg.ui.type = Message::UIEvent::MenuClosed;
+            msg.ui.value = 0.f;
+            m_messageBus.send(msg);
             return false;
         default: break;
         }

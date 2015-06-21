@@ -77,7 +77,9 @@ public:
         {
             RequestVolumeChange,
             RequestAudioMute,
-            RequestAudioUnmute
+            RequestAudioUnmute,
+            MenuOpened,
+            MenuClosed
         }type;
         float value;
     };

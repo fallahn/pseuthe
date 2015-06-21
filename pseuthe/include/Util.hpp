@@ -43,6 +43,7 @@ namespace //is this not moot here as the anonymous namespace gets included in an
     static std::default_random_engine rndEngine(static_cast<unsigned long>(std::time(0)));
     const float PI = 3.1412f;
     const float degToRad = PI / 180.f;
+    const float radToDeg = 180.f / PI;
     const float TAU = PI * 2.f;
 }
 
@@ -137,6 +138,12 @@ namespace Util
             auto ca = std::cos(rads);
             auto sa = std::sin(rads);
             return{ ca*v.x - sa*v.y, sa*v.x + ca*v.y };
+        }
+
+        //gets the rotation (in degrees) of a vector
+        static float rotation(const sf::Vector2f v)
+        {
+            return std::atan2(v.y, v.x) * radToDeg;
         }
 
         //converts a comma delimited string to vector 2

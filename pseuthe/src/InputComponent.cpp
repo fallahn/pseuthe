@@ -36,8 +36,8 @@ source distribution.
 
 namespace
 {
-    const float force = 600.f;
-    const float speed = 500.f;
+    const float force = 550.f;
+    const float speed = 450.f;
     const float maxSpeed = speed * speed;
 
     const float maxBounds = 1920.f;
@@ -106,6 +106,8 @@ void InputComponent::entityUpdate(Entity& entity, float dt)
         m_physicsComponent->setVelocity(Util::Vector::reflect(m_physicsComponent->getVelocity(), normal) * impactReduction);
         m_physicsComponent->setPosition({ maxBounds, currentPosition.y });
     }
+
+    //entity.setRotation(Util::Vector::rotation(m_physicsComponent->getVelocity()));
 }
 
 void InputComponent::handleMessage(const Message& msg)
