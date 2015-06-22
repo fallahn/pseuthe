@@ -45,6 +45,36 @@ namespace
         { 7.f, -11.f },
         { 10.f, -15.f }
     };
+
+    std::vector<sf::Vector2f> sparkVelocities/* =
+    {
+        { -180.5f, 0.f },
+        { -120.f, -88.9f },
+        { -40.f, -124.f },
+        { 0.f, -120.5f },
+        { 48.5f, -64.6f },
+        { 124.f, -88.5f },
+        { 160.9f, 0.f },
+        { 124.f, 9.5f },
+        { 48.f, 27.5f },
+        { 0.7f, 40.4f },
+        { -40.f, 29.6f },
+        { -120.f, 9.5f }
+    }*/;
+
+    std::vector<sf::Vector2f> createPoints(const sf::Vector2f& centre, int pointCount, float radius)
+    {
+        std::vector<sf::Vector2f> retVal;
+        float increment = TAU / static_cast<float>(pointCount);
+
+        for (float angle = 0.f; angle <= TAU; angle += increment)
+        {
+            retVal.emplace_back(centre.x + radius * std::cos(angle), centre.y + radius * std::sin(angle));
+            retVal.back() *= Util::Random::value(0.5f, 1.1f);
+        }
+
+        return retVal;
+    }
 }
 
 ParticleSystem::Ptr ParticleSystem::create(Particle::Type type, MessageBus& mb)
@@ -80,6 +110,27 @@ ParticleSystem::Ptr ParticleSystem::create(Particle::Type type, MessageBus& mb)
         ps->followParent(true);
     }
         break;
+
+    case Particle::Type::Sparkle:
+    {
+        sparkVelocities = createPoints(sf::Vector2f(), 20, 180.f);
+
+        ps->setParticleLifetime(0.3f);
+        ps->setParticleSize({ 10.f, 10.f });
+        ps->setRandomInitialVelocity(sparkVelocities);
+        ps->setBlendMode(sf::BlendAdd);
+        //ps->setEmitRate(4.f);
+        
+        ForceAffector fa({ 0.f, 20.f });
+        ps->addAffector(fa);
+
+        ScaleAffector sa({ 2.f, 2.f });
+        ps->addAffector(sa);
+
+        RotateAffector ra(140.f);
+        ps->addAffector(ra);
+}
+    break;
     default: break;
     }
 

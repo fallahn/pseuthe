@@ -49,7 +49,7 @@ namespace
 
     const float maxHealth = 100.f;
     const float healthReduction = 4.f; //reduction per second
-    const sf::Color defaultColour(150u, 150u, 255u);
+    const sf::Color defaultColour(190u, 190u, 255u);
 
     const float minTrailRate = 1.f;
     const float maxTrailRate = 50.f;

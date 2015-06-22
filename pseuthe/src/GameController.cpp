@@ -96,7 +96,7 @@ void GameController::handleMessage(const Message& msg)
 namespace
 {
     const float partScale = 0.9f;
-    const float partPadding = 6.f;
+    const float partPadding = 1.f;
     const float playerSize = 32.f;
     const sf::Vector2f spawnPosition(960.f, 540.f);
 }
@@ -126,6 +126,12 @@ void GameController::spawnPlayer()
     trailComponent->setName("trail");
     entity->addComponent<ParticleSystem>(trailComponent);
 
+    auto sparkle = ParticleSystem::create(Particle::Type::Sparkle, m_messageBus);
+    sparkle->setTexture(m_appInstance.getTexture("assets/images/particles/spark.png"));
+    sparkle->setName("sparkle");
+    sparkle->start(1u, 0.f, 0.5f);
+    entity->addComponent<ParticleSystem>(sparkle);
+
     auto controlComponent = std::make_unique<InputComponent>(m_messageBus);
     entity->addComponent<InputComponent>(controlComponent);
 
@@ -153,6 +159,12 @@ void GameController::spawnPlayer()
         physComponent->setName("control");
         lastPhysComponent = physComponent.get();
         bodyPart->addComponent<PhysicsComponent>(physComponent);
+
+        auto sparkle = ParticleSystem::create(Particle::Type::Sparkle, m_messageBus);
+        sparkle->setTexture(m_appInstance.getTexture("assets/images/particles/spark.png"));
+        sparkle->setName("sparkle");
+        sparkle->start(1u, 0.f, 0.5f);
+        bodyPart->addComponent<ParticleSystem>(sparkle);
 
         auto bpCont = std::make_unique<BodypartController>(m_messageBus);
         bodyPart->addComponent<BodypartController>(bpCont);

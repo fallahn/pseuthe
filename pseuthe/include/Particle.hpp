@@ -37,7 +37,8 @@ struct Particle final : public sf::Transformable
     enum class Type
     {
         Trail,
-        Echo
+        Echo,
+        Sparkle
     };
 
     sf::Vector2f velocity;

@@ -1,0 +1,15 @@
+{
+  "Animations": [
+    {
+      "Start": 0,
+      "End": 15,
+      "Loop": true,
+      "Name": "default"
+    }
+  ],
+  "FrameCount": 16,
+  "FrameSize": "64, 64",
+  "FrameRate": 24.0,
+  "Texture": "food01.png",
+  "NormalMap": "none.png"
+}
