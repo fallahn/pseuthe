@@ -95,6 +95,7 @@
     <ClCompile Include="src\MenuState.cpp" />
     <ClCompile Include="src\MessageBus.cpp" />
     <ClCompile Include="src\Music.cpp" />
+    <ClCompile Include="src\OrbController.cpp" />
     <ClCompile Include="src\ParticleFactory.cpp" />
     <ClCompile Include="src\ParticleField.cpp" />
     <ClCompile Include="src\ParticleSystem.cpp" />
@@ -141,6 +142,7 @@
     <ClInclude Include="include\MenuState.hpp" />
     <ClInclude Include="include\MessageBus.hpp" />
     <ClInclude Include="include\Music.hpp" />
+    <ClInclude Include="include\OrbController.hpp" />
     <ClInclude Include="include\Particle.hpp" />
     <ClInclude Include="include\ParticleField.hpp" />
     <ClInclude Include="include\ParticleSystem.hpp" />

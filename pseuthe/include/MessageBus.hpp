@@ -30,8 +30,10 @@ source distribution.
 #ifndef MESSAGE_BUS_HPP_
 #define MESSAGE_BUS_HPP_
 
-#include <SFML/Config.hpp>
+#include <StateIds.hpp>
 #include <PhysicsComponent.hpp>
+
+#include <SFML/Config.hpp>
 
 #include <queue>
 
@@ -44,7 +46,8 @@ public:
         Physics,
         Drawable,
         Entity,
-        UI
+        UI,
+        Player
     }type;
 
     struct AudioEvent
@@ -82,9 +85,19 @@ public:
             RequestAudioMute,
             RequestAudioUnmute,
             MenuOpened,
-            MenuClosed
+            MenuClosed,
+            RequestState
         }type;
         float value;
+        States::ID stateId;
+    };
+
+    struct PlayerEvent
+    {
+        enum
+        {
+            Died
+        }action;
     };
 
     union
@@ -94,6 +107,7 @@ public:
         DrawableEvent drawable;
         EntityEvent entity;
         UIEvent ui;
+        PlayerEvent player;
     };
 };
 

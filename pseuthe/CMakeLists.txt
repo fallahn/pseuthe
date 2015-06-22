@@ -72,6 +72,7 @@ add_executable(
 	src/MenuState.cpp
 	src/MessageBus.cpp
 	src/Music.cpp
+	src/OrbController.cpp
 	src/ParticleFactory.cpp	
 	src/ParticleField.cpp
 	src/ParticleSystem.cpp

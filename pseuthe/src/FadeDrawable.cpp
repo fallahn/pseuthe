@@ -27,6 +27,7 @@ source distribution.
 
 #include <FadeDrawable.hpp>
 #include <Log.hpp>
+#include <MessageBus.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
@@ -67,7 +68,16 @@ void FadeDrawable::entityUpdate(Entity&, float dt)
         m_rectangleShape.setFillColor(colour);
 
         m_currentFadeTime -= dt;
-        if (m_currentFadeTime < 0) destroy();
+        if (m_currentFadeTime < 0)
+        {
+            destroy();
+
+            Message msg;
+            msg.type = Message::Type::UI;
+            msg.ui.type = Message::UIEvent::RequestState;
+            msg.ui.stateId = States::ID::Menu;
+            sendMessage(msg);
+        }
 
         //LOG(std::to_string(ratio), Logger::Type::Info);
     }

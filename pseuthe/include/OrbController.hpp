@@ -25,21 +25,19 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//handles real time input for player
+//handles logic for the floating orbs
 
-#ifndef INPUT_COMPONENT_HPP_
-#define INPUT_COMPONENT_HPP_
+#ifndef ORB_CONTROLLER_HPP_
+#define ORB_CONTROLLER_HPP_
 
 #include <Component.hpp>
 
-class PhysicsComponent;
-class AnimatedDrawable;
 class ParticleSystem;
-class InputComponent final : public Component
+class OrbController final : public Component
 {
 public:
-    explicit InputComponent(MessageBus&);
-    ~InputComponent() = default;
+    explicit OrbController(MessageBus&);
+    ~OrbController() = default;
 
     Component::Type type() const override;
     void entityUpdate(Entity&, float) override;
@@ -48,12 +46,7 @@ public:
 
 private:
 
-    PhysicsComponent* m_physicsComponent;
-    AnimatedDrawable* m_drawable;
-    ParticleSystem* m_trailParticles;
-
-    float m_health;
-    bool m_parseInput;
+    ParticleSystem* m_particleSystem;
 };
 
-#endif //INPUT_COMPONENT_HPP_
+#endif //ORB_CONTROLLER_HPP_

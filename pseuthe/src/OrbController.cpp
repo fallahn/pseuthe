@@ -25,35 +25,42 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//handles real time input for player
+#include <OrbController.hpp>
+#include <ParticleSystem.hpp>
+#include <MessageBus.hpp>
+#include <Entity.hpp>
 
-#ifndef INPUT_COMPONENT_HPP_
-#define INPUT_COMPONENT_HPP_
+OrbController::OrbController(MessageBus& mb)
+    : Component         (mb),
+    m_particleSystem    (nullptr)
+{}
 
-#include <Component.hpp>
-
-class PhysicsComponent;
-class AnimatedDrawable;
-class ParticleSystem;
-class InputComponent final : public Component
+//public
+Component::Type OrbController::type() const
 {
-public:
-    explicit InputComponent(MessageBus&);
-    ~InputComponent() = default;
+    return Component::Type::Script;
+}
 
-    Component::Type type() const override;
-    void entityUpdate(Entity&, float) override;
-    void handleMessage(const Message&) override;
-    void onStart(Entity&) override;
+void OrbController::entityUpdate(Entity&, float)
+{
 
-private:
+}
 
-    PhysicsComponent* m_physicsComponent;
-    AnimatedDrawable* m_drawable;
-    ParticleSystem* m_trailParticles;
+void OrbController::handleMessage(const Message& msg)
+{
+    switch (msg.type)
+    {
+    case Message::Type::Physics:
+        if (msg.physics.entityId[0] == getParentUID() || msg.physics.entityId[1] == getParentUID())
+        {
+            m_particleSystem->start(1u, 0.f, 0.02f);
+        }
+        break;
+    default:break;
+    }
+}
 
-    float m_health;
-    bool m_parseInput;
-};
-
-#endif //INPUT_COMPONENT_HPP_
+void OrbController::onStart(Entity& entity)
+{
+    m_particleSystem = entity.getComponent<ParticleSystem>("echo");
+}

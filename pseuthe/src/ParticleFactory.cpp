@@ -49,7 +49,7 @@ namespace
 
 ParticleSystem::Ptr ParticleSystem::create(Particle::Type type, MessageBus& mb)
 {
-    auto ps = std::make_unique<ParticleSystem>(mb, type);
+    auto ps = std::make_unique<ParticleSystem>(mb);
 
     switch (type)
     {

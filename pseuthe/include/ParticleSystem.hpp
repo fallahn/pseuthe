@@ -46,7 +46,7 @@ public:
     using Affector =  std::function<void(Particle& p, float dt)>;
     using Ptr = std::unique_ptr<ParticleSystem> ;
 
-    ParticleSystem(MessageBus&, Particle::Type);
+    explicit ParticleSystem(MessageBus&);
     ~ParticleSystem() = default;
 
     Component::Type type() const override;
@@ -82,7 +82,6 @@ public:
     sf::Uint32 getParticleCount() const;
 
 private:
-    Particle::Type m_type;
     std::deque<Particle> m_particles;
     sf::Texture* m_texture;
     sf::Color m_colour;

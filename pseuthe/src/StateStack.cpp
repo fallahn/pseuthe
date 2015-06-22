@@ -65,6 +65,17 @@ void StateStack::handleEvent(const sf::Event& evt)
 
 void StateStack::handleMessage(const Message& msg)
 {
+    if (msg.type == Message::Type::UI)
+    {
+        switch (msg.ui.type)
+        {
+        case Message::UIEvent::RequestState:
+            pushState(msg.ui.stateId);
+            break;
+        default: break;
+        }
+    }
+    
     for (auto& s : m_stack) s->handleMessage(msg);
 }
 

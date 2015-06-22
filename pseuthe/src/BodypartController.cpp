@@ -29,6 +29,7 @@ source distribution.
 #include <Entity.hpp>
 #include <PhysicsComponent.hpp>
 #include <AnimatedDrawable.hpp>
+#include <MessageBus.hpp>
 #include <Util.hpp>
 
 #include <cassert>
@@ -40,7 +41,9 @@ namespace
     const float minBounds = 0.f;
     const float impactReduction = 0.6f; //reduction of velocity when hitting edges
     const float maxHealth = 100.f;
-    const float healthReduction = 10.f; //reduction per second
+    const float healthReduction = 5.f; //reduction per second
+    const float minHealth = 2.f; //don't want non-tail parts completely dying
+    const float hitPoint = 0.5f; //lose this if hit by a ball
 
     const sf::Color defaultColour(220u, 220u, 220u, 180u);
 }
@@ -95,9 +98,22 @@ void BodypartController::entityUpdate(Entity& entity, float dt)
     }
 }
 
-void BodypartController::handleMessage(const Message&)
+void BodypartController::handleMessage(const Message& msg)
 {
+    switch (msg.type)
+    {
+    case Message::Type::Physics:
 
+        if ((msg.physics.entityId[0] == getParentUID() || msg.physics.entityId[1] == getParentUID()))
+        {
+            if (m_health > minHealth)
+                m_health -= hitPoint;
+
+            //TODO fire a particle effect
+        }
+        break;
+    default: break;
+    }
 }
 
 void BodypartController::onStart(Entity& entity)

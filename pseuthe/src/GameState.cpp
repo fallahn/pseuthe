@@ -33,6 +33,7 @@ source distribution.
 #include <FadeDrawable.hpp>
 #include <CausticDrawable.hpp>
 #include <LightPosition.hpp>
+#include <OrbController.hpp>
 
 #include <App.hpp>
 #include <Log.hpp>
@@ -44,7 +45,7 @@ source distribution.
 namespace
 {
     const int nubbinCount = 19;
-    const std::string version("version 0.5.5");
+    const std::string version("version 0.5.6");
 }
 
 GameState::GameState(StateStack& stateStack, Context context)
@@ -88,7 +89,6 @@ GameState::GameState(StateStack& stateStack, Context context)
 
     m_audioManager.mute(context.appInstance.getAudioSettings().muted);
 
-    //m_gameController.spawnPlayer();
 }
 
 bool GameState::update(float dt)
@@ -157,8 +157,13 @@ Entity::Ptr GameState::createEntity()
     auto particleSize = size * 2.f;
     ps->setParticleSize({ particleSize, particleSize });
     ps->setColour(colour);
+    ps->setName("echo");
     e->addComponent<ParticleSystem>(ps);
 
+    auto oc = std::make_unique<OrbController>(m_messageBus);
+    e->addComponent<OrbController>(oc);
+
+    //remind me: why is second particle system attached to own entity?
     ps = ParticleSystem::create(Particle::Type::Trail, m_messageBus);
     ps->setTexture(getContext().appInstance.getTexture("assets/images/particles/circle.png"));
     particleSize = size / 12.f;

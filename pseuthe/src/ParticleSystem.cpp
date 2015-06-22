@@ -39,9 +39,8 @@ namespace
 
 }
 
-ParticleSystem::ParticleSystem(MessageBus& mb, Particle::Type type)
+ParticleSystem::ParticleSystem(MessageBus& mb)
     : Component         (mb),
-    m_type              (type),
     m_texture           (nullptr),
     m_colour            (sf::Color::White),
     m_followParent      (false),
@@ -77,17 +76,7 @@ void ParticleSystem::entityUpdate(Entity& entity, float dt)
 
 void ParticleSystem::handleMessage(const Message& msg)
 {
-    switch (msg.type)
-    {
-    case Message::Type::Physics:
-        if ((msg.physics.entityId[0] == getParentUID() || msg.physics.entityId[1] == getParentUID())
-            && m_type == Particle::Type::Echo)
-        {
-            start(1u, 0.f, 0.02f);
-        }
-        break;
-    default:break;
-    }
+    
 }
 
 void ParticleSystem::setTexture(const sf::Texture& t)

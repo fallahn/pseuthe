@@ -28,8 +28,10 @@ source distribution.
 #include <InputComponent.hpp>
 #include <PhysicsComponent.hpp>
 #include <AnimatedDrawable.hpp>
+#include <ParticleSystem.hpp>
 #include <Entity.hpp>
 #include <Util.hpp>
+#include <MessageBus.hpp>
 
 #include <SFML/Window/Keyboard.hpp>
 
@@ -44,11 +46,22 @@ namespace
     const float maxBounds = 1920.f;
     const float minBounds = 0.f;
     const float impactReduction = 0.7f; //reduction of velocity when hitting edges
+
+    const float maxHealth = 100.f;
+    const float healthReduction = 4.f; //reduction per second
+    const sf::Color defaultColour(150u, 150u, 255u);
+
+    const float minTrailRate = 1.f;
+    const float maxTrailRate = 50.f;
 }
 
 InputComponent::InputComponent(MessageBus& mb)
     : Component         (mb),
-    m_physicsComponent  (nullptr)
+    m_physicsComponent  (nullptr),
+    m_drawable          (nullptr),
+    m_trailParticles    (nullptr),
+    m_health            (maxHealth),
+    m_parseInput        (true)
 {
 
 }
@@ -60,38 +73,47 @@ Component::Type InputComponent::type() const
 
 void InputComponent::entityUpdate(Entity& entity, float dt)
 {
-    sf::Vector2f forceVec;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)
-        || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+    sf::Vector2f forceVec;    
+    if (m_parseInput)
     {
-        forceVec.y -= 1.f;
-    }
+        //TODO parse controller input
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)
+            || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+        {
+            forceVec.y -= 1.f;
+        }
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)
-        || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-    {
-        forceVec.y += 1.f;
-    }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)
+            || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+        {
+            forceVec.y += 1.f;
+        }
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)
-        || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-    {
-        forceVec.x -= 1.f;
-    }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)
+            || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+        {
+            forceVec.x -= 1.f;
+        }
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)
-        || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-    {
-        forceVec.x += 1.f;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)
+            || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+        {
+            forceVec.x += 1.f;
+        }
+        Util::Vector::normalise(forceVec);
+        forceVec *= force * dt;
     }
-    Util::Vector::normalise(forceVec);
-    forceVec *= force * dt;
 
     //limit speed
-    if (Util::Vector::lengthSquared(m_physicsComponent->getVelocity() + forceVec) > maxSpeed)
+    auto currentSpeed = Util::Vector::lengthSquared(m_physicsComponent->getVelocity() + forceVec);
+    if (currentSpeed > maxSpeed)
         m_physicsComponent->applyForce(-m_physicsComponent->getVelocity() * 0.01f);
     else
         m_physicsComponent->applyForce(forceVec);
+
+    //set particle emit rate based on speed
+    const float emitRate = (currentSpeed / maxSpeed) * maxTrailRate;
+    m_trailParticles->setEmitRate(emitRate + minTrailRate);
 
     //check player bounds
     auto currentPosition = m_physicsComponent->getPosition();
@@ -109,11 +131,41 @@ void InputComponent::entityUpdate(Entity& entity, float dt)
     }
 
     m_drawable->setRotation(Util::Vector::rotation(m_physicsComponent->getVelocity()));
+
+    //update health if we have no tail
+    if (m_physicsComponent->getContraintCount() < 1)
+    {
+        m_health -= healthReduction * dt;
+        if (m_health <= 0)
+        {
+            entity.destroy();
+            Message msg;
+            msg.type = Message::Type::Player;
+            msg.player.action = Message::PlayerEvent::Died;
+            sendMessage(msg);
+        }
+
+        auto colour = defaultColour;
+        colour.a = static_cast<sf::Uint8>((m_health / maxHealth) * static_cast<float>(defaultColour.a));
+        m_drawable->setColour(colour);
+    }
 }
 
 void InputComponent::handleMessage(const Message& msg)
 {
-
+    if (msg.type == Message::Type::UI)
+    {
+        switch (msg.ui.type)
+        {
+        case Message::UIEvent::MenuClosed:
+            m_parseInput = true;
+            break;
+        case Message::UIEvent::MenuOpened:
+            m_parseInput = false;
+            break;
+        default:break;
+        }
+    }
 }
 
 void InputComponent::onStart(Entity& entity)
@@ -123,4 +175,8 @@ void InputComponent::onStart(Entity& entity)
 
     m_drawable = entity.getComponent<AnimatedDrawable>("drawable");
     assert(m_drawable);
+    m_drawable->setColour(defaultColour);
+
+    m_trailParticles = entity.getComponent<ParticleSystem>("trail");
+    assert(m_trailParticles);
 }
