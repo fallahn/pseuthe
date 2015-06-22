@@ -27,6 +27,7 @@ source distribution.
 
 #include <InputComponent.hpp>
 #include <PhysicsComponent.hpp>
+#include <AnimatedDrawable.hpp>
 #include <Entity.hpp>
 #include <Util.hpp>
 
@@ -42,7 +43,7 @@ namespace
 
     const float maxBounds = 1920.f;
     const float minBounds = 0.f;
-    const float impactReduction = 0.6f; //reduction of velocity when hitting edges
+    const float impactReduction = 0.7f; //reduction of velocity when hitting edges
 }
 
 InputComponent::InputComponent(MessageBus& mb)
@@ -107,7 +108,7 @@ void InputComponent::entityUpdate(Entity& entity, float dt)
         m_physicsComponent->setPosition({ maxBounds, currentPosition.y });
     }
 
-    //entity.setRotation(Util::Vector::rotation(m_physicsComponent->getVelocity()));
+    m_drawable->setRotation(Util::Vector::rotation(m_physicsComponent->getVelocity()));
 }
 
 void InputComponent::handleMessage(const Message& msg)
@@ -119,4 +120,7 @@ void InputComponent::onStart(Entity& entity)
 {
     m_physicsComponent = entity.getComponent<PhysicsComponent>("control");
     assert(m_physicsComponent);
+
+    m_drawable = entity.getComponent<AnimatedDrawable>("drawable");
+    assert(m_drawable);
 }

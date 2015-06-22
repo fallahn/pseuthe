@@ -41,7 +41,10 @@ Scene::Scene(MessageBus& mb)
     m_messageBus        (mb)
 {
     for (int i = 0; i < Layer::Count; ++i)
+    {
         m_layers.emplace_back(std::make_unique<Entity>(mb));
+        m_layers.back()->setScene(this);
+    }
 
     m_sceneBufferA.create(1920u, 1080u);
     m_sceneBufferB.create(1920u, 1080u);

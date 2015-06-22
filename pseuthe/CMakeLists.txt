@@ -64,6 +64,7 @@ add_executable(
 	src/FadeDrawable.cpp
 	src/FileSystem.cpp
 	src/FontResource.cpp
+	src/GameController.cpp
 	src/GameState.cpp
 	src/GradientDrawable.cpp
 	src/InputComponent.cpp

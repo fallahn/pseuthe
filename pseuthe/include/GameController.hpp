@@ -25,30 +25,37 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//handles real time input for player
+//observes the scene and controls spawning of entities affecting game play
 
-#ifndef INPUT_COMPONENT_HPP_
-#define INPUT_COMPONENT_HPP_
+#ifndef GAME_CONTROLLER_HPP_
+#define GAME_CONTROLLER_HPP_
 
-#include <Component.hpp>
-
-class PhysicsComponent;
-class AnimatedDrawable;
-class InputComponent final : public Component
+class Scene;
+class MessageBus;
+class Message;
+class App;
+class PhysicsWorld;
+class Entity;
+class GameController final
 {
 public:
-    explicit InputComponent(MessageBus&);
-    ~InputComponent() = default;
+    GameController(Scene&, MessageBus&, App&, PhysicsWorld&);
+    ~GameController() = default;
+    GameController(const GameController&) = delete;
+    const GameController& operator = (const GameController&) = delete;
 
-    Component::Type type() const override;
-    void entityUpdate(Entity&, float) override;
-    void handleMessage(const Message&) override;
-    void onStart(Entity&) override;
+    void update(float);
+    void handleMessage(const Message&);
+
+    void spawnPlayer();
 
 private:
+    Scene& m_scene;
+    MessageBus& m_messageBus;
+    App& m_appInstance;
+    PhysicsWorld& m_physicsWorld;
 
-    PhysicsComponent* m_physicsComponent;
-    AnimatedDrawable* m_drawable;
+    Entity* m_player;
 };
 
-#endif //INPUT_COMPONENT_HPP_
+#endif //GAME_CONTROLLER_HPP_

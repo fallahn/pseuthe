@@ -40,10 +40,9 @@ source distribution.
 #include <memory>
 #include <vector>
 
-//TODO this class could form the basis of nodes in a scene graph
-//decide if we want to add parenting if it seems necessary
 
 //class Component;
+class Scene;
 class Entity final : public sf::Transformable, public sf::Drawable
 {
 public:
@@ -64,7 +63,7 @@ public:
 
     void update(float dt);
 
-    template <typename T>
+    template <typename T> //TODO does this still need to be templated?
     void addComponent(std::unique_ptr<T>& component)
     {
         Component::Ptr c(static_cast<Component*>(component.release()));
@@ -109,6 +108,8 @@ public:
 
     void handleMessage(const Message&);
 
+    void setScene(Scene*);
+
 private:
 
     bool m_destroyed;
@@ -121,6 +122,7 @@ private:
 
     std::vector<Ptr> m_children;
     Entity* m_parent;
+    Scene* m_scene;
 
     void draw(sf::RenderTarget& rt, sf::RenderStates state) const override;
     void drawSelf(sf::RenderTarget&, sf::RenderStates) const;

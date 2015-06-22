@@ -186,6 +186,9 @@
     <ClCompile Include="src\AnimatedDrawable.cpp">
       <Filter>Source Files\components</Filter>
     </ClCompile>
+    <ClCompile Include="src\GameController.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\BodypartController.hpp">
@@ -325,6 +328,9 @@
     </ClInclude>
     <ClInclude Include="include\JsonUtil.hpp">
       <Filter>Header Files\system</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameController.hpp">
+      <Filter>Header Files\game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

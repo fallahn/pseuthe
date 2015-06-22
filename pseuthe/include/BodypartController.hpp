@@ -33,6 +33,7 @@ source distribution.
 #include <Component.hpp>
 
 class PhysicsComponent;
+class AnimatedDrawable;
 class BodypartController final : public Component
 {
 public:
@@ -46,6 +47,8 @@ public:
 
 private:
     PhysicsComponent* m_physComponent;
+    AnimatedDrawable* m_drawable;
+    float m_health;
 };
 
 #endif //BODYPART_COPNTROLLER_HPP_

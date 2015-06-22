@@ -33,9 +33,7 @@ source distribution.
 #include <FadeDrawable.hpp>
 #include <CausticDrawable.hpp>
 #include <LightPosition.hpp>
-#include <InputComponent.hpp>
-#include <BodypartController.hpp>
-#include <AnimatedDrawable.hpp>
+
 #include <App.hpp>
 #include <Log.hpp>
 #include <Util.hpp>
@@ -46,14 +44,15 @@ source distribution.
 namespace
 {
     const int nubbinCount = 19;
-    const std::string version("version 0.5.4");
+    const std::string version("version 0.5.5");
 }
 
 GameState::GameState(StateStack& stateStack, Context context)
-    : State     (stateStack, context),
-    m_messageBus(context.appInstance.getMessageBus()),
-    m_scene     (m_messageBus),
-    m_physWorld (m_messageBus)
+    : State             (stateStack, context),
+    m_messageBus        (context.appInstance.getMessageBus()),
+    m_scene             (m_messageBus),
+    m_physWorld         (m_messageBus),
+    m_gameController    (m_scene, m_messageBus, context.appInstance, m_physWorld)
 {
     for (int i = 0; i < nubbinCount; ++i)
     {
@@ -89,7 +88,7 @@ GameState::GameState(StateStack& stateStack, Context context)
 
     m_audioManager.mute(context.appInstance.getAudioSettings().muted);
 
-    spawnPlayer();
+    //m_gameController.spawnPlayer();
 }
 
 bool GameState::update(float dt)
@@ -101,6 +100,7 @@ bool GameState::update(float dt)
     m_audioManager.update(dt);
     m_physWorld.update(dt);
     m_scene.update(dt);
+    m_gameController.update(dt);
 
     return true;
 }
@@ -135,6 +135,7 @@ void GameState::handleMessage(const Message& msg)
     m_audioManager.handleMessage(msg);
     m_physWorld.handleMessage(msg);
     m_scene.handleMessage(msg);
+    m_gameController.handleMessage(msg);
 }
 
 //private
@@ -168,74 +169,4 @@ Entity::Ptr GameState::createEntity()
     e->addChild(f);
 
     return std::move(e);
-}
-
-namespace
-{
-    const float partScale = 0.9f;
-    const float partPadding = 6.f;
-    const float playerSize = 32.f;
-    const sf::Vector2f spawnPosition(960.f, 540.f);
-}
-
-void GameState::spawnPlayer()
-{
-    auto entity = std::make_unique<Entity>(m_messageBus);
-    entity->setWorldPosition(spawnPosition);
-
-    auto cd = std::make_unique<AnimatedDrawable>(m_messageBus, getContext().appInstance.getTexture("assets/images/player/head.png"));
-    cd->setColour(sf::Color(150u, 150u, 255u));
-    cd->loadAnimationData("assets/images/player/head.cra");
-    cd->setOrigin(sf::Vector2f(cd->getFrameSize()) / 2.f);
-    cd->setBlendMode(sf::BlendAdd);
-    cd->play(cd->getAnimations()[0]);
-    entity->addComponent<AnimatedDrawable>(cd);
-
-    auto physComponent = m_physWorld.addBody(playerSize);
-    physComponent->setName("control");
-    physComponent->setPosition(entity->getWorldPosition());
-    auto lastPhysComponent = physComponent.get();
-    entity->addComponent<PhysicsComponent>(physComponent);
-
-    auto controlComponent = std::make_unique<InputComponent>(m_messageBus);
-    entity->addComponent<InputComponent>(controlComponent);
-
-    float constraintLength = playerSize * 2.f + partPadding;
-    float nextSize = playerSize * partScale;
-    float nextScale = partScale;
-
-    for (auto i = 1; i < 6; ++i)
-    {   
-        auto bodyPart = std::make_unique<Entity>(m_messageBus);
-        bodyPart->setWorldPosition({ spawnPosition.x - (constraintLength * i), spawnPosition.y });
-
-        auto drawable = std::make_unique<AnimatedDrawable>(m_messageBus, getContext().appInstance.getTexture("assets/images/player/bodypart01.png"));
-        drawable->loadAnimationData("assets/images/player/bodypart01.cra");
-        drawable->setOrigin(sf::Vector2f(drawable->getFrameSize()) / 2.f);
-        drawable->setBlendMode(sf::BlendAdd);
-        drawable->play(drawable->getAnimations()[0], drawable->getFrameCount() / 5 * i);
-        drawable->setScale(nextScale, nextScale);
-        drawable->setColour({ 240u, 240u, 240u, 220u });
-
-        //if (Util::Random::value(0, 1) == 1) drawable->rotate(180.f);
-
-        bodyPart->addComponent<AnimatedDrawable>(drawable);
-
-        physComponent = m_physWorld.attachBody(nextSize, constraintLength, lastPhysComponent);
-        physComponent->setPosition(bodyPart->getWorldPosition());
-        physComponent->setVelocity(lastPhysComponent->getVelocity());
-        physComponent->setName("control");
-        lastPhysComponent = physComponent.get();
-        bodyPart->addComponent<PhysicsComponent>(physComponent);
-
-        auto bpCont = std::make_unique<BodypartController>(m_messageBus);
-        bodyPart->addComponent<BodypartController>(bpCont);
-
-        entity->addChild(bodyPart);
-
-        nextSize *= partScale;
-        nextScale *= partScale;
-        constraintLength *= partScale;
-    }
-    m_scene.getLayer(Scene::Layer::FrontMiddle).addChild(entity);
 }

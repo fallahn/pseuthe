@@ -27,6 +27,7 @@ source distribution.
 
 #include <PhysicsComponent.hpp>
 #include <Util.hpp>
+#include <MessageBus.hpp>
 
 #include <cassert>
 
@@ -51,13 +52,9 @@ void PhysicsComponent::Constraint::update(float dt)
     auto constraintVec = m_bodyB->m_position - m_bodyA->m_position;
     float constraintLength = Util::Vector::length(constraintVec);
     auto constraintUnit = constraintVec * (1.f / constraintLength);
-    float relativeDistance = constraintLength - m_length;
-    
+    float relativeDistance = constraintLength - m_length;    
     float relativeVelocity = Util::Vector::dot((m_bodyB->m_velocity - m_bodyA->m_velocity), constraintUnit);
-
-    float excess = (relativeVelocity + relativeDistance);// * dt;
-    //excess /= (m_bodyA->m_inverseMass + m_bodyB->m_inverseMass);
-
+    float excess = (relativeVelocity + relativeDistance);
     sf::Vector2f force(constraintUnit * excess);
 
     m_bodyA->applyForce(force);
@@ -66,8 +63,16 @@ void PhysicsComponent::Constraint::update(float dt)
 
 void PhysicsComponent::Constraint::destroy()
 {
-    m_bodyA->removeConstraint(this);
-    m_bodyB->removeConstraint(this);
+    //m_bodyA->removeConstraint(this);
+    //m_bodyB->removeConstraint(this);
+    Message msg;
+    msg.type = Message::Type::Physics;
+    msg.physics.event = Message::PhysicsEvent::ConstraintDestroyed;
+    msg.physics.constraint = this;
+    msg.physics.entityId[0] = m_bodyA->getParentUID();
+    msg.physics.entityId[1] = m_bodyB->getParentUID();
+    m_bodyA->sendMessage(msg);
+
     m_destroyed = true;
 }
 

@@ -93,6 +93,7 @@ public:
 
     void addConstraint(Constraint*);
     void removeConstraint(Constraint* constraint);
+    sf::Uint32 getContraintCount() const;
 
 private:
 

@@ -44,13 +44,15 @@ Entity::Entity(MessageBus& mb)
  : m_destroyed  (false),
  m_uid          (uid++),
  m_messageBus   (mb),
- m_parent       (nullptr)
+ m_parent       (nullptr),
+ m_scene        (nullptr)
 {}
 
 //public
 void Entity::addChild(Entity::Ptr& child)
 {
     child->m_parent = this;
+    child->setScene(m_scene);
     m_children.push_back(std::move(child));
 }
 
@@ -66,6 +68,7 @@ Entity::Ptr Entity::removeChild(Entity& child)
     {
         Ptr found = std::move(*result);
         found->m_parent = nullptr;
+        found->m_scene = nullptr;
         m_children.erase(result);
         return found;
     }
@@ -186,6 +189,12 @@ void Entity::handleMessage(const Message& msg)
     //pass down to children
     for (auto& c : m_children)
         c->handleMessage(msg);
+}
+
+void Entity::setScene(Scene* scene)
+{
+    m_scene = scene;
+    for (auto& c : m_children) c->setScene(scene);
 }
 
 //private

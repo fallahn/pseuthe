@@ -31,6 +31,7 @@ source distribution.
 #define MESSAGE_BUS_HPP_
 
 #include <SFML/Config.hpp>
+#include <PhysicsComponent.hpp>
 
 #include <queue>
 
@@ -55,10 +56,12 @@ public:
     {
         enum Event
         {
-            Collided
+            Collided,
+            ConstraintDestroyed
         }event;
 
         sf::Uint64 entityId[2];
+        PhysicsComponent::Constraint* constraint;
     };
 
     struct DrawableEvent

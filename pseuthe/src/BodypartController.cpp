@@ -28,6 +28,7 @@ source distribution.
 #include <BodypartController.hpp>
 #include <Entity.hpp>
 #include <PhysicsComponent.hpp>
+#include <AnimatedDrawable.hpp>
 #include <Util.hpp>
 
 #include <cassert>
@@ -38,11 +39,17 @@ namespace
     const float maxBounds = 1920.f;
     const float minBounds = 0.f;
     const float impactReduction = 0.6f; //reduction of velocity when hitting edges
+    const float maxHealth = 100.f;
+    const float healthReduction = 10.f; //reduction per second
+
+    const sf::Color defaultColour(220u, 220u, 220u, 180u);
 }
 
 BodypartController::BodypartController(MessageBus& mb)
-    : Component(mb),
-    m_physComponent(nullptr)
+    : Component     (mb),
+    m_physComponent (nullptr),
+    m_drawable      (nullptr),
+    m_health        (maxHealth)
 {
 
 }
@@ -75,6 +82,17 @@ void BodypartController::entityUpdate(Entity& entity, float dt)
         m_physComponent->setVelocity(Util::Vector::reflect(m_physComponent->getVelocity(), normal) * impactReduction);
         m_physComponent->setPosition({ maxBounds, currentPosition.y });
     }
+
+    //reduce health if this is the tail
+    if (m_physComponent->getContraintCount() < 2)
+    {
+        m_health -= healthReduction * dt;
+        if (m_health <= 0) entity.destroy();
+
+        auto colour = defaultColour;
+        colour.a = static_cast<sf::Uint8>((m_health / maxHealth) * static_cast<float>(defaultColour.a));
+        m_drawable->setColour(colour);
+    }
 }
 
 void BodypartController::handleMessage(const Message&)
@@ -86,4 +104,8 @@ void BodypartController::onStart(Entity& entity)
 {
     m_physComponent = entity.getComponent<PhysicsComponent>("control");
     assert(m_physComponent);
+
+    m_drawable = entity.getComponent<AnimatedDrawable>("drawable");
+    assert(m_drawable);
+    m_drawable->setColour(defaultColour);
 }

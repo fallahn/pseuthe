@@ -35,6 +35,7 @@ source distribution.
 #include <Scene.hpp>
 #include <PhysicsWorld.hpp>
 #include <AudioManager.hpp>
+#include <GameController.hpp>
 
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -63,12 +64,12 @@ private :
     Scene m_scene;
     PhysicsWorld m_physWorld;
     AudioManager m_audioManager;
+    GameController m_gameController;
 
     sf::RectangleShape m_vignette;
     sf::Text m_versionText;
 
     Entity::Ptr createEntity();
-    void spawnPlayer();
 };
 
 #endif //GAME_STATE_HPP_

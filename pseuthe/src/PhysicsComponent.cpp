@@ -76,6 +76,19 @@ void PhysicsComponent::handleMessage(const Message& msg)
             m_velocity.y = static_cast<float>(Util::Random::value(-maxVelocity, maxVelocity));
         }
     }
+    else if (msg.type == Message::Type::Physics)
+    {
+        switch (msg.physics.event)
+        {
+        case Message::PhysicsEvent::ConstraintDestroyed:
+            if (msg.physics.entityId[0] == getParentUID() || msg.physics.entityId[1] == getParentUID())
+            {
+                removeConstraint(msg.physics.constraint);
+            }
+            break;
+        default: break;
+        }
+    }
 }
 
 void PhysicsComponent::destroy()
@@ -183,14 +196,19 @@ void PhysicsComponent::removeConstraint(Constraint* constraint)
     auto result = std::find_if(m_constraints.begin(), m_constraints.end(),
         [constraint](const Constraint* c)
     {
-        return c == constraint;
+        return ((c == constraint)/* && !c->destroyed()*/);
     });
 
     if (result != m_constraints.end())
     {
-        (*result)->destroy();
+        if(!(*result)->destroyed())(*result)->destroy();
         m_constraints.erase(result);
     }
+}
+
+sf::Uint32 PhysicsComponent::getContraintCount() const
+{
+    return m_constraints.size();
 }
 
 //private
