@@ -25,30 +25,30 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <PauseState.hpp>
+#include <ScoreState.hpp>
 
-PauseState::PauseState(StateStack& stateStack, Context context)
+ScoreState::ScoreState(StateStack& stateStack, Context context)
     : State(stateStack, context)
 {
 
 }
 
-bool PauseState::update(float dt)
+bool ScoreState::update(float dt)
 {
     return true;
 }
 
-void PauseState::draw()
+void ScoreState::draw()
 {
 
 }
 
-bool PauseState::handleEvent(const sf::Event& evt)
+bool ScoreState::handleEvent(const sf::Event& evt)
 {
     return true;
 }
 
-void PauseState::handleMessage(const Message&)
+void ScoreState::handleMessage(const Message&)
 {
 
 }

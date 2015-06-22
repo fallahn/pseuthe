@@ -28,7 +28,7 @@ source distribution.
 #include <App.hpp>
 #include <MenuState.hpp>
 #include <GameState.hpp>
-#include <PauseState.hpp>
+#include <ScoreState.hpp>
 #include <Util.hpp>
 
 #include <SFML/Window/Event.hpp>
@@ -231,7 +231,7 @@ void App::registerStates()
 {
     m_stateStack.registerState<MenuState>(States::ID::Menu); 
     m_stateStack.registerState<GameState>(States::ID::Main);
-    m_stateStack.registerState<PauseState>(States::ID::Pause);
+    m_stateStack.registerState<ScoreState>(States::ID::Score);
 }
 
 void App::loadSettings()

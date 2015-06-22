@@ -153,9 +153,6 @@
     <ClCompile Include="src\MenuState.cpp">
       <Filter>Source Files\states</Filter>
     </ClCompile>
-    <ClCompile Include="src\PauseState.cpp">
-      <Filter>Source Files\states</Filter>
-    </ClCompile>
     <ClCompile Include="src\State.cpp">
       <Filter>Source Files\states</Filter>
     </ClCompile>
@@ -191,6 +188,9 @@
     </ClCompile>
     <ClCompile Include="src\OrbController.cpp">
       <Filter>Source Files\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ScoreState.cpp">
+      <Filter>Source Files\states</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -255,9 +255,6 @@
       <Filter>Header Files\states</Filter>
     </ClInclude>
     <ClInclude Include="include\State.hpp">
-      <Filter>Header Files\states</Filter>
-    </ClInclude>
-    <ClInclude Include="include\PauseState.hpp">
       <Filter>Header Files\states</Filter>
     </ClInclude>
     <ClInclude Include="include\MenuState.hpp">
@@ -337,6 +334,9 @@
     </ClInclude>
     <ClInclude Include="include\OrbController.hpp">
       <Filter>Header Files\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ScoreState.hpp">
+      <Filter>Header Files\states</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

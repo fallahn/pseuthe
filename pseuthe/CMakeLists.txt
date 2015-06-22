@@ -76,7 +76,6 @@ add_executable(
 	src/ParticleFactory.cpp	
 	src/ParticleField.cpp
 	src/ParticleSystem.cpp
-	src/PauseState.cpp
 	src/PhysicsComponent.cpp
 	src/PhysicsConstraint.cpp
 	src/PhysicsWorld.cpp
@@ -84,6 +83,7 @@ add_executable(
 	src/PostChromeAb.cpp
 	src/PostProcess.cpp
 	src/Scene.cpp
+	src/ScoreState.cpp
 	src/ShaderResource.cpp
 	src/SoundPlayer.cpp
 	src/State.cpp

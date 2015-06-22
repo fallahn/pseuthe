@@ -99,7 +99,7 @@
     <ClCompile Include="src\ParticleFactory.cpp" />
     <ClCompile Include="src\ParticleField.cpp" />
     <ClCompile Include="src\ParticleSystem.cpp" />
-    <ClCompile Include="src\PauseState.cpp" />
+    <ClCompile Include="src\ScoreState.cpp" />
     <ClCompile Include="src\PhysicsComponent.cpp" />
     <ClCompile Include="src\PhysicsConstraint.cpp" />
     <ClCompile Include="src\PhysicsWorld.cpp" />
@@ -146,7 +146,7 @@
     <ClInclude Include="include\Particle.hpp" />
     <ClInclude Include="include\ParticleField.hpp" />
     <ClInclude Include="include\ParticleSystem.hpp" />
-    <ClInclude Include="include\PauseState.hpp" />
+    <ClInclude Include="include\ScoreState.hpp" />
     <ClInclude Include="include\PhysicsComponent.hpp" />
     <ClInclude Include="include\PhysicsWorld.hpp" />
     <ClInclude Include="include\PostBloom.hpp" />

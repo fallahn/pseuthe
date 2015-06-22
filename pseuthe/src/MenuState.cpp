@@ -50,7 +50,7 @@ MenuState::MenuState(StateStack& stateStack, Context context)
 
     auto& font = context.appInstance.getFont("assets/fonts/N_E_B.ttf");
 
-    m_texts.emplace_back("Press Space to Toggle Menu", font, 35u);
+    m_texts.emplace_back("Press Space To Play", font, 35u);
     auto& spaceText = m_texts.back();
     Util::Position::centreOrigin(spaceText);
     spaceText.setPosition(context.defaultView.getCenter());

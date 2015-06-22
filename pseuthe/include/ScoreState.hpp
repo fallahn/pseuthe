@@ -25,18 +25,18 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//shows options and things mmmkay?
+//shows score summary
 
-#ifndef PAUSE_STATE_HPP_
-#define PAUSE_STATE_HPP_
+#ifndef SCORE_STATE_HPP_
+#define SCORE_STATE_HPP_
 
 #include <State.hpp>
 
-class PauseState final : public State
+class ScoreState final : public State
 {
 public:
-    PauseState(StateStack& stateStack, Context context);
-    ~PauseState() = default;
+    ScoreState(StateStack& stateStack, Context context);
+    ~ScoreState() = default;
 
     bool update(float dt) override;
     void draw() override;
@@ -44,4 +44,4 @@ public:
     void handleMessage(const Message&) override;
 };
 
-#endif //PAUSE_STATE_HPP_
+#endif //SCORE_STATE_HPP_
