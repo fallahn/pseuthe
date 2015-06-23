@@ -31,8 +31,10 @@ source distribution.
 #define GAME_CONTROLLER_HPP_
 
 #include <SFML/Config.hpp>
+#include <SFML/Graphics/Rect.hpp>
 
 #include <vector>
+#include <array>
 
 class Scene;
 class MessageBus;
@@ -63,10 +65,13 @@ private:
     float m_constraintLength;
     float m_nextPartSize;
     float m_nextPartScale;
-    std::vector<PhysicsComponent*> m_physicsComponents;
+    std::vector<PhysicsComponent*> m_playerPhysicsComponents;
+
+    std::array<sf::FloatRect, 2> m_planktonSpawns;
 
     void spawnPlayer();
     void addBodyPart();
+    void spawnPlankton();
 };
 
 #endif //GAME_CONTROLLER_HPP_

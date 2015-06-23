@@ -46,6 +46,8 @@ public:
     PhysicsComponent::Ptr addBody(float radius);
     PhysicsComponent::Ptr attachBody(float radius, float constraintLength, PhysicsComponent*);
 
+    const sf::FloatRect& getWorldSize() const;
+
     void handleMessage(const Message&);
     void update(float);
 

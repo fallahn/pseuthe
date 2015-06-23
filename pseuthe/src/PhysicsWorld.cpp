@@ -59,6 +59,11 @@ PhysicsComponent::Ptr PhysicsWorld::attachBody(float radius, float distance, Phy
     return std::move(newBody);
 }
 
+const sf::FloatRect& PhysicsWorld::getWorldSize() const
+{
+    return bounds;
+}
+
 void PhysicsWorld::handleMessage(const Message& msg)
 {
 

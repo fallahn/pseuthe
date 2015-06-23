@@ -32,7 +32,7 @@ source distribution.
 #include <PhysicsWorld.hpp>
 #include <Entity.hpp>
 #include <ParticleSystem.hpp>
-
+#include <Util.hpp>
 #include <InputComponent.hpp>
 #include <BodypartController.hpp>
 #include <AnimatedDrawable.hpp>
@@ -47,6 +47,7 @@ namespace
     const sf::Vector2f spawnPosition(960.f, 540.f);
 
     const int maxBodyParts = 6;
+    const int maxPlankton = 5;
 }
 
 GameController::GameController(Scene& scene, MessageBus& mb, App& app, PhysicsWorld& pw)
@@ -59,7 +60,15 @@ GameController::GameController(Scene& scene, MessageBus& mb, App& app, PhysicsWo
     m_nextPartSize          (0.f),
     m_nextPartScale         (0.f)
 {
+    //find two off sceen aresa for spawning teh planktons
+    auto& worldBounds = m_physicsWorld.getWorldSize();
+    m_planktonSpawns[0].left = worldBounds.left;
+    m_planktonSpawns[0].width = std::abs(worldBounds.left);
+    m_planktonSpawns[0].height = worldBounds.height;
 
+    m_planktonSpawns[1].left = 1920.f;
+    m_planktonSpawns[1].width = worldBounds.width - 1920.f / 2.f;
+    m_planktonSpawns[1].height = worldBounds.height;
 }
 
 //public
@@ -81,6 +90,11 @@ void GameController::handleMessage(const Message& msg)
                 addBodyPart();
                 addBodyPart();
                 addBodyPart();
+                
+                spawnPlankton();
+                spawnPlankton();
+                spawnPlankton();
+                spawnPlankton();
             }
             break;
         case Message::UIEvent::MenuOpened:
@@ -107,7 +121,7 @@ void GameController::handleMessage(const Message& msg)
             }
             break;
         case Message::PlayerEvent::PartRemoved:
-            m_physicsComponents.pop_back();
+            m_playerPhysicsComponents.pop_back();
             m_nextPartSize /= partScale;
             m_nextPartScale /= partScale;
             m_constraintLength /= partScale;
@@ -126,14 +140,14 @@ void GameController::spawnPlayer()
     cd->loadAnimationData("assets/images/player/head.cra");
     cd->setOrigin(sf::Vector2f(cd->getFrameSize()) / 2.f);
     cd->setBlendMode(sf::BlendAdd);
-    cd->play(cd->getAnimations()[0]);
+    cd->play(cd->getAnimations()[0]); //TODO safety check this
     cd->setName("drawable");
     entity->addComponent<AnimatedDrawable>(cd);
 
     auto physComponent = m_physicsWorld.addBody(playerSize);
     physComponent->setName("control");
     physComponent->setPosition(entity->getWorldPosition());
-    m_physicsComponents.push_back(physComponent.get());
+    m_playerPhysicsComponents.push_back(physComponent.get());
     entity->addComponent<PhysicsComponent>(physComponent);
 
     auto trailComponent = ParticleSystem::create(Particle::Type::Trail, m_messageBus);
@@ -162,22 +176,22 @@ void GameController::spawnPlayer()
 void GameController::addBodyPart()
 {
     auto bodyPart = std::make_unique<Entity>(m_messageBus);
-    bodyPart->setWorldPosition({ spawnPosition.x - (m_constraintLength * m_physicsComponents.size()), spawnPosition.y });
+    bodyPart->setWorldPosition({ spawnPosition.x - (m_constraintLength * m_playerPhysicsComponents.size()), spawnPosition.y });
 
     auto drawable = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/bodypart01.png"));
     drawable->loadAnimationData("assets/images/player/bodypart01.cra");
     drawable->setOrigin(sf::Vector2f(drawable->getFrameSize()) / 2.f);
     drawable->setBlendMode(sf::BlendAdd);
-    drawable->play(drawable->getAnimations()[0], drawable->getFrameCount() / maxBodyParts * m_physicsComponents.size());
+    drawable->play(drawable->getAnimations()[0], drawable->getFrameCount() / maxBodyParts * m_playerPhysicsComponents.size()); // TODO safety check this
     drawable->setScale(m_nextPartScale, m_nextPartScale);
     drawable->setName("drawable");
     bodyPart->addComponent<AnimatedDrawable>(drawable);
 
-    auto physComponent = m_physicsWorld.attachBody(m_nextPartSize, m_constraintLength, m_physicsComponents.back());
+    auto physComponent = m_physicsWorld.attachBody(m_nextPartSize, m_constraintLength, m_playerPhysicsComponents.back());
     physComponent->setPosition(bodyPart->getWorldPosition());
-    physComponent->setVelocity(m_physicsComponents.back()->getVelocity());
+    physComponent->setVelocity(m_playerPhysicsComponents.back()->getVelocity());
     physComponent->setName("control");
-    m_physicsComponents.push_back(physComponent.get());
+    m_playerPhysicsComponents.push_back(physComponent.get());
     bodyPart->addComponent<PhysicsComponent>(physComponent);
 
     auto sparkle = ParticleSystem::create(Particle::Type::Sparkle, m_messageBus);
@@ -198,6 +212,45 @@ void GameController::addBodyPart()
     Message msg;
     msg.type = Message::Type::Player;
     msg.player.action = Message::PlayerEvent::PartAdded;
-    msg.player.mass = m_physicsComponents.back()->getMass();
+    msg.player.mass = m_playerPhysicsComponents.back()->getMass();
     m_messageBus.send(msg);
+}
+
+void GameController::spawnPlankton()
+{
+    //TODO despawn these when moving off screen? Or just keep count
+    //and spawn when below X
+    //TODO make these triggers only, no collision reaction
+
+    auto& spawnArea = m_planktonSpawns[Util::Random::value(0, m_planktonSpawns.size() - 1)];
+    const float posX = spawnArea.left + (spawnArea.width / 2.f);
+    const float posY = static_cast<float>(Util::Random::value(0, 1080));
+
+    auto entity = std::make_unique<Entity>(m_messageBus);
+    entity->setWorldPosition({ posX, posY });
+    auto physComponent = m_physicsWorld.addBody(32.f); //TODO vary size and scale drawable accordingly
+    physComponent->setPosition(entity->getWorldPosition());
+    entity->addComponent<PhysicsComponent>(physComponent);
+
+    AnimatedDrawable::Ptr ad;
+    switch (Util::Random::value(0, 1))
+    {
+    case 0:
+        ad = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/food01.png"));
+        ad->loadAnimationData("assets/images/player/food01.cra");
+        break;
+    case 1:
+        ad = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/food02.png"));
+        ad->loadAnimationData("assets/images/player/food02.cra");
+        break;
+    default: break;
+    }
+    ad->setBlendMode(sf::BlendAdd);
+    ad->setOrigin(sf::Vector2f(ad->getFrameSize()) / 2.f);
+    ad->play(ad->getAnimations()[0]);
+    entity->addComponent<AnimatedDrawable>(ad);
+
+    //TODO send a spawn message
+
+    m_scene.getLayer(Scene::Layer::FrontRear).addChild(entity);
 }

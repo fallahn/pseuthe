@@ -69,6 +69,7 @@ class TextureResource;
 class AnimatedDrawable final : public sf::Drawable, public sf::Transformable, public Component
 {
 public:
+    using Ptr = std::unique_ptr<AnimatedDrawable> ;
     explicit AnimatedDrawable(MessageBus&);
     AnimatedDrawable(MessageBus&, const sf::Texture& t);
     AnimatedDrawable(const AnimatedDrawable&) = delete;
