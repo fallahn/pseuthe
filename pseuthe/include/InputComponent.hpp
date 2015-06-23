@@ -32,6 +32,8 @@ source distribution.
 
 #include <Component.hpp>
 
+#include <SFML/System/Vector2.hpp>
+
 class PhysicsComponent;
 class AnimatedDrawable;
 class ParticleSystem;
@@ -57,6 +59,9 @@ private:
 
     float m_mass;
     float m_invMass;
+
+    sf::Vector2f getKeyboard();
+    sf::Vector2f getController();
 };
 
 #endif //INPUT_COMPONENT_HPP_

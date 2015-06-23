@@ -67,7 +67,7 @@ GameController::GameController(Scene& scene, MessageBus& mb, App& app, PhysicsWo
     m_planktonSpawns[0].height = worldBounds.height;
 
     m_planktonSpawns[1].left = 1920.f;
-    m_planktonSpawns[1].width = worldBounds.width - 1920.f / 2.f;
+    m_planktonSpawns[1].width = (worldBounds.width - 1920.f) / 2.f;
     m_planktonSpawns[1].height = worldBounds.height;
 }
 
@@ -143,6 +143,8 @@ void GameController::spawnPlayer()
     cd->play(cd->getAnimations()[0]); //TODO safety check this
     cd->setName("drawable");
     entity->addComponent<AnimatedDrawable>(cd);
+
+
 
     auto physComponent = m_physicsWorld.addBody(playerSize);
     physComponent->setName("control");
@@ -236,11 +238,11 @@ void GameController::spawnPlankton()
     switch (Util::Random::value(0, 1))
     {
     case 0:
-        ad = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/food01.png"));
+        ad = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/food01_good.png"));
         ad->loadAnimationData("assets/images/player/food01.cra");
         break;
     case 1:
-        ad = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/food02.png"));
+        ad = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/food02_good.png"));
         ad->loadAnimationData("assets/images/player/food02.cra");
         break;
     default: break;

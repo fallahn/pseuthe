@@ -1,0 +1,15 @@
+{
+  "Animations": [
+    {
+      "Start": 0,
+      "End": 9,
+      "Loop": true,
+      "Name": "default"
+    }
+  ],
+  "FrameCount": 10,
+  "FrameSize": "176, 96",
+  "FrameRate": 25.0,
+  "Texture": "legs.png",
+  "NormalMap": "none.png"
+}

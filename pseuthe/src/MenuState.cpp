@@ -97,10 +97,29 @@ bool MenuState::handleEvent(const sf::Event& evt)
 {
     if (evt.type == sf::Event::KeyReleased)
     {
+        //TODO repeated code here... fix this
         switch (evt.key.code)
         {
         case sf::Keyboard::Space:
         case sf::Keyboard::Escape:
+        case sf::Keyboard::Return:
+            requestStackPop();
+
+            Message msg;
+            msg.type = Message::Type::UI;
+            msg.ui.type = Message::UIEvent::MenuClosed;
+            msg.ui.value = 0.f;
+            msg.ui.stateId = States::ID::Menu;
+            m_messageBus.send(msg);
+            return false;
+        default: break;
+        }
+    }
+    else if (evt.type == sf::Event::JoystickButtonReleased)
+    {
+        switch (evt.joystickButton.button)
+        {
+        case 7:
             requestStackPop();
 
             Message msg;

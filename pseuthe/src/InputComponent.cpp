@@ -35,6 +35,7 @@ source distribution.
 #include <Log.hpp>
 
 #include <SFML/Window/Keyboard.hpp>
+#include <SFML/Window/Joystick.hpp>
 
 #include <cassert>
 
@@ -56,6 +57,8 @@ namespace
     const float maxTrailRate = 50.f;
 
     const float dragMultiplier = 2900.f;
+
+    const float joyDeadZone = 25.f;
 }
 
 InputComponent::InputComponent(MessageBus& mb)
@@ -81,32 +84,17 @@ void InputComponent::entityUpdate(Entity& entity, float dt)
     sf::Vector2f forceVec;    
     if (m_parseInput)
     {
-        //TODO parse controller input
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)
-            || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+        forceVec = getKeyboard();
+        if (Util::Vector::lengthSquared(forceVec) > 0.1f)
         {
-            forceVec.y -= 1.f;
+            Util::Vector::normalise(forceVec);
+            forceVec *= force * m_invMass * dt;
         }
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)
-            || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+        else
         {
-            forceVec.y += 1.f;
+            forceVec = getController();
+            forceVec *= dt;
         }
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)
-            || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-        {
-            forceVec.x -= 1.f;
-        }
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)
-            || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-        {
-            forceVec.x += 1.f;
-        }
-        Util::Vector::normalise(forceVec);
-        forceVec *= force * m_invMass * dt;
     }
 
     //limit speed
@@ -207,4 +195,68 @@ void InputComponent::onStart(Entity& entity)
 
     m_trailParticles = entity.getComponent<ParticleSystem>("trail");
     assert(m_trailParticles);
+}
+
+//private
+sf::Vector2f InputComponent::getKeyboard()
+{
+    sf::Vector2f forceVec;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)
+        || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+    {
+        forceVec.y -= 1.f;
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)
+        || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+    {
+        forceVec.y += 1.f;
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)
+        || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+    {
+        forceVec.x -= 1.f;
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)
+        || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+    {
+        forceVec.x += 1.f;
+    }
+    return forceVec;
+}
+
+sf::Vector2f InputComponent::getController()
+{
+    //TODO how do we maintain the analog of the controller? (normalising the vector breaks this)
+    //try and remember dot product tomorrow... cos you're too tired now.
+    sf::Vector2f forceVec;
+    if (sf::Joystick::isConnected(0))
+    {
+        auto axisPosX = sf::Joystick::getAxisPosition(0, sf::Joystick::PovX);
+        if (axisPosX < -joyDeadZone || axisPosX > joyDeadZone)
+        {
+            forceVec.x = force * (axisPosX / 100.f) * m_invMass;
+        }
+        auto axisPosY = -sf::Joystick::getAxisPosition(0, sf::Joystick::PovY);
+        if (axisPosY < -joyDeadZone || axisPosY > joyDeadZone)
+        {
+            forceVec.y = force * (axisPosY / 100.f) * m_invMass;
+        }
+
+        axisPosX = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
+        if (axisPosX < -joyDeadZone || axisPosX > joyDeadZone)
+        {
+            forceVec.x = force * (axisPosX / 100.f) * m_invMass;
+        }
+
+        axisPosY = sf::Joystick::getAxisPosition(0, sf::Joystick::Y);
+        if (axisPosY < -joyDeadZone || axisPosY > joyDeadZone)
+        {
+            forceVec.y = force * (axisPosY / 100.f) * m_invMass;
+        }
+    }
+
+    return forceVec;
 }

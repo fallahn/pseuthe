@@ -91,8 +91,43 @@ bool ScoreState::handleEvent(const sf::Event& evt)
 {
     if (evt.type == sf::Event::KeyReleased)
     {
+        switch (evt.key.code)
+        {
+        case sf::Keyboard::Space:
+        case sf::Keyboard::Escape:
+        case sf::Keyboard::Return:
+            requestStackPop();
+            requestStackPush(States::ID::Menu);
 
+            Message msg;
+            msg.type = Message::Type::UI;
+            msg.ui.type = Message::UIEvent::MenuClosed;
+            msg.ui.value = 0.f;
+            msg.ui.stateId = States::ID::Score;
+            m_messageBus.send(msg);
+            return false;
+        default: break;
+        }
     }
+    else if (evt.type == sf::Event::JoystickButtonReleased)
+    {
+        switch (evt.joystickButton.button)
+        {
+        case 7:
+            requestStackPop();
+            requestStackPush(States::ID::Menu);
+
+            Message msg;
+            msg.type = Message::Type::UI;
+            msg.ui.type = Message::UIEvent::MenuClosed;
+            msg.ui.value = 0.f;
+            msg.ui.stateId = States::ID::Score;
+            m_messageBus.send(msg);
+            return false;
+        default: break;
+        }
+    }
+
 
     //pass remaining events to menu
     const auto& rw = getContext().renderWindow;
