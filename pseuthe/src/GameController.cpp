@@ -41,15 +41,23 @@ source distribution.
 
 namespace
 {
+    const float partScale = 0.9f;
+    const float partPadding = 1.f;
+    const float playerSize = 32.f;
+    const sf::Vector2f spawnPosition(960.f, 540.f);
+
     const int maxBodyParts = 6;
 }
 
 GameController::GameController(Scene& scene, MessageBus& mb, App& app, PhysicsWorld& pw)
-    : m_scene       (scene),
-    m_messageBus    (mb),
-    m_appInstance   (app),
-    m_physicsWorld  (pw),
-    m_player        (nullptr)
+    : m_scene               (scene),
+    m_messageBus            (mb),
+    m_appInstance           (app),
+    m_physicsWorld          (pw),
+    m_player                (nullptr),
+    m_constraintLength      (0.f),
+    m_nextPartSize          (0.f),
+    m_nextPartScale         (0.f)
 {
 
 }
@@ -67,9 +75,12 @@ void GameController::handleMessage(const Message& msg)
         switch (msg.ui.type)
         {
         case Message::UIEvent::MenuClosed:
-            if (!m_player)
+            if (msg.ui.stateId == States::ID::Menu && !m_player)
             {
                 spawnPlayer();
+                addBodyPart();
+                addBodyPart();
+                addBodyPart();
             }
             break;
         case Message::UIEvent::MenuOpened:
@@ -87,18 +98,23 @@ void GameController::handleMessage(const Message& msg)
         {
         case Message::PlayerEvent::Died:
             m_player = nullptr;
+            {
+                Message newMessage;
+                newMessage.type = Message::Type::UI;
+                newMessage.ui.type = Message::UIEvent::RequestState;
+                newMessage.ui.stateId = States::ID::Score;
+                m_messageBus.send(newMessage);
+            }
+            break;
+        case Message::PlayerEvent::PartRemoved:
+            m_physicsComponents.pop_back();
+            m_nextPartSize /= partScale;
+            m_nextPartScale /= partScale;
+            m_constraintLength /= partScale;
             break;
         default: break;
         }
     }
-}
-
-namespace
-{
-    const float partScale = 0.9f;
-    const float partPadding = 1.f;
-    const float playerSize = 32.f;
-    const sf::Vector2f spawnPosition(960.f, 540.f);
 }
 
 void GameController::spawnPlayer()
@@ -117,7 +133,7 @@ void GameController::spawnPlayer()
     auto physComponent = m_physicsWorld.addBody(playerSize);
     physComponent->setName("control");
     physComponent->setPosition(entity->getWorldPosition());
-    auto lastPhysComponent = physComponent.get();
+    m_physicsComponents.push_back(physComponent.get());
     entity->addComponent<PhysicsComponent>(physComponent);
 
     auto trailComponent = ParticleSystem::create(Particle::Type::Trail, m_messageBus);
@@ -135,46 +151,53 @@ void GameController::spawnPlayer()
     auto controlComponent = std::make_unique<InputComponent>(m_messageBus);
     entity->addComponent<InputComponent>(controlComponent);
 
-    float constraintLength = playerSize * 2.f + partPadding;
-    float nextSize = playerSize * partScale;
-    float nextScale = partScale;
-
-    for (auto i = 1; i < maxBodyParts / 2; ++i)
-    {
-        auto bodyPart = std::make_unique<Entity>(m_messageBus);
-        bodyPart->setWorldPosition({ spawnPosition.x - (constraintLength * i), spawnPosition.y });
-
-        auto drawable = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/bodypart01.png"));
-        drawable->loadAnimationData("assets/images/player/bodypart01.cra");
-        drawable->setOrigin(sf::Vector2f(drawable->getFrameSize()) / 2.f);
-        drawable->setBlendMode(sf::BlendAdd);
-        drawable->play(drawable->getAnimations()[0], drawable->getFrameCount() / maxBodyParts * i);
-        drawable->setScale(nextScale, nextScale);
-        drawable->setName("drawable");
-        bodyPart->addComponent<AnimatedDrawable>(drawable);
-
-        physComponent = m_physicsWorld.attachBody(nextSize, constraintLength, lastPhysComponent);
-        physComponent->setPosition(bodyPart->getWorldPosition());
-        physComponent->setVelocity(lastPhysComponent->getVelocity());
-        physComponent->setName("control");
-        lastPhysComponent = physComponent.get();
-        bodyPart->addComponent<PhysicsComponent>(physComponent);
-
-        auto sparkle = ParticleSystem::create(Particle::Type::Sparkle, m_messageBus);
-        sparkle->setTexture(m_appInstance.getTexture("assets/images/particles/spark.png"));
-        sparkle->setName("sparkle");
-        sparkle->start(1u, 0.f, 0.5f);
-        bodyPart->addComponent<ParticleSystem>(sparkle);
-
-        auto bpCont = std::make_unique<BodypartController>(m_messageBus);
-        bodyPart->addComponent<BodypartController>(bpCont);
-
-        entity->addChild(bodyPart);
-
-        nextSize *= partScale;
-        nextScale *= partScale;
-        constraintLength *= partScale;
-    }
+    m_constraintLength = playerSize + (playerSize * partScale) + partPadding;
+    m_nextPartSize = playerSize * partScale;
+    m_nextPartScale = partScale;
+    
     m_player = entity.get();
     m_scene.getLayer(Scene::Layer::FrontMiddle).addChild(entity);
+}
+
+void GameController::addBodyPart()
+{
+    auto bodyPart = std::make_unique<Entity>(m_messageBus);
+    bodyPart->setWorldPosition({ spawnPosition.x - (m_constraintLength * m_physicsComponents.size()), spawnPosition.y });
+
+    auto drawable = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/bodypart01.png"));
+    drawable->loadAnimationData("assets/images/player/bodypart01.cra");
+    drawable->setOrigin(sf::Vector2f(drawable->getFrameSize()) / 2.f);
+    drawable->setBlendMode(sf::BlendAdd);
+    drawable->play(drawable->getAnimations()[0], drawable->getFrameCount() / maxBodyParts * m_physicsComponents.size());
+    drawable->setScale(m_nextPartScale, m_nextPartScale);
+    drawable->setName("drawable");
+    bodyPart->addComponent<AnimatedDrawable>(drawable);
+
+    auto physComponent = m_physicsWorld.attachBody(m_nextPartSize, m_constraintLength, m_physicsComponents.back());
+    physComponent->setPosition(bodyPart->getWorldPosition());
+    physComponent->setVelocity(m_physicsComponents.back()->getVelocity());
+    physComponent->setName("control");
+    m_physicsComponents.push_back(physComponent.get());
+    bodyPart->addComponent<PhysicsComponent>(physComponent);
+
+    auto sparkle = ParticleSystem::create(Particle::Type::Sparkle, m_messageBus);
+    sparkle->setTexture(m_appInstance.getTexture("assets/images/particles/spark.png"));
+    sparkle->setName("sparkle");
+    sparkle->start(1u, 0.f, 0.5f);
+    bodyPart->addComponent<ParticleSystem>(sparkle);
+
+    auto bpCont = std::make_unique<BodypartController>(m_messageBus);
+    bodyPart->addComponent<BodypartController>(bpCont);
+
+    m_player->addChild(bodyPart);
+
+    m_nextPartSize *= partScale;
+    m_nextPartScale *= partScale;
+    m_constraintLength *= partScale;
+
+    Message msg;
+    msg.type = Message::Type::Player;
+    msg.player.action = Message::PlayerEvent::PartAdded;
+    msg.player.mass = m_physicsComponents.back()->getMass();
+    m_messageBus.send(msg);
 }

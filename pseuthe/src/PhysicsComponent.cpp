@@ -129,6 +129,7 @@ void PhysicsComponent::physicsUpdate(float dt, const sf::FloatRect& bounds)
         }
         else
         {
+            m_position.x = bounds.left + 1.f;
             m_position.y = static_cast<float>(Util::Random::value(static_cast<int>(bounds.top), static_cast<int>(bounds.top + bounds.height)));
         }
     }

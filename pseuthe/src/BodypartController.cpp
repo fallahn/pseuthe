@@ -90,7 +90,15 @@ void BodypartController::entityUpdate(Entity& entity, float dt)
     if (m_physComponent->getContraintCount() < 2)
     {
         m_health -= healthReduction * dt;
-        if (m_health <= 0) entity.destroy();
+        if (m_health <= 0)
+        {
+            entity.destroy();
+            Message msg;
+            msg.type = Message::Type::Player;
+            msg.player.action = Message::PlayerEvent::PartRemoved;
+            msg.player.mass = m_physComponent->getMass();
+            sendMessage(msg);
+        }
 
         auto colour = defaultColour;
         colour.a = static_cast<sf::Uint8>((m_health / maxHealth) * static_cast<float>(defaultColour.a));

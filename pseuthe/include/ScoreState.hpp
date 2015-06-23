@@ -31,7 +31,12 @@ source distribution.
 #define SCORE_STATE_HPP_
 
 #include <State.hpp>
+#include <UIContainer.hpp>
 
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Text.hpp>
+
+class MessageBus;
 class ScoreState final : public State
 {
 public:
@@ -42,6 +47,16 @@ public:
     void draw() override;
     bool handleEvent(const sf::Event& evt) override;
     void handleMessage(const Message&) override;
+
+private:
+    MessageBus& m_messageBus;
+    sf::Sprite m_menuSprite;
+    sf::Sprite m_cursorSprite;
+    std::vector<sf::Text> m_texts;
+
+    ui::Container m_uiContainer;
+
+    void buildMenu(const sf::Font&);
 };
 
 #endif //SCORE_STATE_HPP_

@@ -59,6 +59,7 @@ App::App()
 {
     registerStates();
     m_stateStack.pushState(States::ID::Main);
+    m_stateStack.pushState(States::ID::Menu);
 
     loadSettings();
 

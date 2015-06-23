@@ -32,6 +32,7 @@ source distribution.
 #include <Entity.hpp>
 #include <Util.hpp>
 #include <MessageBus.hpp>
+#include <Log.hpp>
 
 #include <SFML/Window/Keyboard.hpp>
 
@@ -53,6 +54,8 @@ namespace
 
     const float minTrailRate = 1.f;
     const float maxTrailRate = 50.f;
+
+    const float dragMultiplier = 2900.f;
 }
 
 InputComponent::InputComponent(MessageBus& mb)
@@ -61,7 +64,9 @@ InputComponent::InputComponent(MessageBus& mb)
     m_drawable          (nullptr),
     m_trailParticles    (nullptr),
     m_health            (maxHealth),
-    m_parseInput        (true)
+    m_parseInput        (true),
+    m_mass              (0.f),
+    m_invMass           (1.f)
 {
 
 }
@@ -101,7 +106,7 @@ void InputComponent::entityUpdate(Entity& entity, float dt)
             forceVec.x += 1.f;
         }
         Util::Vector::normalise(forceVec);
-        forceVec *= force * dt;
+        forceVec *= force * m_invMass * dt;
     }
 
     //limit speed
@@ -133,20 +138,25 @@ void InputComponent::entityUpdate(Entity& entity, float dt)
     m_drawable->setRotation(Util::Vector::rotation(m_physicsComponent->getVelocity()));
 
     //update health if we have no tail
-    if (m_physicsComponent->getContraintCount() < 1)
+    if (m_physicsComponent->getContraintCount() < 1 && m_parseInput)
     {
         m_health -= healthReduction * dt;
         if (m_health <= 0)
         {
-            entity.destroy();
-            Message msg;
-            msg.type = Message::Type::Player;
-            msg.player.action = Message::PlayerEvent::Died;
-            sendMessage(msg);
+            m_trailParticles->stop();
+            
+            if (m_trailParticles->getParticleCount() == 0)
+            {
+                entity.destroy();
+                Message msg;
+                msg.type = Message::Type::Player;
+                msg.player.action = Message::PlayerEvent::Died;
+                sendMessage(msg);
+            }
         }
 
         auto colour = defaultColour;
-        colour.a = static_cast<sf::Uint8>((m_health / maxHealth) * static_cast<float>(defaultColour.a));
+        colour.a = static_cast<sf::Uint8>(std::max((m_health / maxHealth) * static_cast<float>(defaultColour.a), 0.f));
         m_drawable->setColour(colour);
     }
 }
@@ -164,6 +174,24 @@ void InputComponent::handleMessage(const Message& msg)
             m_parseInput = false;
             break;
         default:break;
+        }
+    }
+    if (msg.type == Message::Type::Player)
+    {
+        switch (msg.player.action)
+        {
+        case Message::PlayerEvent::PartAdded:
+            m_mass += msg.player.mass;
+            m_invMass = (1.f / m_mass) * dragMultiplier;
+            LOG("Current Inverse Mass: " + std::to_string(m_invMass), Logger::Type::Info);
+            break;
+        case Message::PlayerEvent::PartRemoved:
+            m_mass = std::max(0.f, m_mass - msg.player.mass);
+            m_invMass = (m_mass > 0.01f) ? (1.f / m_mass) * dragMultiplier : 1.f;
+            LOG("Current Mass: " + std::to_string(m_mass), Logger::Type::Info);
+            LOG("Current Inverse Mass: " + std::to_string(m_invMass), Logger::Type::Info);
+            break;
+        default: break;
         }
     }
 }

@@ -30,11 +30,16 @@ source distribution.
 #ifndef GAME_CONTROLLER_HPP_
 #define GAME_CONTROLLER_HPP_
 
+#include <SFML/Config.hpp>
+
+#include <vector>
+
 class Scene;
 class MessageBus;
 class Message;
 class App;
 class PhysicsWorld;
+class PhysicsComponent;
 class Entity;
 class GameController final
 {
@@ -47,8 +52,6 @@ public:
     void update(float);
     void handleMessage(const Message&);
 
-    void spawnPlayer();
-
 private:
     Scene& m_scene;
     MessageBus& m_messageBus;
@@ -56,6 +59,14 @@ private:
     PhysicsWorld& m_physicsWorld;
 
     Entity* m_player;
+
+    float m_constraintLength;
+    float m_nextPartSize;
+    float m_nextPartScale;
+    std::vector<PhysicsComponent*> m_physicsComponents;
+
+    void spawnPlayer();
+    void addBodyPart();
 };
 
 #endif //GAME_CONTROLLER_HPP_

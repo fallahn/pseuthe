@@ -72,11 +72,11 @@ void FadeDrawable::entityUpdate(Entity&, float dt)
         {
             destroy();
 
-            Message msg;
+            /*Message msg;
             msg.type = Message::Type::UI;
             msg.ui.type = Message::UIEvent::RequestState;
             msg.ui.stateId = States::ID::Menu;
-            sendMessage(msg);
+            sendMessage(msg);*/
         }
 
         //LOG(std::to_string(ratio), Logger::Type::Info);

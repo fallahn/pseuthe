@@ -96,8 +96,11 @@ public:
     {
         enum
         {
-            Died
+            Died,
+            PartAdded,
+            PartRemoved
         }action;
+        float mass;
     };
 
     union
@@ -128,6 +131,8 @@ public:
 
 private:
     std::queue<Message> m_messages;
+    std::queue<Message> m_deferredMessages;
+    bool m_polling;
 };
 
 #endif

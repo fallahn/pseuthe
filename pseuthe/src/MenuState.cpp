@@ -67,6 +67,7 @@ MenuState::MenuState(StateStack& stateStack, Context context)
     msg.type = Message::Type::UI;
     msg.ui.type = Message::UIEvent::MenuOpened;
     msg.ui.value = 0.f;
+    msg.ui.stateId = States::ID::Menu;
     m_messageBus.send(msg);
 }
 
@@ -106,6 +107,7 @@ bool MenuState::handleEvent(const sf::Event& evt)
             msg.type = Message::Type::UI;
             msg.ui.type = Message::UIEvent::MenuClosed;
             msg.ui.value = 0.f;
+            msg.ui.stateId = States::ID::Menu;
             m_messageBus.send(msg);
             return false;
         default: break;
@@ -135,6 +137,12 @@ void MenuState::buildMenu(const sf::Font& font)
     //buttonClose->setCallback([this]()
     //{
     //    requestStackPop();
+    /*    Message msg;
+        msg.type = Message::Type::UI;
+        msg.ui.type = Message::UIEvent::MenuClosed;
+        msg.ui.value = 0.f;
+        msg.ui.stateId = States::ID::Menu;
+        m_messageBus.send(msg);*/
     //});
     //m_uiContainer.addControl(buttonClose);
     

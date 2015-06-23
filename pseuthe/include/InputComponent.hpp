@@ -54,6 +54,9 @@ private:
 
     float m_health;
     bool m_parseInput;
+
+    float m_mass;
+    float m_invMass;
 };
 
 #endif //INPUT_COMPONENT_HPP_

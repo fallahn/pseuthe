@@ -28,10 +28,12 @@ source distribution.
 #include <MessageBus.hpp>
 #include <Log.hpp>
 
-MessageBus::MessageBus(){}
+MessageBus::MessageBus()
+: m_polling(false){}
 
 Message MessageBus::poll()
 {
+    m_polling = true;
     Message m = m_messages.front();
     m_messages.pop();
 
@@ -40,13 +42,18 @@ Message MessageBus::poll()
 
 void MessageBus::send(const Message& m)
 {
-    //TODO we ought to prevent this from being called
-    //from within a message handler, as it has potential
-    //for inifite loops??
-    m_messages.push(m);
+    (m_polling) ? m_deferredMessages.push(m) : m_messages.push(m);
 }
 
 bool MessageBus::empty()
 {
-    return m_messages.empty();
+    auto result = m_messages.empty();
+    if (result)
+    {
+        m_messages = std::move(m_deferredMessages);
+        m_deferredMessages = {};
+        m_polling = false;
+    }
+
+    return result;
 }
