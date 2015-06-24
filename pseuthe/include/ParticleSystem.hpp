@@ -69,6 +69,7 @@ public:
     void setInitialVelocity(const sf::Vector2f& vel);
     void setRandomInitialVelocity(const std::vector<sf::Vector2f>& randValues);
     void setEmitRate(float rate);
+    void setRandomInitialPosition(const std::vector<sf::Vector2f>&);
 
     void addAffector(Affector& a);
     template <typename T>
@@ -96,6 +97,8 @@ private:
     bool m_randVelocity;
     std::vector<sf::Vector2f> m_randVelocities;
     float m_emitRate;
+    bool m_randPosition;
+    std::vector<sf::Vector2f> m_randPositions;
 
     bool m_started;
     float m_accumulator;

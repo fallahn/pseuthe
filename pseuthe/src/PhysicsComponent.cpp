@@ -45,7 +45,8 @@ PhysicsComponent::PhysicsComponent(float radius, MessageBus& m)
     : Component     (m),
     m_radius        (radius),
     m_mass          ((std::pow(radius, 2.f) * PI * density / 2.f)),
-    m_inverseMass   (1.f / m_mass)
+    m_inverseMass   (1.f / m_mass),
+    m_triggerOnly   (false)
 {
     m_velocity.x = static_cast<float>(Util::Random::value(-maxVelocity, maxVelocity));
     m_velocity.y = static_cast<float>(Util::Random::value(-maxVelocity, maxVelocity));
@@ -116,7 +117,7 @@ void PhysicsComponent::physicsUpdate(float dt, const sf::FloatRect& bounds)
 
             Message msg;
             msg.type = Message::Type::Physics;
-            msg.physics.event = Message::PhysicsEvent::Collided;
+            msg.physics.event = Message::PhysicsEvent::Collision;
             msg.physics.entityId[0] = getParentUID();
             msg.physics.entityId[1] = 0u;
             sendMessage(msg);
@@ -137,14 +138,10 @@ void PhysicsComponent::physicsUpdate(float dt, const sf::FloatRect& bounds)
 
 void PhysicsComponent::resolveCollision(PhysicsComponent* other, const Manifold& m)
 {
+    if (m_triggerOnly || other->m_triggerOnly) return;
+
     m_velocity += m.transferForce;
     m_position -= (other->m_mass / (other->m_mass + m_mass) * m.penetration) * m.normal;
-
-    //Message msg;
-    //msg.type = Message::Type::Physics;
-    //msg.physics.event = Message::PhysicsEvent::Collided;
-    //msg.physics.entityId = getParentUID();
-    //sendMessage(msg);
 }
 
 void PhysicsComponent::applyForce(const sf::Vector2f& force)
@@ -197,7 +194,7 @@ void PhysicsComponent::removeConstraint(Constraint* constraint)
     auto result = std::find_if(m_constraints.begin(), m_constraints.end(),
         [constraint](const Constraint* c)
     {
-        return ((c == constraint)/* && !c->destroyed()*/);
+        return ((c == constraint));
     });
 
     if (result != m_constraints.end())
@@ -210,6 +207,16 @@ void PhysicsComponent::removeConstraint(Constraint* constraint)
 sf::Uint32 PhysicsComponent::getContraintCount() const
 {
     return m_constraints.size();
+}
+
+void PhysicsComponent::setTriggerOnly(bool trigger)
+{
+    m_triggerOnly = trigger;
+}
+
+bool PhysicsComponent::isTrigger() const
+{
+    return m_triggerOnly;
 }
 
 //private

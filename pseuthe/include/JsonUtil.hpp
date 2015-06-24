@@ -42,7 +42,7 @@ namespace Util
     namespace Json
     {
 
-        static void parseJsonObject(const picojson::object& o, sf::FloatRect& rect)
+        static inline void parseJsonObject(const picojson::object& o, sf::FloatRect& rect)
         {
             for (const auto& p : o)
             {
@@ -69,7 +69,7 @@ namespace Util
             }
         }
 
-        static void parseJsonObject(const picojson::object& o, sf::Vector2f& v)
+        static inline void parseJsonObject(const picojson::object& o, sf::Vector2f& v)
         {
             for (const auto& p : o)
             {
@@ -89,7 +89,7 @@ namespace Util
 
     namespace File
     {
-        static bool validLength(std::ifstream& file)
+        static inline bool validLength(std::ifstream& file)
         {
             file.seekg(0, file.end);
             sf::Int32 fileLength = static_cast<sf::Int32>(file.tellg());

@@ -36,6 +36,7 @@ source distribution.
 #include <InputComponent.hpp>
 #include <BodypartController.hpp>
 #include <AnimatedDrawable.hpp>
+#include <PlanktonController.hpp>
 
 #include <memory>
 
@@ -43,11 +44,15 @@ namespace
 {
     const float partScale = 0.9f;
     const float partPadding = 1.f;
-    const float playerSize = 32.f;
+    const float partSize = 32.f;
+    const float playerSize = 38.4f;
     const sf::Vector2f spawnPosition(960.f, 540.f);
 
     const int maxBodyParts = 6;
     const int maxPlankton = 5;
+
+    sf::Clock spawnClock;
+    const float spawnTime = 7.f;
 }
 
 GameController::GameController(Scene& scene, MessageBus& mb, App& app, PhysicsWorld& pw)
@@ -58,9 +63,10 @@ GameController::GameController(Scene& scene, MessageBus& mb, App& app, PhysicsWo
     m_player                (nullptr),
     m_constraintLength      (0.f),
     m_nextPartSize          (0.f),
-    m_nextPartScale         (0.f)
+    m_nextPartScale         (0.f),
+    m_planktonCount         (0u)
 {
-    //find two off sceen aresa for spawning teh planktons
+    //find two off sceen areas for spawning teh planktons
     auto& worldBounds = m_physicsWorld.getWorldSize();
     m_planktonSpawns[0].left = worldBounds.left;
     m_planktonSpawns[0].width = std::abs(worldBounds.left);
@@ -74,7 +80,14 @@ GameController::GameController(Scene& scene, MessageBus& mb, App& app, PhysicsWo
 //public
 void GameController::update(float dt)
 {
-
+    if (spawnClock.getElapsedTime().asSeconds() > (spawnTime * m_planktonCount))
+    {
+        spawnClock.restart();
+        if (m_planktonCount < maxPlankton && m_player)
+        {
+            spawnPlankton();
+        }
+    }
 }
 
 void GameController::handleMessage(const Message& msg)
@@ -90,11 +103,6 @@ void GameController::handleMessage(const Message& msg)
                 addBodyPart();
                 addBodyPart();
                 addBodyPart();
-                
-                spawnPlankton();
-                spawnPlankton();
-                spawnPlankton();
-                spawnPlankton();
             }
             break;
         case Message::UIEvent::MenuOpened:
@@ -129,6 +137,20 @@ void GameController::handleMessage(const Message& msg)
         default: break;
         }
     }
+    else if (msg.type == Message::Type::Plankton)
+    {
+        switch (msg.plankton.action)
+        {
+        case Message::PlanktonEvent::Died:
+            m_planktonCount--;
+
+            break;
+        case Message::PlanktonEvent::Spawned:
+            m_planktonCount++;
+            break;
+        default: break;
+        }
+    }
 }
 
 void GameController::spawnPlayer()
@@ -140,15 +162,16 @@ void GameController::spawnPlayer()
     cd->loadAnimationData("assets/images/player/head.cra");
     cd->setOrigin(sf::Vector2f(cd->getFrameSize()) / 2.f);
     cd->setBlendMode(sf::BlendAdd);
-    cd->play(cd->getAnimations()[0]); //TODO safety check this
+    const auto& anims = cd->getAnimations();
+    if(!anims.empty()) cd->play(cd->getAnimations()[0]);
     cd->setName("drawable");
+    cd->setScale(1.2f, 1.2f);
     entity->addComponent<AnimatedDrawable>(cd);
-
-
 
     auto physComponent = m_physicsWorld.addBody(playerSize);
     physComponent->setName("control");
     physComponent->setPosition(entity->getWorldPosition());
+    physComponent->setVelocity({});
     m_playerPhysicsComponents.push_back(physComponent.get());
     entity->addComponent<PhysicsComponent>(physComponent);
 
@@ -167,8 +190,8 @@ void GameController::spawnPlayer()
     auto controlComponent = std::make_unique<InputComponent>(m_messageBus);
     entity->addComponent<InputComponent>(controlComponent);
 
-    m_constraintLength = playerSize + (playerSize * partScale) + partPadding;
-    m_nextPartSize = playerSize * partScale;
+    m_constraintLength = playerSize + partSize + partPadding;
+    m_nextPartSize = partSize;
     m_nextPartScale = partScale;
     
     m_player = entity.get();
@@ -184,7 +207,11 @@ void GameController::addBodyPart()
     drawable->loadAnimationData("assets/images/player/bodypart01.cra");
     drawable->setOrigin(sf::Vector2f(drawable->getFrameSize()) / 2.f);
     drawable->setBlendMode(sf::BlendAdd);
-    drawable->play(drawable->getAnimations()[0], drawable->getFrameCount() / maxBodyParts * m_playerPhysicsComponents.size()); // TODO safety check this
+    const auto& anims = drawable->getAnimations();
+    if (!anims.empty())
+    {
+        drawable->play(drawable->getAnimations()[0], drawable->getFrameCount() / maxBodyParts * m_playerPhysicsComponents.size());
+    }
     drawable->setScale(m_nextPartScale, m_nextPartScale);
     drawable->setName("drawable");
     bodyPart->addComponent<AnimatedDrawable>(drawable);
@@ -207,9 +234,10 @@ void GameController::addBodyPart()
 
     m_player->addChild(bodyPart);
 
+    m_constraintLength = m_nextPartSize + (m_nextPartSize * m_nextPartScale);
     m_nextPartSize *= partScale;
     m_nextPartScale *= partScale;
-    m_constraintLength *= partScale;
+    
 
     Message msg;
     msg.type = Message::Type::Player;
@@ -220,10 +248,6 @@ void GameController::addBodyPart()
 
 void GameController::spawnPlankton()
 {
-    //TODO despawn these when moving off screen? Or just keep count
-    //and spawn when below X
-    //TODO make these triggers only, no collision reaction
-
     auto& spawnArea = m_planktonSpawns[Util::Random::value(0, m_planktonSpawns.size() - 1)];
     const float posX = spawnArea.left + (spawnArea.width / 2.f);
     const float posY = static_cast<float>(Util::Random::value(0, 1080));
@@ -232,27 +256,54 @@ void GameController::spawnPlankton()
     entity->setWorldPosition({ posX, posY });
     auto physComponent = m_physicsWorld.addBody(32.f); //TODO vary size and scale drawable accordingly
     physComponent->setPosition(entity->getWorldPosition());
+    physComponent->setTriggerOnly(true);
+    physComponent->setName("control");
     entity->addComponent<PhysicsComponent>(physComponent);
 
     AnimatedDrawable::Ptr ad;
-    switch (Util::Random::value(0, 1))
+    PlanktonController::Type type = static_cast<PlanktonController::Type>(Util::Random::value(0, 2));
+    if (type != PlanktonController::Type::Bonus)
     {
-    case 0:
-        ad = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/food01_good.png"));
-        ad->loadAnimationData("assets/images/player/food01.cra");
-        break;
-    case 1:
-        ad = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/food02_good.png"));
-        ad->loadAnimationData("assets/images/player/food02.cra");
-        break;
-    default: break;
+        switch (Util::Random::value(0, 1))
+        {
+        case 0:
+            (type == PlanktonController::Type::Good) ?
+            ad = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/food01_good.png")) :
+            ad = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/food01_bad.png"));
+            ad->loadAnimationData("assets/images/player/food01.cra");
+            break;
+        case 1:
+            (type == PlanktonController::Type::Good) ?
+            ad = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/food02_good.png")) :
+            ad = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/food02_bad.png"));
+            ad->loadAnimationData("assets/images/player/food02.cra");
+            break;
+        default: break;
+        }
+    }
+    else
+    {
+        ad = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/food03.png"));
+        ad->loadAnimationData("assets/images/player/food03.cra");
     }
     ad->setBlendMode(sf::BlendAdd);
     ad->setOrigin(sf::Vector2f(ad->getFrameSize()) / 2.f);
-    ad->play(ad->getAnimations()[0]);
+    if(!ad->getAnimations().empty()) ad->play(ad->getAnimations()[0]);
+    ad->setName("drawable");
     entity->addComponent<AnimatedDrawable>(ad);
 
-    //TODO send a spawn message
+    auto controller = std::make_unique<PlanktonController>(m_messageBus);
+    assert(m_player);
+    controller->setEnemyId(m_player->getUID());
+    controller->setType(type);
+    entity->addComponent<PlanktonController>(controller);
+
+    //send a spawn message
+    Message msg;
+    msg.type = Message::Type::Plankton;
+    msg.plankton.action = Message::PlanktonEvent::Spawned;
+    msg.plankton.type = type;
+    m_messageBus.send(msg);
 
     m_scene.getLayer(Scene::Layer::FrontRear).addChild(entity);
 }

@@ -77,7 +77,7 @@ void Scene::handleMessage(const Message& msg)
 
     if (msg.type == Message::Type::Physics)
     {
-        if (msg.physics.event == Message::PhysicsEvent::Collided
+        if (msg.physics.event == Message::PhysicsEvent::Collision
             && m_countCollisions)
         {
             m_collisionCount++;

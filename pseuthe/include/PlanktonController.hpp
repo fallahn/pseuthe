@@ -25,35 +25,57 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <MessageBus.hpp>
-#include <Log.hpp>
+//script component for plankton behaviour
 
-MessageBus::MessageBus()
-: m_polling(false){}
+#ifndef PLANKTON_CONTROLLER_HPP_
+#define PLANKTON_CONTROLLER_HPP_
 
-Message MessageBus::poll()
+#include <Component.hpp>
+
+class AnimatedDrawable;
+class PhysicsComponent;
+class PlanktonController final : public Component
 {
-    m_polling = true;
-    Message m = m_messages.front();
-    m_messages.pop();
-
-    return m;
-}
-
-void MessageBus::send(const Message& m)
-{
-    (m_polling) ? m_deferredMessages.push(m) : m_messages.push(m);
-}
-
-bool MessageBus::empty()
-{
-    auto result = m_messages.empty();
-    if (result)
+public:
+    enum class Type
     {
-        m_messages = std::move(m_deferredMessages);
-        m_deferredMessages = std::queue<Message>();
-        m_polling = false;
-    }
+        Good = 0,
+        Bad,
+        /*Ugly*/Bonus
+    };
 
-    return result;
-}
+    explicit PlanktonController(MessageBus&);
+    ~PlanktonController() = default;
+
+    Component::Type type() const override;
+    void entityUpdate(Entity&, float) override;
+    void handleMessage(const Message&) override;
+    void onStart(Entity&) override;
+
+    void setType(Type);
+
+    void setEnemyId(sf::Uint64);
+
+private:
+
+    enum Flags
+    {
+        HealthHit       = 0x1,
+        RequestRotation = 0x2,
+        Suicide         = 0x4
+    };
+    sf::Uint32 m_flags;
+
+    Type m_type;
+    PhysicsComponent* m_physComponent;
+    AnimatedDrawable* m_drawable;
+
+    float m_health;
+    sf::Uint64 m_enemyId;
+
+    float m_targetRotation;
+    float m_rotationSpeed;
+};
+
+
+#endif //PLANKTON_CONTROLLER_HPP_

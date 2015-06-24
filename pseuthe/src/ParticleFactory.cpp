@@ -62,6 +62,8 @@ namespace
         { -120.f, 9.5f }
     };
 
+    std::vector<sf::Vector2f> sparkPositions;
+
     std::vector<sf::Vector2f> createPoints(const sf::Vector2f& centre, int pointCount, float radius)
     {
         std::vector<sf::Vector2f> retVal;
@@ -113,13 +115,13 @@ ParticleSystem::Ptr ParticleSystem::create(Particle::Type type, MessageBus& mb)
 
     case Particle::Type::Sparkle:
     {
-        //sparkVelocities = createPoints(sf::Vector2f(), 20, 180.f);
+        sparkPositions = createPoints(sf::Vector2f(), 20, 18.f);
 
         ps->setParticleLifetime(0.3f);
         ps->setParticleSize({ 10.f, 10.f });
         ps->setRandomInitialVelocity(sparkVelocities);
+        ps->setRandomInitialPosition(sparkPositions);
         ps->setBlendMode(sf::BlendAdd);
-        //ps->setEmitRate(4.f);
         
         ForceAffector fa({ 0.f, 20.f });
         ps->addAffector(fa);

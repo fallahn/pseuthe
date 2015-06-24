@@ -52,7 +52,7 @@ namespace Util
     namespace String
     {
         //converts a comma delimited string of floats into an array
-        static std::vector<float> toFloatArray(const std::string& str)
+        static inline std::vector<float> toFloatArray(const std::string& str)
         {
             std::vector<float> values;
             auto start = 0u;
@@ -75,7 +75,7 @@ namespace Util
         }
 
         //splits a soring with a given token and returns a vector of results
-        static std::vector<std::string> tokenize(const std::string& str, char delim, bool keepEmpty = false)
+        static inline std::vector<std::string> tokenize(const std::string& str, char delim, bool keepEmpty = false)
         {
             assert(!str.empty());
             std::stringstream ss(str);
@@ -93,7 +93,7 @@ namespace Util
         }
 
         //returns string as all lower case
-        static std::string toLower(const std::string& str)
+        static inline std::string toLower(const std::string& str)
         {
             std::string result = str;
             std::transform(result.begin(), result.end(), result.begin(), ::tolower);
@@ -104,35 +104,35 @@ namespace Util
     namespace Vector
     {
         //calculates dot product of 2 vectors
-        static float dot(const sf::Vector2f& lv, const sf::Vector2f& rv)
+        static inline float dot(const sf::Vector2f& lv, const sf::Vector2f& rv)
         {
             return lv.x * rv.x + lv.y * rv.y;
         }
         //Returns a given vector with its length normalized to 1
-        static sf::Vector2f normalise(sf::Vector2f source)
+        static inline sf::Vector2f normalise(sf::Vector2f source)
         {
             float length = std::sqrt(dot(source, source));
             if (length != 0) source /= length;
             return source;
         }
         //returns length squared
-        static float lengthSquared(const sf::Vector2f& source)
+        static inline float lengthSquared(const sf::Vector2f& source)
         {
             return dot(source, source);
         }
         //Returns length of a given vector
-        static float length(const sf::Vector2f& source)
+        static inline float length(const sf::Vector2f& source)
         {
             return std::sqrt(lengthSquared(source));
         }
 
-        static sf::Vector2f reflect(const sf::Vector2f& velocity, const sf::Vector2f& normal)
+        static inline sf::Vector2f reflect(const sf::Vector2f& velocity, const sf::Vector2f& normal)
         {
             return -2.f * dot(velocity, normal) * normal + velocity;
         }
 
         //rotates a vector (not very accurately)
-        static sf::Vector2f rotate(const sf::Vector2f& v, float degrees)
+        static inline sf::Vector2f rotate(const sf::Vector2f& v, float degrees)
         {
             const float rads = degrees * degToRad;
             auto ca = std::cos(rads);
@@ -141,14 +141,14 @@ namespace Util
         }
 
         //gets the rotation (in degrees) of a vector
-        static float rotation(const sf::Vector2f v)
+        static inline float rotation(const sf::Vector2f v)
         {
             return std::atan2(v.y, v.x) * radToDeg;
         }
 
         //converts a comma delimited string to vector 2
         template <typename T>
-        static sf::Vector2<T> vec2FromString(const std::string& str)
+        static inline sf::Vector2<T> vec2FromString(const std::string& str)
         {
             sf::Vector2<T> retVec;
             auto values = String::toFloatArray(str);
@@ -167,28 +167,36 @@ namespace Util
 
     namespace Position
     {
-        static void centreOrigin(sf::Sprite& sprite)
+        //TODO template this?
+        /*static inline void centreOrigin(sf::Sprite& sprite)
         {
             sf::FloatRect bounds = sprite.getLocalBounds();
             sprite.setOrigin(std::floor(bounds.width / 2.f), std::floor(bounds.height / 2.f));
         }
-        static void centreOrigin(sf::Text& text)
+        static inline void centreOrigin(sf::Text& text)
         {
             sf::FloatRect bounds = text.getLocalBounds();
             text.setOrigin(std::floor(bounds.width / 2.f), std::floor(bounds.height / 2.f));
+        }*/
+
+        template <typename T>
+        static inline void centreOrigin(T& transformable)
+        {
+            sf::FloatRect bounds = transformable.getLocalBounds();
+            transformable.setOrigin(std::floor(bounds.width / 2.f), std::floor(bounds.height / 2.f));
         }
     }
 
     namespace Random
     {
-        static float value(float begin, float end)
+        static inline float value(float begin, float end)
         {
             assert(begin < end);
             std::uniform_real_distribution<float> dist(begin, end);
             return dist(rndEngine);
         }
 
-        static int value(int begin, int end)
+        static inline int value(int begin, int end)
         {
             assert(begin < end);
             std::uniform_int_distribution<int> dist(begin, end);
@@ -199,12 +207,12 @@ namespace Util
     namespace Math
     {
         template <typename T>
-        static T clamp(const T& n, const T& lower, const T& upper)
+        static inline T clamp(const T& n, const T& lower, const T& upper)
         {
             return std::max(lower, std::min(n, upper));
         }
 
-        static float round(float v)
+        static inline float round(float v)
         {
             return std::floor(v + 0.5f);
         }

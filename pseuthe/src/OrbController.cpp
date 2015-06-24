@@ -51,9 +51,15 @@ void OrbController::handleMessage(const Message& msg)
     switch (msg.type)
     {
     case Message::Type::Physics:
-        if (msg.physics.entityId[0] == getParentUID() || msg.physics.entityId[1] == getParentUID())
+        switch (msg.physics.event)
         {
-            m_particleSystem->start(1u, 0.f, 0.02f);
+        case Message::PhysicsEvent::Collision:
+            if (msg.physics.entityId[0] == getParentUID() || msg.physics.entityId[1] == getParentUID())
+            {
+                m_particleSystem->start(1u, 0.f, 0.02f);
+            }
+            break;
+        default: break;
         }
         break;
     default:break;

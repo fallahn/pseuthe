@@ -45,7 +45,7 @@ namespace
     const float minHealth = 2.f; //don't want non-tail parts completely dying
     const float hitPoint = 0.5f; //lose this if hit by a ball
 
-    const sf::Color defaultColour(220u, 220u, 220u, 180u);
+    const sf::Color defaultColour(200u, 200u, 230u, 180u);
 }
 
 BodypartController::BodypartController(MessageBus& mb)
@@ -101,7 +101,7 @@ void BodypartController::entityUpdate(Entity& entity, float dt)
         }
 
         auto colour = defaultColour;
-        colour.a = static_cast<sf::Uint8>((m_health / maxHealth) * static_cast<float>(defaultColour.a));
+        colour.a = static_cast<sf::Uint8>(std::max((m_health / maxHealth) * static_cast<float>(defaultColour.a), 0.f));
         m_drawable->setColour(colour);
     }
 }

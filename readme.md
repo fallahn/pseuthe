@@ -1,13 +1,19 @@
 PSEUTHE
 =======
 
-Pseuthe (pronounced 'soothe') is an abstract audio / visual experience.
-Sounds and patterns are created in a pseudo-random manner with the intent
-to aid relaxation, study or to create an ambient atmosphere.
+Pseuthe (pronounced 'soothe') is an abstract audio / visual experience,
+with casual gameplay elements.
 
 Pseuthe started when I was experimenting with simulating Newton's laws of
 motion (and, to a lesser extent, Hooke's laws of springs) but has since
-evolved. Other than the ambient experience Psuethe serves no real purpose.
+evolved - first into something more graphical, closely followed by the
+addition of gameplay. You take on the role of a proterozoic plankton with
+the sole aim of survival - absorb and consume the healthy microbes whilst
+avoiding those detrimental to your health.
+
+The 'pseu' in pseuthe comes from the greek 'pseudo' meaning fake - mainly
+because the game is not really at all that soothing...
+
 
 Building
 --------

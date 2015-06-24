@@ -32,6 +32,7 @@ source distribution.
 
 #include <StateIds.hpp>
 #include <PhysicsComponent.hpp>
+#include <PlanktonController.hpp>
 
 #include <SFML/Config.hpp>
 
@@ -47,7 +48,8 @@ public:
         Drawable,
         Entity,
         UI,
-        Player
+        Player,
+        Plankton
     }type;
 
     struct AudioEvent
@@ -59,8 +61,9 @@ public:
     {
         enum Event
         {
-            Collided,
-            ConstraintDestroyed
+            Collision,
+            ConstraintDestroyed,
+            Trigger
         }event;
 
         sf::Uint64 entityId[2];
@@ -103,6 +106,16 @@ public:
         float mass;
     };
 
+    struct PlanktonEvent
+    {
+        enum
+        {
+            Spawned,
+            Died
+        }action;
+        PlanktonController::Type type;
+    };
+
     union
     {
         AudioEvent audio;
@@ -111,6 +124,7 @@ public:
         EntityEvent entity;
         UIEvent ui;
         PlayerEvent player;
+        PlanktonEvent plankton;
     };
 };
 

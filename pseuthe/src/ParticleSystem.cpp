@@ -47,6 +47,7 @@ ParticleSystem::ParticleSystem(MessageBus& mb)
     m_particleSize      (4.f, 4.f),
     m_randVelocity      (false),
     m_emitRate          (30.f),
+    m_randPosition      (false),
     m_particleLifetime  (2.f),
     m_startDelay        (0.f),
     m_started           (false),
@@ -133,7 +134,7 @@ void ParticleSystem::setInitialVelocity(const sf::Vector2f& vel)
 
 void ParticleSystem::setRandomInitialVelocity(const std::vector<sf::Vector2f>& randVelocities)
 {
-    assert(randVelocities.size());
+    assert(!randVelocities.empty());
     m_randVelocities = randVelocities;
     m_randVelocity = true;
 }
@@ -142,6 +143,13 @@ void ParticleSystem::setEmitRate(float rate)
 {
     assert(rate > 0.f);
     m_emitRate = rate;
+}
+
+void ParticleSystem::setRandomInitialPosition(const std::vector<sf::Vector2f>& positions)
+{
+    assert(!positions.empty());
+    m_randPositions = positions;
+    m_randPosition = true;
 }
 
 void ParticleSystem::addAffector(Affector& a)
@@ -210,6 +218,12 @@ void ParticleSystem::update(float dt)
     }
 }
 
+sf::Uint32 ParticleSystem::getParticleCount() const
+{
+    return m_particles.size();
+}
+
+//private
 void ParticleSystem::emit(float dt)
 {
     const float interval = 1.f / m_emitRate;
@@ -219,16 +233,14 @@ void ParticleSystem::emit(float dt)
     {
         m_accumulator -= interval;
         for (auto i = 0u; i < m_releaseCount; ++i)
-            addParticle(m_position);
+        {
+            m_randPosition ? 
+                addParticle(m_position + m_randPositions[Util::Random::value(0, m_randPositions.size() - 1)]) :
+                addParticle(m_position);
+        }
     }
 }
 
-sf::Uint32 ParticleSystem::getParticleCount() const
-{
-    return m_particles.size();
-}
-
-//private
 void ParticleSystem::addParticle(const sf::Vector2f& position)
 {
     Particle p;

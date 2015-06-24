@@ -95,6 +95,9 @@ public:
     void removeConstraint(Constraint* constraint);
     sf::Uint32 getContraintCount() const;
 
+    void setTriggerOnly(bool);
+    bool isTrigger() const;
+
 private:
 
     sf::Vector2f m_position;
@@ -104,6 +107,8 @@ private:
     float m_inverseMass;
 
     std::vector<Constraint*> m_constraints;
+
+    bool m_triggerOnly;
 };
 
 #endif //PHYS_COMP_HPP_

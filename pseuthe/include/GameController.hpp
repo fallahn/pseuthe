@@ -68,6 +68,7 @@ private:
     std::vector<PhysicsComponent*> m_playerPhysicsComponents;
 
     std::array<sf::FloatRect, 2> m_planktonSpawns;
+    sf::Uint8 m_planktonCount;
 
     void spawnPlayer();
     void addBodyPart();

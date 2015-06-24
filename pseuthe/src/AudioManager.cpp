@@ -102,8 +102,14 @@ void AudioManager::handleMessage(const Message& msg)
     switch (msg.type)
     {
     case Message::Type::Physics:
-        if (m_muted) break;
-            m_soundPlayer.play(m_impactSounds[Util::Random::value(0, m_impactSounds.size() - 1)]);
+        switch (msg.physics.event)
+        {
+        case Message::PhysicsEvent::Collision:
+            if (m_muted) break;
+                m_soundPlayer.play(m_impactSounds[Util::Random::value(0, m_impactSounds.size() - 1)]);
+                break;
+        default:break;
+        }
         break;
     case Message::Type::Entity:
         if (!m_muted && msg.entity.maxCollisionsReached)

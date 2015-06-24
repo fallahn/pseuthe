@@ -126,7 +126,7 @@ void PhysicsWorld::update(float dt)
 
         Message msg;
         msg.type = Message::Type::Physics;
-        msg.physics.event = Message::PhysicsEvent::Collided;
+        msg.physics.event = (c.first->isTrigger() || c.second->isTrigger()) ? Message::PhysicsEvent::Trigger : Message::PhysicsEvent::Collision;
         msg.physics.entityId[0] = c.first->getParentUID();
         msg.physics.entityId[1] = c.second->getParentUID();
         m_messageBus.send(msg);
