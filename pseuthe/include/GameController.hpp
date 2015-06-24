@@ -73,6 +73,10 @@ private:
     void spawnPlayer();
     void addBodyPart();
     void spawnPlankton();
+
+    void resetScore();
+    float getScore() const;
+    std::string getName() const;
 };
 
 #endif //GAME_CONTROLLER_HPP_

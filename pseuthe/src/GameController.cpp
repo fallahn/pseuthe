@@ -53,6 +53,13 @@ namespace
 
     sf::Clock spawnClock;
     const float spawnTime = 7.f;
+
+    sf::Clock scoreClock;
+    std::vector<int> scoreCounts(maxBodyParts + 1);
+
+    sf::Clock lifeClock;
+
+    const char namechars[] = "0123456789ABCDEF";
 }
 
 GameController::GameController(Scene& scene, MessageBus& mb, App& app, PhysicsWorld& pw)
@@ -87,6 +94,11 @@ void GameController::update(float dt)
         {
             spawnPlankton();
         }
+    }
+
+    if (scoreClock.getElapsedTime().asSeconds() > 1.f)
+    {
+        scoreCounts[m_playerPhysicsComponents.size()]++;
     }
 }
 
@@ -127,6 +139,7 @@ void GameController::handleMessage(const Message& msg)
                 newMessage.ui.stateId = States::ID::Score;
                 m_messageBus.send(newMessage);
             }
+            LOG(std::to_string(getScore()), Logger::Type::Info);
             break;
         case Message::PlayerEvent::PartRemoved:
             m_playerPhysicsComponents.pop_back();
@@ -196,6 +209,8 @@ void GameController::spawnPlayer()
     
     m_player = entity.get();
     m_scene.getLayer(Scene::Layer::FrontMiddle).addChild(entity);
+
+    resetScore();
 }
 
 void GameController::addBodyPart()
@@ -306,4 +321,41 @@ void GameController::spawnPlankton()
     m_messageBus.send(msg);
 
     m_scene.getLayer(Scene::Layer::FrontRear).addChild(entity);
+}
+
+void GameController::resetScore()
+{
+    for (auto& count : scoreCounts)
+        count = 0;
+
+    scoreClock.restart();
+    lifeClock.restart();
+}
+
+float GameController::getScore() const
+{
+    int multiplier = 0;
+    for (auto i = 0; i < scoreCounts.size(); ++i)
+    {
+        multiplier += i * scoreCounts[i];
+    }
+
+    return scoreClock.getElapsedTime().asSeconds() * multiplier;
+}
+
+std::string GameController::getName() const
+{
+    std::string name("H");
+    name += std::to_string(Util::Random::value(100, 999));
+    name += "M";
+    name += std::to_string(Util::Random::value(19, 89));
+    name += "-0x";
+
+    for (auto i = 0; i < 6; ++i)
+    {
+        name += namechars[Util::Random::value(0, 17)];
+    }
+
+    assert(name.size() == 16);
+    return name;
 }
