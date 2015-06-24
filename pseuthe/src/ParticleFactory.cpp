@@ -48,18 +48,18 @@ namespace
 
     std::vector<sf::Vector2f> sparkVelocities =
     {
-        { -180.5f, 0.f },
-        { -120.f, -88.9f },
-        { -40.f, -124.f },
-        { 0.f, -120.5f },
-        { 48.5f, -64.6f },
-        { 124.f, -88.5f },
-        { 160.9f, 0.f },
-        { 124.f, 9.5f },
-        { 48.f, 27.5f },
-        { 0.7f, 40.4f },
-        { -40.f, 29.6f },
-        { -120.f, 9.5f }
+        { -36.5f, 0.f },
+        { -24.f, -16.9f },
+        { -8.f, -24.f },
+        { 0.f, -24.5f },
+        { 8.5f, -12.6f },
+        { 24.f, -16.5f },
+        { 31.9f, 0.f },
+        { 24.f, 18.5f },
+        { 10.f, 5.5f },
+        { 1.7f, 8.4f },
+        { -8.f, 10.6f },
+        { -24.f, 18.5f }
     };
 
     std::vector<sf::Vector2f> sparkPositions;
@@ -117,14 +117,11 @@ ParticleSystem::Ptr ParticleSystem::create(Particle::Type type, MessageBus& mb)
     {
         sparkPositions = createPoints(sf::Vector2f(), 20, 18.f);
 
-        ps->setParticleLifetime(0.3f);
+        ps->setParticleLifetime(0.6f);
         ps->setParticleSize({ 10.f, 10.f });
         ps->setRandomInitialVelocity(sparkVelocities);
         ps->setRandomInitialPosition(sparkPositions);
         ps->setBlendMode(sf::BlendAdd);
-        
-        ForceAffector fa({ 0.f, 20.f });
-        ps->addAffector(fa);
 
         ScaleAffector sa({ 2.f, 2.f });
         ps->addAffector(sa);

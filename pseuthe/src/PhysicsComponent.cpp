@@ -39,6 +39,8 @@ namespace
     const int maxPositionY = 1080;
 
     const float epsilon = 0.2f;
+
+    const float uberLimit = 200000.f;
 }
 
 PhysicsComponent::PhysicsComponent(float radius, MessageBus& m)
@@ -100,9 +102,13 @@ void PhysicsComponent::destroy()
 
 void PhysicsComponent::physicsUpdate(float dt, const sf::FloatRect& bounds)
 {
-    //bounce off top / bottom bounds, wrap left / right
+    //hackiness to stop some phys bodies ocassionally going mental
+    if (Util::Vector::lengthSquared(m_velocity) > uberLimit) m_velocity = sf::Vector2f();
+
+
     m_position += m_velocity * dt;
 
+    //bounce off top / bottom bounds, wrap left / right
     if (!bounds.contains(m_position))
     {
         if (m_position.x > bounds.left

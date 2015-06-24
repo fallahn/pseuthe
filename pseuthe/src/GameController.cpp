@@ -225,11 +225,25 @@ void GameController::addBodyPart()
     const auto& anims = drawable->getAnimations();
     if (!anims.empty())
     {
-        drawable->play(drawable->getAnimations()[0], drawable->getFrameCount() / maxBodyParts * m_playerPhysicsComponents.size());
+        drawable->play(anims[0], drawable->getFrameCount() / maxBodyParts * m_playerPhysicsComponents.size());
     }
     drawable->setScale(m_nextPartScale, m_nextPartScale);
     drawable->setName("drawable");
     bodyPart->addComponent<AnimatedDrawable>(drawable);
+
+    //drawable = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/legs.png"));
+    //drawable->loadAnimationData("assets/images/player/legs.cra");
+    //drawable->setOrigin(sf::Vector2f(drawable->getFrameSize()) / 2.f);
+    //drawable->setBlendMode(sf::BlendAdd);
+    //const auto& otherAnims = drawable->getAnimations();
+    //if (!otherAnims.empty())
+    //{
+    //    drawable->play(otherAnims[0], drawable->getFrameCount() / maxBodyParts * m_playerPhysicsComponents.size());
+    //}
+    //drawable->setScale(m_nextPartScale, m_nextPartScale);
+    //drawable->setRotation(180.f);
+    //bodyPart->addComponent<AnimatedDrawable>(drawable);
+
 
     auto physComponent = m_physicsWorld.attachBody(m_nextPartSize, m_constraintLength, m_playerPhysicsComponents.back());
     physComponent->setPosition(bodyPart->getWorldPosition());
@@ -241,7 +255,7 @@ void GameController::addBodyPart()
     auto sparkle = ParticleSystem::create(Particle::Type::Sparkle, m_messageBus);
     sparkle->setTexture(m_appInstance.getTexture("assets/images/particles/spark.png"));
     sparkle->setName("sparkle");
-    sparkle->start(1u, 0.f, 0.5f);
+    sparkle->start(6u, 0.f, 0.6f);
     bodyPart->addComponent<ParticleSystem>(sparkle);
 
     auto bpCont = std::make_unique<BodypartController>(m_messageBus);
@@ -306,6 +320,14 @@ void GameController::spawnPlankton()
     if(!ad->getAnimations().empty()) ad->play(ad->getAnimations()[0]);
     ad->setName("drawable");
     entity->addComponent<AnimatedDrawable>(ad);
+
+    auto trail = ParticleSystem::create(Particle::Type::Trail, m_messageBus);
+    trail->setTexture(m_appInstance.getTexture("assets/images/particles/circle.png"));
+    float particleSize = m_nextPartSize / 12.f;
+    trail->setParticleSize({ particleSize, particleSize });
+    trail->setName("trail");
+    trail->setEmitRate(10.f);
+    entity->addComponent<ParticleSystem>(trail);
 
     auto controller = std::make_unique<PlanktonController>(m_messageBus);
     assert(m_player);

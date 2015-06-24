@@ -11,8 +11,7 @@ addition of gameplay. You take on the role of a proterozoic plankton with
 the sole aim of survival - absorb and consume the healthy microbes whilst
 avoiding those detrimental to your health.
 
-The 'pseu' in pseuthe comes from the greek 'pseudo' meaning fake - mainly
-because the game is not really at all that soothing...
+Pseuthe is best played with a controller.
 
 
 Building

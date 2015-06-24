@@ -30,6 +30,7 @@ source distribution.
 #include <MessageBus.hpp>
 #include <PhysicsComponent.hpp>
 #include <AnimatedDrawable.hpp>
+#include <ParticleSystem.hpp>
 #include <Util.hpp>
 
 #include <SFML/Graphics/Color.hpp>
@@ -40,7 +41,7 @@ namespace
 {
     const sf::Color goodColour(220u, 230u, 210u, 180u);
     const sf::Color badColour(230u, 220u, 210u, 180u);
-    const sf::Color bonusColour(200u, 200u, 230u, 180u);
+    const sf::Color bonusColour(170u, 170u, 200u, 180u);
 
     const float maxHealth = 100.f;
     const float healthReduction = 45.f; //reduction per second
@@ -56,6 +57,7 @@ PlanktonController::PlanktonController(MessageBus& mb)
     m_type          (Type::Good),
     m_physComponent (nullptr),
     m_drawable      (nullptr),
+    m_trail         (nullptr),
     m_health        (maxHealth),
     m_enemyId       (0u),
     m_targetRotation(0.f),
@@ -105,20 +107,24 @@ void PlanktonController::entityUpdate(Entity& entity, float dt)
 
     if (m_flags & Flags::Suicide)
     {
-        entity.destroy(); //TODO make this prettier
+        m_health = 0.f;
     }
 
     //check health
     if (m_health <= 0)
     {
-        entity.destroy();
-
-        //send message notification with current type (let game controller decide on scoring)
-        Message msg;
-        msg.type = Message::Type::Plankton;
-        msg.plankton.action = Message::PlanktonEvent::Died;
-        msg.plankton.type = m_type;
-        sendMessage(msg);
+        m_trail->stop();
+        if (m_trail->getParticleCount() == 0)
+        {
+            entity.destroy();
+        
+            //send message notification with current type (let game controller decide on scoring)
+            Message msg;
+            msg.type = Message::Type::Plankton;
+            msg.plankton.action = Message::PlanktonEvent::Died;
+            msg.plankton.type = m_type;
+            sendMessage(msg);
+        }
     }
 
     //set colour
@@ -189,6 +195,9 @@ void PlanktonController::onStart(Entity& entity)
 
     m_drawable = entity.getComponent<AnimatedDrawable>("drawable");
     assert(m_drawable);
+
+    m_trail = entity.getComponent<ParticleSystem>("trail");
+    assert(m_trail);
 }
 
 void PlanktonController::setType(Type t)

@@ -8,7 +8,7 @@
     }
   ],
   "FrameCount": 10,
-  "FrameSize": "176, 96",
+  "FrameSize": "96, 176",
   "FrameRate": 25.0,
   "Texture": "legs.png",
   "NormalMap": "none.png"
