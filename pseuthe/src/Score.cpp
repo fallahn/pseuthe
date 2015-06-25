@@ -35,12 +35,12 @@ source distribution.
 namespace
 {
     const int ident = 0x534e5542;
-    const std::string file = "scores.dat";
+    const std::string scoreFile = "scores.dat";
 }
 
 void Scores::load(std::vector<Scores::Value>& dst)
 {
-    std::fstream file(file, std::ios::binary | std::ios::in);
+    std::fstream file(scoreFile, std::ios::binary | std::ios::in);
     if (!file.good() || !file.is_open() || file.fail())
     {
         Logger::Log("failed to open score data for reading", Logger::Type::Error, Logger::Output::All);
@@ -77,7 +77,7 @@ void Scores::load(std::vector<Scores::Value>& dst)
 
 void Scores::save(const std::vector<Scores::Value>& src)
 {
-    std::fstream file(file, std::ios::binary | std::ios::out);
+    std::fstream file(scoreFile, std::ios::binary | std::ios::out);
     if (!file.good() || !file.is_open() || file.fail())
     {
         Logger::Log("failed to open score data for writing", Logger::Type::Error, Logger::Output::All);

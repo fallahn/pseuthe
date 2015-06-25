@@ -38,7 +38,8 @@ struct Particle final : public sf::Transformable
     {
         Trail,
         Echo,
-        Sparkle
+        Sparkle,
+        Ident
     };
 
     sf::Vector2f velocity;

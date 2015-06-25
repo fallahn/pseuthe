@@ -325,6 +325,12 @@ void GameController::spawnPlankton()
     trail->setEmitRate(10.f);
     entity->addComponent<ParticleSystem>(trail);
 
+    auto ident = ParticleSystem::create(Particle::Type::Ident, m_messageBus);
+    ident->setTexture(m_appInstance.getTexture("assets/images/particles/ident.png"));
+    ident->setColour(sf::Color::Green); //TODO set this based on type
+    ident->setName("ident");
+    entity->addComponent<ParticleSystem>(ident);
+
     auto controller = std::make_unique<PlanktonController>(m_messageBus);
     assert(m_player);
     controller->setEnemyId(m_player->getUID());

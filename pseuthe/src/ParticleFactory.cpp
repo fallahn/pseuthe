@@ -63,6 +63,7 @@ namespace
     };
 
     std::vector<sf::Vector2f> sparkPositions;
+    std::vector<sf::Vector2f> identPositions;
 
     std::vector<sf::Vector2f> createPoints(const sf::Vector2f& centre, int pointCount, float radius)
     {
@@ -128,8 +129,21 @@ ParticleSystem::Ptr ParticleSystem::create(Particle::Type type, MessageBus& mb)
 
         RotateAffector ra(140.f);
         ps->addAffector(ra);
-}
+    }
     break;
+    case Particle::Type::Ident:
+    {
+        identPositions = createPoints({}, 20, 16.f);
+
+        ps->setParticleLifetime(0.6f);
+        ps->setParticleSize({ 10.f, 10.f });
+        ps->setInitialVelocity({ 0.f, 0.f });
+        ps->setRandomInitialPosition(identPositions);
+        ps->setBlendMode(sf::BlendAdd);
+        ps->followParent(true);
+        ps->setEmitRate(5.f);
+        ps->start();
+    }
     default: break;
     }
 

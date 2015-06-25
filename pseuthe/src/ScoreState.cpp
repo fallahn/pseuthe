@@ -34,6 +34,11 @@ source distribution.
 
 #include <SFML/Window/Event.hpp>
 
+namespace
+{
+    const float scorePadding = 18.f;
+}
+
 ScoreState::ScoreState(StateStack& stateStack, Context context)
     : State(stateStack, context),
     m_messageBus(context.appInstance.getMessageBus())
@@ -45,9 +50,10 @@ ScoreState::ScoreState(StateStack& stateStack, Context context)
 
     m_cursorSprite.setTexture(context.appInstance.getTexture("assets/images/ui/cursor.png"));
 
-    auto& font = context.appInstance.getFont("assets/fonts/N_E_B.ttf");
+    auto& menuFont = context.appInstance.getFont("assets/fonts/N_E_B.ttf");
+    auto& scoreFont = context.appInstance.getFont("assets/fonts/Ardeco.ttf");
 
-    m_texts.emplace_back("Scores", font, 35u);
+    m_texts.emplace_back("Scores", menuFont, 35u);
     auto& spaceText = m_texts.back();
     Util::Position::centreOrigin(spaceText);
     spaceText.setPosition(context.defaultView.getCenter());
@@ -62,19 +68,19 @@ ScoreState::ScoreState(StateStack& stateStack, Context context)
 
     for (int i = start; i < end; ++i)
     {
-        m_texts.emplace_back(std::to_string(i + 1) + ".    " + std::string(scores[i].name) + " - " + std::to_string(scores[i].score), font, 42u);
+        m_texts.emplace_back(std::to_string(i + 1) + ".    " + std::string(scores[i].name) + " - " + std::to_string(scores[i].score), scoreFont, 42u);
         auto& text = m_texts.back();
         if (i == index) text.setStyle(sf::Text::Bold);
         Util::Position::centreOrigin(text);
         text.setPosition(context.defaultView.getCenter());
         int offset = i - index;
-        text.move(0.f, text.getLocalBounds().height * offset);
+        text.move(0.f, (text.getLocalBounds().height + scorePadding) * offset);
         sf::Uint8 alpha = 255u - std::abs(offset) * 100u;
         sf::Color colour(255u, 255u, 255u, alpha);
         text.setColor(colour);
     }
 
-    buildMenu(font);
+    buildMenu(menuFont);
 
     m_cursorSprite.setPosition(context.renderWindow.mapPixelToCoords(sf::Mouse::getPosition(context.renderWindow)));
 
