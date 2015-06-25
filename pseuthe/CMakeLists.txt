@@ -85,6 +85,7 @@ add_executable(
 	src/PostChromeAb.cpp
 	src/PostProcess.cpp
 	src/Scene.cpp
+	src/Score.cpp
 	src/ScoreState.cpp
 	src/ShaderResource.cpp
 	src/SoundPlayer.cpp

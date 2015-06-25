@@ -33,6 +33,7 @@ source distribution.
 #include <StateStack.hpp>
 #include <Resource.hpp>
 #include <MessageBus.hpp>
+#include <Score.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
@@ -88,6 +89,11 @@ public:
     sf::Font& getFont(const std::string& path);
     sf::Texture& getTexture(const std::string& path);
     MessageBus& getMessageBus();
+
+    void addScore(const std::string& name, float value);
+    const std::vector<Scores::Value>& getScores() const;
+    int getLastScoreIndex() const;
+
 private:
     AudioSettings m_audioSettings;
 
@@ -100,6 +106,8 @@ private:
     TextureResource m_textureResource;
 
     MessageBus m_messageBus;
+
+    std::vector<Scores::Value> m_scores;
 
     void handleEvents();
     void handleMessages();

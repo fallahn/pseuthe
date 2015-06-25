@@ -100,6 +100,7 @@
     <ClCompile Include="src\ParticleField.cpp" />
     <ClCompile Include="src\ParticleSystem.cpp" />
     <ClCompile Include="src\PlanktonController.cpp" />
+    <ClCompile Include="src\Score.cpp" />
     <ClCompile Include="src\ScoreState.cpp" />
     <ClCompile Include="src\PhysicsComponent.cpp" />
     <ClCompile Include="src\PhysicsConstraint.cpp" />
@@ -148,6 +149,7 @@
     <ClInclude Include="include\ParticleField.hpp" />
     <ClInclude Include="include\ParticleSystem.hpp" />
     <ClInclude Include="include\PlanktonController.hpp" />
+    <ClInclude Include="include\Score.hpp" />
     <ClInclude Include="include\ScoreState.hpp" />
     <ClInclude Include="include\PhysicsComponent.hpp" />
     <ClInclude Include="include\PhysicsWorld.hpp" />

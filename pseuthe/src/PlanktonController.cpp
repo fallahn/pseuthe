@@ -82,14 +82,20 @@ void PlanktonController::entityUpdate(Entity& entity, float dt)
     }
 
     if ((m_flags & Flags::RequestRotation) && m_type != Type::Bonus)
-    {      
-        if (m_currentRotation > m_targetRotation)
+    {           
+        if (m_currentRotation < m_targetRotation) //TODO work out rotation direction
         {
-            m_currentRotation -= rotationSpeed * dt;
+            if (m_currentRotation < 0)
+                m_currentRotation += rotationSpeed * dt;
+            else
+                m_currentRotation -= rotationSpeed * dt;
         }
         else
         {
-            m_currentRotation += rotationSpeed * dt;
+            if (m_currentRotation > 0)
+                m_currentRotation += rotationSpeed * dt;
+            else
+                m_currentRotation -= rotationSpeed * dt;
         }
         m_drawable->setRotation(m_currentRotation);
 

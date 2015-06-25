@@ -132,6 +132,7 @@ void GameController::handleMessage(const Message& msg)
         {
         case Message::PlayerEvent::Died:
             m_player = nullptr;
+            m_appInstance.addScore(getName(), getScore());
             {
                 Message newMessage;
                 newMessage.type = Message::Type::UI;
@@ -139,7 +140,7 @@ void GameController::handleMessage(const Message& msg)
                 newMessage.ui.stateId = States::ID::Score;
                 m_messageBus.send(newMessage);
             }
-            LOG(std::to_string(getScore()), Logger::Type::Info);
+
             break;
         case Message::PlayerEvent::PartRemoved:
             m_playerPhysicsComponents.pop_back();

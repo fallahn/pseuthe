@@ -48,8 +48,9 @@ namespace
     float timeSinceLastUpdate = 0.f;
 
     const std::string windowTitle("pseuthe");
-
     const std::string settingsFile("settings.set");
+
+    int lastScoreIndex = 0;
 }
 
 App::App()
@@ -62,6 +63,7 @@ App::App()
     m_stateStack.pushState(States::ID::Menu);
 
     loadSettings();
+    Scores::load(m_scores);
 
     m_renderWindow.setVerticalSyncEnabled(m_videoSettings.VSync);
 
@@ -106,6 +108,7 @@ void App::run()
     }
 
     saveSettings();
+    Scores::save(m_scores);
 }
 
 void App::pause()
@@ -163,6 +166,39 @@ sf::Texture& App::getTexture(const std::string& path)
 MessageBus& App::getMessageBus()
 {
     return m_messageBus;
+}
+
+void App::addScore(const std::string& name, float value)
+{
+    m_scores.emplace_back();
+
+    Scores::Value& score = m_scores.back();
+    std::strcpy(score.name, name.c_str());
+    score.score = value;
+
+    std::sort(m_scores.begin(), m_scores.end(),
+        [](const Scores::Value& sv1, const Scores::Value& sv2)
+    {
+        return sv1.score > sv2.score;
+    });
+
+    auto result = std::find_if(m_scores.begin(), m_scores.end(),
+        [&name, value](const Scores::Value& sv)
+    {
+        return (sv.name == name && sv.score == value);
+    });
+
+    lastScoreIndex = (result == m_scores.end()) ? 0 : result - m_scores.begin();
+}
+
+int App::getLastScoreIndex() const
+{
+    return lastScoreIndex;
+}
+
+const std::vector<Scores::Value>& App::getScores() const
+{
+    return m_scores;
 }
 
 //private

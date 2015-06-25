@@ -53,6 +53,27 @@ ScoreState::ScoreState(StateStack& stateStack, Context context)
     spaceText.setPosition(context.defaultView.getCenter());
     spaceText.move(0.f, -206.f);
 
+
+    //scores
+    const auto& scores = context.appInstance.getScores();
+    int index = context.appInstance.getLastScoreIndex();
+    int start = std::max(0, index - 2);
+    int end = std::min(index + 3, static_cast<int>(scores.size()));
+
+    for (int i = start; i < end; ++i)
+    {
+        m_texts.emplace_back(std::to_string(i + 1) + ".    " + std::string(scores[i].name) + " - " + std::to_string(scores[i].score), font, 42u);
+        auto& text = m_texts.back();
+        if (i == index) text.setStyle(sf::Text::Bold);
+        Util::Position::centreOrigin(text);
+        text.setPosition(context.defaultView.getCenter());
+        int offset = i - index;
+        text.move(0.f, text.getLocalBounds().height * offset);
+        sf::Uint8 alpha = 255u - std::abs(offset) * 100u;
+        sf::Color colour(255u, 255u, 255u, alpha);
+        text.setColor(colour);
+    }
+
     buildMenu(font);
 
     m_cursorSprite.setPosition(context.renderWindow.mapPixelToCoords(sf::Mouse::getPosition(context.renderWindow)));
