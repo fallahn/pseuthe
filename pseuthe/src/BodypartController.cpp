@@ -29,6 +29,7 @@ source distribution.
 #include <Entity.hpp>
 #include <PhysicsComponent.hpp>
 #include <AnimatedDrawable.hpp>
+#include <ParticleSystem.hpp>
 #include <MessageBus.hpp>
 #include <Util.hpp>
 
@@ -41,9 +42,12 @@ namespace
     const float minBounds = 0.f;
     const float impactReduction = 0.6f; //reduction of velocity when hitting edges
     const float maxHealth = 100.f;
-    const float healthReduction = 5.f; //reduction per second
+    const float healthReduction = 4.f; //reduction per second
     const float minHealth = 2.f; //don't want non-tail parts completely dying
     const float hitPoint = 0.5f; //lose this if hit by a ball
+
+    const float planktonHealth = 50.f;
+    const float bonusHealth = 100.f;
 
     const sf::Color defaultColour(200u, 200u, 230u, 180u);
 }
@@ -52,6 +56,7 @@ BodypartController::BodypartController(MessageBus& mb)
     : Component     (mb),
     m_physComponent (nullptr),
     m_drawable      (nullptr),
+    m_sparkles      (nullptr),
     m_health        (maxHealth)
 {
 
@@ -96,7 +101,7 @@ void BodypartController::entityUpdate(Entity& entity, float dt)
             Message msg;
             msg.type = Message::Type::Player;
             msg.player.action = Message::PlayerEvent::PartRemoved;
-            msg.player.mass = m_physComponent->getMass();
+            msg.player.value = m_physComponent->getMass();
             sendMessage(msg);
         }
 
@@ -120,6 +125,42 @@ void BodypartController::handleMessage(const Message& msg)
             //TODO fire a particle effect
         }
         break;
+    case Message::Type::Plankton:
+        if (msg.plankton.action == Message::PlanktonEvent::Died
+            && m_physComponent->getContraintCount() < 2) //we're on the end
+        {
+            Message newMessage;
+            newMessage.type = Message::Type::Player;
+
+            switch (msg.plankton.type)
+            {
+            case PlanktonController::Type::Good:
+                m_health += planktonHealth;
+                newMessage.player.action = Message::PlayerEvent::HealthAdded;
+                m_sparkles->start(4u, 0.f, 0.6f);
+                break;
+            case PlanktonController::Type::Bad:
+                m_health -= planktonHealth;
+                newMessage.player.action = Message::PlayerEvent::HealthLost;
+                //TODO same particle effect as hit from physics?
+                break;
+            case PlanktonController::Type::Bonus:
+                m_health += bonusHealth;
+                newMessage.player.action = Message::PlayerEvent::HealthAdded;
+                //TODO prevent health counting down for short duration
+
+                m_sparkles->start(4u, 0.f, 0.6f);
+                break;
+            default:break;
+            }
+
+            //clamp health and send remainder
+            const float remainder = m_health - maxHealth;
+            m_health = std::min(m_health, maxHealth);           
+            newMessage.player.value = remainder;
+            sendMessage(newMessage);
+        }
+        break;
     default: break;
     }
 }
@@ -132,4 +173,13 @@ void BodypartController::onStart(Entity& entity)
     m_drawable = entity.getComponent<AnimatedDrawable>("drawable");
     assert(m_drawable);
     m_drawable->setColour(defaultColour);
+
+    m_sparkles = entity.getComponent<ParticleSystem>("sparkle");
+    assert(m_sparkles);
+}
+
+void BodypartController::setHealth(float health)
+{
+    assert(health >= 0 && health <= maxHealth);
+    m_health = health;
 }

@@ -101,9 +101,11 @@ public:
         {
             Died,
             PartAdded,
-            PartRemoved
+            PartRemoved,
+            HealthAdded,
+            HealthLost
         }action;
-        float mass;
+        float value;
     };
 
     struct PlanktonEvent

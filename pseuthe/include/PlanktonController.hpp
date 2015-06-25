@@ -76,7 +76,7 @@ private:
     sf::Uint64 m_enemyId;
 
     float m_targetRotation;
-    float m_rotationSpeed;
+    float m_currentRotation;
 };
 
 

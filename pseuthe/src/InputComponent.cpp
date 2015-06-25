@@ -50,7 +50,9 @@ namespace
     const float impactReduction = 0.7f; //reduction of velocity when hitting edges
 
     const float maxHealth = 100.f;
-    const float healthReduction = 4.f; //reduction per second
+    const float healthReduction = 3.f; //reduction per second
+    const float planktonHealth = 50.f;
+    const float bonusHealth = 100.f;
     const sf::Color defaultColour(190u, 190u, 255u);
 
     const float minTrailRate = 1.f;
@@ -66,6 +68,7 @@ InputComponent::InputComponent(MessageBus& mb)
     m_physicsComponent  (nullptr),
     m_drawable          (nullptr),
     m_trailParticles    (nullptr),
+    m_sparkleParticles  (nullptr),
     m_health            (maxHealth),
     m_parseInput        (true),
     m_mass              (0.f),
@@ -96,6 +99,8 @@ void InputComponent::entityUpdate(Entity& entity, float dt)
             forceVec *= dt;
         }
     }
+
+    //forceVec = Util::Vector::rotate(forceVec, m_drawable->getRotation() + 90.f);
 
     //limit speed
     auto currentSpeed = Util::Vector::lengthSquared(m_physicsComponent->getVelocity() + forceVec);
@@ -164,22 +169,55 @@ void InputComponent::handleMessage(const Message& msg)
         default:break;
         }
     }
-    if (msg.type == Message::Type::Player)
+    else if (msg.type == Message::Type::Player)
     {
         switch (msg.player.action)
         {
         case Message::PlayerEvent::PartAdded:
-            m_mass += msg.player.mass;
+            m_mass += msg.player.value;
             m_invMass = (1.f / m_mass) * dragMultiplier;
-            LOG("Current Inverse Mass: " + std::to_string(m_invMass), Logger::Type::Info);
             break;
         case Message::PlayerEvent::PartRemoved:
-            m_mass = std::max(0.f, m_mass - msg.player.mass);
+            m_mass = std::max(0.f, m_mass - msg.player.value);
             m_invMass = (m_mass > 0.01f) ? (1.f / m_mass) * dragMultiplier : 1.f;
-            LOG("Current Mass: " + std::to_string(m_mass), Logger::Type::Info);
-            LOG("Current Inverse Mass: " + std::to_string(m_invMass), Logger::Type::Info);
             break;
         default: break;
+        }
+    }
+    else if (msg.type == Message::Type::Plankton)
+    {
+        if (msg.plankton.action == Message::PlanktonEvent::Died
+            && m_physicsComponent->getContraintCount() == 0) //no body parts
+        {
+            Message newMessage;
+            newMessage.type = Message::Type::Player;
+
+            switch (msg.plankton.type)
+            {
+            case PlanktonController::Type::Good:
+                m_health += planktonHealth;
+                newMessage.player.action = Message::PlayerEvent::HealthAdded;
+                m_sparkleParticles->start(4u, 0.f, 0.6f);
+                break;
+            case PlanktonController::Type::Bad:
+                m_health -= planktonHealth;
+                newMessage.player.action = Message::PlayerEvent::HealthLost;
+                //TODO same particle effect as hit from physics?
+                break;
+            case PlanktonController::Type::Bonus:
+                m_health += bonusHealth;
+                newMessage.player.action = Message::PlayerEvent::HealthAdded;
+                //TODO prevent health counting down for short duration
+                m_sparkleParticles->start(4u, 0.f, 0.6f);
+                break;
+            default:break;
+            }
+
+            //clamp health and send remainder
+            const float remainder = m_health - maxHealth;
+            m_health = std::min(m_health, maxHealth);
+            newMessage.player.value = remainder;
+            sendMessage(newMessage);
         }
     }
 }
@@ -195,6 +233,9 @@ void InputComponent::onStart(Entity& entity)
 
     m_trailParticles = entity.getComponent<ParticleSystem>("trail");
     assert(m_trailParticles);
+
+    m_sparkleParticles = entity.getComponent<ParticleSystem>("sparkle");
+    assert(m_sparkleParticles);
 }
 
 //private

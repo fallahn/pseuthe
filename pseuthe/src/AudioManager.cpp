@@ -146,6 +146,18 @@ void AudioManager::handleMessage(const Message& msg)
         default: break;
         }
         break;
+    case Message::Type::Player:
+        switch (msg.player.action)
+        {
+        case Message::PlayerEvent::HealthAdded:
+            LOG("play sound health added", Logger::Type::Info);
+            break;
+        case Message::PlayerEvent::HealthLost:
+            LOG("play sound health lost", Logger::Type::Info);
+            break;
+        default:break;
+        }
+        break;
     default: break;
     }
 }

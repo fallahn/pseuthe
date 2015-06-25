@@ -102,6 +102,8 @@ public:
 
     sf::FloatRect getLocalBounds() const;
     sf::FloatRect getGlobalBounds() const;
+    sf::Vector2f getForwardVector() const;
+    sf::Vector2f getRightVector() const;
 
     void loadAnimationData(const std::string& path);
 

@@ -40,7 +40,7 @@ namespace
 
     const float epsilon = 0.2f;
 
-    const float uberLimit = 200000.f;
+    const float uberLimit = 203000.f;
 }
 
 PhysicsComponent::PhysicsComponent(float radius, MessageBus& m)

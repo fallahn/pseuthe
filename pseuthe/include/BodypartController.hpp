@@ -34,6 +34,7 @@ source distribution.
 
 class PhysicsComponent;
 class AnimatedDrawable;
+class ParticleSystem;
 class BodypartController final : public Component
 {
 public:
@@ -45,9 +46,12 @@ public:
     void handleMessage(const Message&) override;
     void onStart(Entity&) override;
 
+    void setHealth(float);
+
 private:
     PhysicsComponent* m_physComponent;
     AnimatedDrawable* m_drawable;
+    ParticleSystem* m_sparkles;
     float m_health;
 };
 

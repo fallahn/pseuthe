@@ -225,6 +225,16 @@ sf::FloatRect AnimatedDrawable::getGlobalBounds() const
     return getTransform().transformRect(getLocalBounds());
 }
 
+sf::Vector2f AnimatedDrawable::getForwardVector() const
+{
+    return getTransform().transformPoint({ 1.f, 0.f });
+}
+
+sf::Vector2f AnimatedDrawable::getRightVector() const
+{
+    return getTransform().transformPoint({ 0.f, 1.f });
+}
+
 void AnimatedDrawable::loadAnimationData(const std::string& path)
 {
     std::ifstream file(path);

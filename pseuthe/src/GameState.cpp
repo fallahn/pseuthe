@@ -45,7 +45,7 @@ source distribution.
 namespace
 {
     const int nubbinCount = 19;
-    const std::string version("version 0.5.12");
+    const std::string version("version 0.5.13");
 }
 
 GameState::GameState(StateStack& stateStack, Context context)
@@ -173,15 +173,11 @@ Entity::Ptr GameState::createEntity()
     auto oc = std::make_unique<OrbController>(m_messageBus);
     e->addComponent<OrbController>(oc);
 
-    //remind me: why is second particle system attached to own entity?
     ps = ParticleSystem::create(Particle::Type::Trail, m_messageBus);
     ps->setTexture(getContext().appInstance.getTexture("assets/images/particles/circle.png"));
     particleSize = size / 12.f;
     ps->setParticleSize({ particleSize, particleSize });
-
-    Entity::Ptr f = std::make_unique<Entity>(m_messageBus);
-    f->addComponent<ParticleSystem>(ps);
-    e->addChild(f);
+    e->addComponent<ParticleSystem>(ps);
 
     return std::move(e);
 }

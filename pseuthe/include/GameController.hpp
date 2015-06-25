@@ -71,7 +71,7 @@ private:
     sf::Uint8 m_planktonCount;
 
     void spawnPlayer();
-    void addBodyPart();
+    void addBodyPart(float health = 100.f);
     void spawnPlankton();
 
     void resetScore();
