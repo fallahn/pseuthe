@@ -48,11 +48,15 @@ namespace
     const float playerSize = 38.4f;
     const sf::Vector2f spawnPosition(960.f, 540.f);
 
+    const float planktonSize = 32.f;
+    int goodPlankton = 0;
+    int badPlankton = 0;
+
     const int maxBodyParts = 8;
-    const int maxPlankton = 5;
+    const int maxPlankton = 8;
 
     sf::Clock spawnClock;
-    const float spawnTime = 7.f;
+    const float spawnTime = 6.f;
 
     sf::Clock scoreClock;
     std::vector<int> scoreCounts(maxBodyParts + 1);
@@ -163,7 +167,14 @@ void GameController::handleMessage(const Message& msg)
         {
         case Message::PlanktonEvent::Died:
             m_planktonCount--;
-
+            if (msg.plankton.type == PlanktonController::Type::Bad)
+            {
+                badPlankton--;
+            }
+            else if (msg.plankton.type == PlanktonController::Type::Good)
+            {
+                goodPlankton--;
+            }
             break;
         case Message::PlanktonEvent::Spawned:
             m_planktonCount++;
@@ -277,19 +288,27 @@ void GameController::spawnPlankton()
     const float posX = spawnArea.left + (spawnArea.width / 2.f);
     const float posY = static_cast<float>(Util::Random::value(0, 1080));
 
+    float scale = Util::Random::value(0.7f, 1.1f);
     auto entity = std::make_unique<Entity>(m_messageBus);
     entity->setWorldPosition({ posX, posY });
-    auto physComponent = m_physicsWorld.addBody(32.f); //TODO vary size and scale drawable accordingly
+
+    auto physComponent = m_physicsWorld.addBody(planktonSize * scale);
     physComponent->setPosition(entity->getWorldPosition());
     physComponent->setTriggerOnly(true);
     physComponent->setName("control");
     entity->addComponent<PhysicsComponent>(physComponent);
 
     AnimatedDrawable::Ptr ad;
-    PlanktonController::Type type = static_cast<PlanktonController::Type>(Util::Random::value(0, 2));
+    //1 in 5 chance a bonus plankton, else other type
+    PlanktonController::Type type = (Util::Random::value(0, 4) == 0) ?
+        PlanktonController::Type::Bonus :
+        (Util::Random::value(0, 2) == 0) ? //1 in 3 chance it'll be most populous
+            (badPlankton >= goodPlankton) ? PlanktonController::Type::Bad : PlanktonController::Type::Good :
+            (badPlankton < goodPlankton) ? PlanktonController::Type::Bad : PlanktonController::Type::Good;
+
     if (type != PlanktonController::Type::Bonus)
     {
-        switch (Util::Random::value(0, 1))
+        switch (Util::Random::value(0, 1)) //random graphic
         {
         case 0:
             (type == PlanktonController::Type::Good) ?
@@ -315,6 +334,7 @@ void GameController::spawnPlankton()
     ad->setOrigin(sf::Vector2f(ad->getFrameSize()) / 2.f);
     if(!ad->getAnimations().empty()) ad->play(ad->getAnimations()[0]);
     ad->setName("drawable");
+    ad->setScale(scale, scale);
     entity->addComponent<AnimatedDrawable>(ad);
 
     auto trail = ParticleSystem::create(Particle::Type::Trail, m_messageBus);
@@ -327,7 +347,21 @@ void GameController::spawnPlankton()
 
     auto ident = ParticleSystem::create(Particle::Type::Ident, m_messageBus);
     ident->setTexture(m_appInstance.getTexture("assets/images/particles/ident.png"));
-    ident->setColour(sf::Color::Green); //TODO set this based on type
+    switch (type)
+    {
+    case PlanktonController::Type::Good:
+        ident->setColour({ 84u, 150u, 75u });
+        goodPlankton++;
+        break;
+    case PlanktonController::Type::Bad:
+        ident->setColour({ 184u, 67u, 51u });
+        badPlankton++;
+        break;
+    case PlanktonController::Type::Bonus:
+        ident->setColour({ 158u, 148u, 224u });
+        break;
+    default:break;
+    }
     ident->setName("ident");
     entity->addComponent<ParticleSystem>(ident);
 

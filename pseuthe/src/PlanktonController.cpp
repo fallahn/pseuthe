@@ -58,6 +58,7 @@ PlanktonController::PlanktonController(MessageBus& mb)
     m_physComponent     (nullptr),
     m_drawable          (nullptr),
     m_trail             (nullptr),
+    m_ident             (nullptr),
     m_health            (maxHealth),
     m_enemyId           (0u),
     m_targetRotation    (0.f),
@@ -116,6 +117,7 @@ void PlanktonController::entityUpdate(Entity& entity, float dt)
     if (m_health <= 0)
     {
         m_trail->stop();
+        m_ident->stop();
         if (m_trail->getParticleCount() == 0)
         {
             entity.destroy();
@@ -200,6 +202,9 @@ void PlanktonController::onStart(Entity& entity)
 
     m_trail = entity.getComponent<ParticleSystem>("trail");
     assert(m_trail);
+
+    m_ident = entity.getComponent<ParticleSystem>("ident");
+    assert(m_ident);
 }
 
 void PlanktonController::setType(Type t)

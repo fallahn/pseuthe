@@ -66,7 +66,20 @@ const sf::FloatRect& PhysicsWorld::getWorldSize() const
 
 void PhysicsWorld::handleMessage(const Message& msg)
 {
-
+    if (msg.type == Message::Type::ComponentSystem)
+    {
+        switch (msg.component.action)
+        {
+        case Message::ComponentEvent::Deleted:
+            m_bodies.erase(std::remove_if(m_bodies.begin(), m_bodies.end(),
+                [&msg](const PhysicsComponent* p)
+            {
+                return msg.component.ptr == (Component*)p;
+            }), m_bodies.end());
+            break;
+        default: break;
+        }
+    }
 }
 
 void PhysicsWorld::update(float dt)

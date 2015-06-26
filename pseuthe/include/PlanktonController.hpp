@@ -71,6 +71,7 @@ private:
     PhysicsComponent* m_physComponent;
     AnimatedDrawable* m_drawable;
     ParticleSystem* m_trail;
+    ParticleSystem* m_ident;
 
     float m_health;
     sf::Uint64 m_enemyId;

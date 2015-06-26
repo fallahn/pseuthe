@@ -35,12 +35,15 @@ source distribution.
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 
+#include <functional>
+
 namespace ui
 {
     class Selection final : public Control
     {
     public:
         using Ptr = std::shared_ptr<Selection>;
+        using Callback = std::function<void(const Selection*)>;
 
         Selection(const sf::Font&, const sf::Texture&, float = 350.f);
         ~Selection() = default;
@@ -64,6 +67,8 @@ namespace ui
         sf::Uint32 itemCount() const;
         void selectItem(const std::string&);
         void selectItem(sf::Uint16);
+
+        void setCallback(Callback);
 
     private:
         enum State
@@ -102,6 +107,8 @@ namespace ui
             Prev,
             Next
         } m_selectedButton;
+
+        Callback m_selectionChanged;
 
         void draw(sf::RenderTarget&, sf::RenderStates) const override;
         void updateText();

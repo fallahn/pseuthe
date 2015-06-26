@@ -49,7 +49,8 @@ public:
         Entity,
         UI,
         Player,
-        Plankton
+        Plankton,
+        ComponentSystem
     }type;
 
     struct AudioEvent
@@ -118,6 +119,16 @@ public:
         PlanktonController::Type type;
     };
 
+    struct ComponentEvent
+    {
+        enum
+        {
+            Deleted
+        }action;
+        sf::Uint64 entityId;
+        Component* ptr;
+    };
+
     union
     {
         AudioEvent audio;
@@ -127,6 +138,7 @@ public:
         UIEvent ui;
         PlayerEvent player;
         PlanktonEvent plankton;
+        ComponentEvent component;
     };
 };
 

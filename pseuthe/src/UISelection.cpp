@@ -195,6 +195,7 @@ void Selection::setSelectedIndex(sf::Uint16 index)
     m_selectedIndex = index;
     m_selectedText.setString(m_items[index]->name);
     updateText();
+    if (m_selectionChanged) m_selectionChanged(this);
 }
 
 sf::Uint32 Selection::itemCount() const
@@ -230,6 +231,10 @@ void Selection::selectItem(sf::Uint16 val)
     }
 }
 
+void Selection::setCallback(Callback callback)
+{
+    m_selectionChanged = std::move(callback);
+}
 
 //private
 void Selection::draw(sf::RenderTarget& rt, sf::RenderStates states) const

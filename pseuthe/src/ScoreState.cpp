@@ -190,8 +190,5 @@ void ScoreState::buildMenu(const sf::Font& font)
         m_messageBus.send(msg);
     });
     m_uiContainer.addControl(applyButton);
-    
-    //TODO load scores, insert current and display
 
-    //TODO save new score here?
 }

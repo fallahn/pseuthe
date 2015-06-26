@@ -166,7 +166,7 @@ void MenuState::buildMenu(const sf::Font& font)
     //m_uiContainer.addControl(buttonClose);
     
     auto soundSlider = std::make_shared<ui::Slider>(font, getContext().appInstance.getTexture("assets/images/ui/slider_handle.png"), 375.f);
-    soundSlider->setPosition(600.f, 510.f);
+    soundSlider->setPosition(600.f, 490.f);
     soundSlider->setText("Volume");
     soundSlider->setMaxValue(1.f);
     soundSlider->setCallback([this](const ui::Slider* slider)
@@ -187,7 +187,7 @@ void MenuState::buildMenu(const sf::Font& font)
     m_uiContainer.addControl(soundSlider);
 
     auto muteCheckbox = std::make_shared<ui::CheckBox>(font, getContext().appInstance.getTexture("assets/images/ui/checkbox.png"));
-    muteCheckbox->setPosition(1100.f, 470.f);
+    muteCheckbox->setPosition(1100.f, 450.f);
     muteCheckbox->setText("Mute");
     muteCheckbox->setCallback([this](const ui::CheckBox* checkBox)
     {
@@ -205,7 +205,7 @@ void MenuState::buildMenu(const sf::Font& font)
 
 
     auto resolutionBox = std::make_shared<ui::Selection>(font, getContext().appInstance.getTexture("assets/images/ui/scroll_arrow.png"), 375.f);
-    resolutionBox->setPosition(600.f, 600.f);
+    resolutionBox->setPosition(600.f, 560.f);
 
     const auto& modes = getContext().appInstance.getVideoSettings().AvailableVideoModes;
     auto i = 0u;
@@ -226,7 +226,7 @@ void MenuState::buildMenu(const sf::Font& font)
     m_uiContainer.addControl(resolutionBox);
 
     auto fullscreenCheckbox = std::make_shared<ui::CheckBox>(font, getContext().appInstance.getTexture("assets/images/ui/checkbox.png"));
-    fullscreenCheckbox->setPosition(1100.f, 600.f);
+    fullscreenCheckbox->setPosition(1100.f, 560.f);
     fullscreenCheckbox->setText("Full Screen");
     fullscreenCheckbox->setCallback([this](const ui::CheckBox*)
     {
@@ -234,6 +234,19 @@ void MenuState::buildMenu(const sf::Font& font)
     }, ui::CheckBox::Event::CheckChanged);
     fullscreenCheckbox->check((getContext().appInstance.getVideoSettings().WindowStyle & sf::Style::Fullscreen) != 0);
     m_uiContainer.addControl(fullscreenCheckbox);
+
+    auto difficultySelection = std::make_shared<ui::Selection>(font, getContext().appInstance.getTexture("assets/images/ui/scroll_arrow.png"), 375.f);
+    difficultySelection->setPosition(960.f, 670.f);
+    difficultySelection->setAlignment(ui::Alignment::Centre);
+    difficultySelection->addItem("Easy", 0);
+    difficultySelection->addItem("Medium", 1);
+    difficultySelection->addItem("Hard", 2);
+    difficultySelection->selectItem(0);
+    difficultySelection->setCallback([](const ui::Selection* s)
+    {
+        //TODO send message with new difficulty
+    });
+    m_uiContainer.addControl(difficultySelection);
 
     auto applyButton = std::make_shared<ui::Button>(font, getContext().appInstance.getTexture("assets/images/ui/button.png"));
     applyButton->setText("Apply");

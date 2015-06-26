@@ -175,12 +175,34 @@ void Entity::handleMessage(const Message& msg)
     
     switch (msg.type)
     {
-    case Message::Type::Physics:
-        
-        if ((msg.physics.entityId[0] == m_uid || msg.physics.entityId[1] == m_uid))
+    //case Message::Type::Physics:
+    //    
+    //    if ((msg.physics.entityId[0] == m_uid || msg.physics.entityId[1] == m_uid))
+    //    {
+
+
+    //    }
+    //    break;
+    case Message::Type::ComponentSystem:
+        if (msg.component.entityId == m_uid)
         {
+            switch (msg.component.action)
+            {
+            case Message::ComponentEvent::Deleted:
+                m_components.erase(std::remove_if(m_components.begin(), m_components.end(),
+                    [&msg](const Component::Ptr& p)
+                {
+                    return msg.component.ptr == p.get();
+                }), m_components.end());
 
-
+                m_drawables.erase(std::remove_if(m_drawables.begin(), m_drawables.end(),
+                    [&msg](const sf::Drawable* p)
+                {
+                    return msg.component.ptr == (Component*)p;
+                }), m_drawables.end());
+                break;
+            default: break;
+            }
         }
         break;
     default: break;

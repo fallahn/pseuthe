@@ -36,6 +36,16 @@ Component::Component(MessageBus& m)
 
 }
 
+Component::~Component()
+{
+    Message msg;
+    msg.type = Message::Type::ComponentSystem;
+    msg.component.action = Message::ComponentEvent::Deleted;
+    msg.component.ptr = this;
+    msg.component.entityId = m_parentUID;
+    m_messageBus.send(msg);
+}
+
 //public
 void Component::onStart(Entity&)
 {

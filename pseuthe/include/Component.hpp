@@ -51,7 +51,7 @@ public:
     };
 
     explicit Component(MessageBus&);
-    virtual ~Component() = default;
+    virtual ~Component();
     Component(const Component&) = delete;
     const Component& operator = (const Component&) = delete;
 
