@@ -90,10 +90,12 @@ public:
             RequestAudioUnmute,
             MenuOpened,
             MenuClosed,
-            RequestState
+            RequestState,
+            RequestDifficultyChange
         }type;
         float value;
         States::ID stateId;
+        Difficulty difficulty;
     };
 
     struct PlayerEvent

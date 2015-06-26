@@ -56,7 +56,8 @@ namespace
 App::App()
     : m_videoSettings   (),
     m_renderWindow      (m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle),
-    m_stateStack        ({ m_renderWindow, *this })
+    m_stateStack        ({ m_renderWindow, *this }),
+    m_difficulty        (Difficulty::Easy)
 {
     registerStates();
     m_stateStack.pushState(States::ID::Main);
@@ -201,6 +202,16 @@ const std::vector<Scores::Value>& App::getScores() const
     return m_scores;
 }
 
+void App::setDifficulty(Difficulty d)
+{
+    m_difficulty = d;
+}
+
+Difficulty App::getDifficulty() const
+{
+    return m_difficulty;
+}
+
 //private
 void App::handleEvents()
 {
@@ -286,7 +297,7 @@ void App::loadSettings()
     int fileSize = static_cast<int>(file.tellg());
     file.seekg(0, std::ios::beg);
 
-    int expectedSize = sizeof(m_videoSettings.VideoMode) + sizeof(m_videoSettings.WindowStyle) + sizeof(AudioSettings);
+    int expectedSize = sizeof(m_videoSettings.VideoMode) + sizeof(m_videoSettings.WindowStyle) + sizeof(AudioSettings) + sizeof(Difficulty);
 
     if (fileSize != expectedSize)
     {
@@ -310,6 +321,9 @@ void App::loadSettings()
 
     std::memcpy(&m_audioSettings, dataPtr, sizeof(m_audioSettings));
     m_audioSettings.volume = Util::Math::clamp(m_audioSettings.volume, 0.f, 1.f);
+    dataPtr += sizeof(AudioSettings);
+
+    std::memcpy(&m_difficulty, dataPtr, sizeof(Difficulty));
 
     applyVideoSettings(newVideoSettings);
 }
@@ -324,7 +338,7 @@ void App::saveSettings()
         return;
     }
 
-    std::vector<char> data(sizeof(m_videoSettings.VideoMode) + sizeof(m_videoSettings.WindowStyle) + sizeof(AudioSettings));
+    std::vector<char> data(sizeof(m_videoSettings.VideoMode) + sizeof(m_videoSettings.WindowStyle) + sizeof(AudioSettings) + sizeof(Difficulty));
     char* dataPtr = &data[0];
     std::memcpy(dataPtr, &m_videoSettings.VideoMode, sizeof(m_videoSettings.VideoMode));
     dataPtr += sizeof(m_videoSettings.VideoMode);
@@ -333,6 +347,9 @@ void App::saveSettings()
     dataPtr += sizeof(m_videoSettings.WindowStyle);
 
     std::memcpy(dataPtr, &m_audioSettings, sizeof(m_audioSettings));
+    dataPtr += sizeof(m_audioSettings);
+
+    std::memcpy(dataPtr, &m_difficulty, sizeof(Difficulty));
 
     file.write(&data[0], data.size());
     file.close();

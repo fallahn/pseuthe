@@ -39,4 +39,12 @@ namespace States
     };
 }
 
+
+enum class Difficulty
+{
+    Easy,
+    Medium,
+    Hard
+};
+
 #endif //STATE_IDS_HPP_

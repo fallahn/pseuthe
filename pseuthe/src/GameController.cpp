@@ -55,8 +55,16 @@ namespace
     const int maxBodyParts = 8;
     const int maxPlankton = 8;
 
+    const sf::Uint8 easyPartCount = 3u;
+    const sf::Uint8 hardPartCount = 2u;
+
+    const float easyDecayTime = 4.f;
+    const float mediumDecayTime = 5.f;
+    const float hardDecayTime = 6.5f;
+
     sf::Clock spawnClock;
-    const float spawnTime = 6.f;
+    const float easySpawnTime = 6.f;
+    const float hardSpawnTime = 7.5f;
 
     sf::Clock scoreClock;
     std::vector<int> scoreCounts(maxBodyParts + 1);
@@ -75,7 +83,9 @@ GameController::GameController(Scene& scene, MessageBus& mb, App& app, PhysicsWo
     m_constraintLength      (0.f),
     m_nextPartSize          (0.f),
     m_nextPartScale         (0.f),
-    m_planktonCount         (0u)
+    m_planktonCount         (0u),
+    m_spawnTime             (easySpawnTime),
+    m_initialPartCount      (easyPartCount)
 {
     //find two off sceen areas for spawning teh planktons
     auto& worldBounds = m_physicsWorld.getWorldSize();
@@ -91,7 +101,7 @@ GameController::GameController(Scene& scene, MessageBus& mb, App& app, PhysicsWo
 //public
 void GameController::update(float dt)
 {
-    if (spawnClock.getElapsedTime().asSeconds() > (spawnTime * m_planktonCount))
+    if (spawnClock.getElapsedTime().asSeconds() > (m_spawnTime * m_planktonCount))
     {
         spawnClock.restart();
         if (m_planktonCount < maxPlankton && m_player)
@@ -116,15 +126,28 @@ void GameController::handleMessage(const Message& msg)
             if (msg.ui.stateId == States::ID::Menu && !m_player)
             {
                 spawnPlayer();
-                addBodyPart();
-                addBodyPart();
-                addBodyPart();
+                for (auto i = 0u; i < m_initialPartCount; ++i)
+                {
+                    addBodyPart();
+                }
             }
             break;
         case Message::UIEvent::MenuOpened:
             if (m_player)
             {
                 
+            }
+            break;
+        case Message::UIEvent::RequestDifficultyChange:
+            if (msg.ui.difficulty == Difficulty::Easy)
+            {
+                m_spawnTime = easySpawnTime;
+                m_initialPartCount = easyPartCount;
+            }
+            else
+            {
+                m_spawnTime = hardSpawnTime;
+                m_initialPartCount = hardPartCount;
             }
             break;
         default:break;
@@ -265,6 +288,14 @@ void GameController::addBodyPart(float health)
     sparkle->start(6u, 0.f, 0.6f);
     bodyPart->addComponent<ParticleSystem>(sparkle);
 
+    auto echo = ParticleSystem::create(Particle::Type::Echo, m_messageBus);
+    echo->setTexture(m_appInstance.getTexture("assets/images/particles/circle.png"));
+    float size = m_nextPartSize;
+    echo->setParticleSize({ size, size });
+    echo->setColour({ 240u, 35u, 30u });
+    echo->setName("echo");
+    bodyPart->addComponent<ParticleSystem>(echo);
+
     auto bpCont = std::make_unique<BodypartController>(m_messageBus);
     bpCont->setHealth(health);
     bodyPart->addComponent<BodypartController>(bpCont);
@@ -289,10 +320,12 @@ void GameController::spawnPlankton()
     const float posY = static_cast<float>(Util::Random::value(0, 1080));
 
     float scale = Util::Random::value(0.7f, 1.1f);
+    float size = planktonSize * scale;
+
     auto entity = std::make_unique<Entity>(m_messageBus);
     entity->setWorldPosition({ posX, posY });
 
-    auto physComponent = m_physicsWorld.addBody(planktonSize * scale);
+    auto physComponent = m_physicsWorld.addBody(size);
     physComponent->setPosition(entity->getWorldPosition());
     physComponent->setTriggerOnly(true);
     physComponent->setName("control");
@@ -302,7 +335,7 @@ void GameController::spawnPlankton()
     //1 in 5 chance a bonus plankton, else other type
     PlanktonController::Type type = (Util::Random::value(0, 4) == 0) ?
         PlanktonController::Type::Bonus :
-        (Util::Random::value(0, 2) == 0) ? //1 in 3 chance it'll be most populous
+        (Util::Random::value(0, 3) == 0) ? //1 in 4 chance it'll be most populous
             (badPlankton >= goodPlankton) ? PlanktonController::Type::Bad : PlanktonController::Type::Good :
             (badPlankton < goodPlankton) ? PlanktonController::Type::Bad : PlanktonController::Type::Good;
 

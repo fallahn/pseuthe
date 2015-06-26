@@ -57,6 +57,7 @@ BodypartController::BodypartController(MessageBus& mb)
     m_physComponent (nullptr),
     m_drawable      (nullptr),
     m_sparkles      (nullptr),
+    m_echo          (nullptr),
     m_health        (maxHealth)
 {
 
@@ -119,10 +120,12 @@ void BodypartController::handleMessage(const Message& msg)
 
         if ((msg.physics.entityId[0] == getParentUID() || msg.physics.entityId[1] == getParentUID()))
         {
+            //hmm we also get damage from plankton - unintentional bonus?
             if (m_health > minHealth)
+            {
                 m_health -= hitPoint;
-
-            //TODO fire a particle effect
+                m_echo->start(1u, 0.f, 0.02f);
+            }
         }
         break;
     case Message::Type::Plankton:
@@ -142,7 +145,7 @@ void BodypartController::handleMessage(const Message& msg)
             case PlanktonController::Type::Bad:
                 m_health -= planktonHealth;
                 newMessage.player.action = Message::PlayerEvent::HealthLost;
-                //TODO same particle effect as hit from physics?
+                m_echo->start(1u, 0.f, 0.02f);
                 break;
             case PlanktonController::Type::Bonus:
                 m_health += bonusHealth;
@@ -176,6 +179,9 @@ void BodypartController::onStart(Entity& entity)
 
     m_sparkles = entity.getComponent<ParticleSystem>("sparkle");
     assert(m_sparkles);
+
+    m_echo = entity.getComponent<ParticleSystem>("echo");
+    assert(m_echo);
 }
 
 void BodypartController::setHealth(float health)

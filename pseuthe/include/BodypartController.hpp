@@ -52,6 +52,8 @@ private:
     PhysicsComponent* m_physComponent;
     AnimatedDrawable* m_drawable;
     ParticleSystem* m_sparkles;
+    ParticleSystem* m_echo;
+
     float m_health;
 };
 

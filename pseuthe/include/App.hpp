@@ -32,8 +32,8 @@ source distribution.
 
 #include <StateStack.hpp>
 #include <Resource.hpp>
-#include <MessageBus.hpp>
 #include <Score.hpp>
+#include <MessageBus.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
@@ -94,6 +94,9 @@ public:
     const std::vector<Scores::Value>& getScores() const;
     int getLastScoreIndex() const;
 
+    void setDifficulty(Difficulty);
+    Difficulty getDifficulty() const;
+
 private:
     AudioSettings m_audioSettings;
 
@@ -108,6 +111,7 @@ private:
     MessageBus m_messageBus;
 
     std::vector<Scores::Value> m_scores;
+    Difficulty m_difficulty;
 
     void handleEvents();
     void handleMessages();

@@ -69,6 +69,8 @@ private:
 
     std::array<sf::FloatRect, 2> m_planktonSpawns;
     sf::Uint8 m_planktonCount;
+    float m_spawnTime;
+    sf::Uint8 m_initialPartCount;
 
     void spawnPlayer();
     void addBodyPart(float health = 100.f);

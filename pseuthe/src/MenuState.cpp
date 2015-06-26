@@ -238,14 +238,22 @@ void MenuState::buildMenu(const sf::Font& font)
     auto difficultySelection = std::make_shared<ui::Selection>(font, getContext().appInstance.getTexture("assets/images/ui/scroll_arrow.png"), 375.f);
     difficultySelection->setPosition(960.f, 670.f);
     difficultySelection->setAlignment(ui::Alignment::Centre);
-    difficultySelection->addItem("Easy", 0);
-    difficultySelection->addItem("Medium", 1);
-    difficultySelection->addItem("Hard", 2);
+    difficultySelection->addItem("Easy", static_cast<int>(Difficulty::Easy));
+    difficultySelection->addItem("Medium", static_cast<int>(Difficulty::Medium));
+    difficultySelection->addItem("Hard", static_cast<int>(Difficulty::Hard));
     difficultySelection->selectItem(0);
-    difficultySelection->setCallback([](const ui::Selection* s)
+    difficultySelection->setCallback([this](const ui::Selection* s)
     {
-        //TODO send message with new difficulty
+        //send message with new difficulty
+        Message msg;
+        msg.type = Message::Type::UI;
+        msg.ui.type = Message::UIEvent::RequestDifficultyChange;
+        msg.ui.difficulty = static_cast<Difficulty>(s->getSelectedValue());
+        m_messageBus.send(msg);
+
+        getContext().appInstance.setDifficulty(msg.ui.difficulty);
     });
+    difficultySelection->selectItem(static_cast<int>(getContext().appInstance.getDifficulty()));
     m_uiContainer.addControl(difficultySelection);
 
     auto applyButton = std::make_shared<ui::Button>(font, getContext().appInstance.getTexture("assets/images/ui/button.png"));
