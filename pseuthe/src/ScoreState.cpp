@@ -53,11 +53,25 @@ ScoreState::ScoreState(StateStack& stateStack, Context context)
     auto& menuFont = context.appInstance.getFont("assets/fonts/N_E_B.ttf");
     auto& scoreFont = context.appInstance.getFont("assets/fonts/Ardeco.ttf");
 
-    m_texts.emplace_back("Scores", menuFont, 35u);
-    auto& spaceText = m_texts.back();
-    Util::Position::centreOrigin(spaceText);
-    spaceText.setPosition(context.defaultView.getCenter());
-    spaceText.move(0.f, -206.f);
+    m_texts.emplace_back("", menuFont, 35u);
+    auto& titleText = m_texts.back();
+    switch (context.appInstance.getDifficulty())
+    {
+    default:
+    case Difficulty::Easy:
+        titleText.setString("Scores: Easy");
+        break;
+    case Difficulty::Medium:
+        titleText.setString("Scores: Medium");
+        break;
+    case Difficulty::Hard:
+        titleText.setString("Scores: Hard");
+        break;
+    }
+    Util::Position::centreOrigin(titleText);
+    titleText.setPosition(context.defaultView.getCenter());
+    titleText.move(0.f, -206.f);
+
 
 
     //scores

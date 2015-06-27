@@ -47,6 +47,7 @@ public:
     void onStart(Entity&) override;
 
     void setHealth(float);
+    void setDecayRate(float);
 
 private:
     PhysicsComponent* m_physComponent;
@@ -55,6 +56,7 @@ private:
     ParticleSystem* m_echo;
 
     float m_health;
+    float m_decayRate;
 };
 
 #endif //BODYPART_COPNTROLLER_HPP_

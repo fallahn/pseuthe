@@ -31,14 +31,16 @@ source distribution.
 #include <string>
 #include <fstream>
 #include <cstring>
+#include <algorithm>
 
 namespace
 {
     const int ident = 0x534e5542;
+    const int version = 2;
     const std::string scoreFile = "scores.dat";
 }
 
-void Scores::load(std::vector<Scores::Value>& dst)
+void Scores::load()
 {
     std::fstream file(scoreFile, std::ios::binary | std::ios::in);
     if (!file.good() || !file.is_open() || file.fail())
@@ -65,17 +67,23 @@ void Scores::load(std::vector<Scores::Value>& dst)
 
     Scores::Header header;
     std::memcpy(&header, fileData.data(), sizeof(Header));
-    if (header.ident != ident)
+    if (header.ident != ident || header.version != version)
     {
-        Logger::Log("unusual ident found in score data", Logger::Type::Error, Logger::Output::All);
+        Logger::Log("unusual ident found in score data, or incorrect version", Logger::Type::Error, Logger::Output::All);
         return;
     }
 
-    dst.resize(header.size);
-    std::memcpy(dst.data(), fileData.data() + sizeof(Header), header.size * sizeof(Value));
+    m_easyScores.resize(header.chunks[0].size / sizeof(Item));
+    std::memcpy(m_easyScores.data(), fileData.data() + header.chunks[0].offset, header.chunks[0].size);
+
+    m_mediumScores.resize(header.chunks[1].size / sizeof(Item));
+    std::memcpy(m_mediumScores.data(), fileData.data() + header.chunks[1].offset, header.chunks[1].size);
+
+    m_hardScores.resize(header.chunks[2].size / sizeof(Item));
+    std::memcpy(m_hardScores.data(), fileData.data() + header.chunks[2].offset, header.chunks[2].size);
 }
 
-void Scores::save(const std::vector<Scores::Value>& src)
+void Scores::save()
 {
     std::fstream file(scoreFile, std::ios::binary | std::ios::out);
     if (!file.good() || !file.is_open() || file.fail())
@@ -87,9 +95,71 @@ void Scores::save(const std::vector<Scores::Value>& src)
 
     Header header;
     header.ident = ident;
-    header.size = src.size();
+    header.version = version;
+    header.chunks[0].offset = sizeof(Header);
+    header.chunks[0].size = sizeof(Item) * m_easyScores.size();
+
+    header.chunks[1].offset = header.chunks[0].offset + header.chunks[0].size;
+    header.chunks[1].size = sizeof(Item) * m_mediumScores.size();
+
+    header.chunks[2].offset = header.chunks[1].offset + header.chunks[1].size;
+    header.chunks[2].size = sizeof(Item) * m_hardScores.size();
 
     file.write((char*)&header, sizeof(header));
-    file.write((char*)src.data(), sizeof(Value) * header.size);
+    file.write((char*)m_easyScores.data(), header.chunks[0].size);
+    file.write((char*)m_mediumScores.data(), header.chunks[1].size);
+    file.write((char*)m_hardScores.data(), header.chunks[2].size);
     file.close();
+}
+
+int Scores::add(const std::string& name, float value, Difficulty difficulty)
+{
+    std::vector<Item>* scores = nullptr;
+    switch (difficulty)
+    {
+    default:
+    case Difficulty::Easy:
+        scores = &m_easyScores;
+        break;
+    case Difficulty::Medium:
+        scores = &m_mediumScores;
+        break;
+    case Difficulty::Hard:
+        scores = &m_hardScores;
+        break;
+    }
+
+    scores->emplace_back();
+
+    Scores::Item& score = scores->back();
+    std::strcpy(score.name, name.c_str());
+    score.score = value;
+
+    std::sort(scores->begin(), scores->end(),
+        [](const Scores::Item& sv1, const Scores::Item& sv2)
+    {
+        return sv1.score > sv2.score;
+    });
+
+    auto result = std::find_if(scores->begin(), scores->end(),
+        [&name, value](const Scores::Item& sv)
+    {
+        return (std::string(sv.name) == name && sv.score == value);
+    });
+
+    return (result == scores->end()) ? 0 : result - scores->begin();
+}
+
+const std::vector<Scores::Item>& Scores::getScores(Difficulty difficulty) const
+{
+    switch (difficulty)
+    {
+    default:
+    case Difficulty::Easy:
+        return m_easyScores;
+    case Difficulty::Medium:
+        return m_mediumScores;
+    case Difficulty::Hard:
+        return m_hardScores;
+    }
 }

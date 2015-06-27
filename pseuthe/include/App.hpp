@@ -91,7 +91,7 @@ public:
     MessageBus& getMessageBus();
 
     void addScore(const std::string& name, float value);
-    const std::vector<Scores::Value>& getScores() const;
+    const std::vector<Scores::Item>& getScores() const;
     int getLastScoreIndex() const;
 
     void setDifficulty(Difficulty);
@@ -110,7 +110,7 @@ private:
 
     MessageBus m_messageBus;
 
-    std::vector<Scores::Value> m_scores;
+    Scores m_scores;
     Difficulty m_difficulty;
 
     void handleEvents();

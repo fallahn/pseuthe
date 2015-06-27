@@ -133,15 +133,15 @@ ParticleSystem::Ptr ParticleSystem::create(Particle::Type type, MessageBus& mb)
     break;
     case Particle::Type::Ident:
     {
-        identPositions = createPoints({}, 20, 16.f);
+        identPositions = createPoints({}, 20, 20.f);
 
         ps->setParticleLifetime(0.6f);
-        ps->setParticleSize({ 10.f, 10.f });
+        ps->setParticleSize({ 20.f, 20.f });
         ps->setInitialVelocity({ 0.f, 0.f });
         ps->setRandomInitialPosition(identPositions);
         ps->setBlendMode(sf::BlendAdd);
         ps->followParent(true);
-        ps->setEmitRate(5.f);
+        ps->setEmitRate(7.f);
         ps->start();
     }
     default: break;

@@ -64,7 +64,7 @@ App::App()
     m_stateStack.pushState(States::ID::Menu);
 
     loadSettings();
-    Scores::load(m_scores);
+    m_scores.load();
 
     m_renderWindow.setVerticalSyncEnabled(m_videoSettings.VSync);
 
@@ -109,7 +109,7 @@ void App::run()
     }
 
     saveSettings();
-    Scores::save(m_scores);
+    m_scores.save();
 }
 
 void App::pause()
@@ -171,25 +171,7 @@ MessageBus& App::getMessageBus()
 
 void App::addScore(const std::string& name, float value)
 {
-    m_scores.emplace_back();
-
-    Scores::Value& score = m_scores.back();
-    std::strcpy(score.name, name.c_str());
-    score.score = value;
-
-    std::sort(m_scores.begin(), m_scores.end(),
-        [](const Scores::Value& sv1, const Scores::Value& sv2)
-    {
-        return sv1.score > sv2.score;
-    });
-
-    auto result = std::find_if(m_scores.begin(), m_scores.end(),
-        [&name, value](const Scores::Value& sv)
-    {
-        return (sv.name == name && sv.score == value);
-    });
-
-    lastScoreIndex = (result == m_scores.end()) ? 0 : result - m_scores.begin();
+    lastScoreIndex = m_scores.add(name, value, m_difficulty);
 }
 
 int App::getLastScoreIndex() const
@@ -197,9 +179,9 @@ int App::getLastScoreIndex() const
     return lastScoreIndex;
 }
 
-const std::vector<Scores::Value>& App::getScores() const
+const std::vector<Scores::Item>& App::getScores() const
 {
-    return m_scores;
+    return m_scores.getScores(m_difficulty);
 }
 
 void App::setDifficulty(Difficulty d)

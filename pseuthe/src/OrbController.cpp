@@ -30,6 +30,8 @@ source distribution.
 #include <MessageBus.hpp>
 #include <Entity.hpp>
 
+#include <cassert>
+
 OrbController::OrbController(MessageBus& mb)
     : Component         (mb),
     m_particleSystem    (nullptr)
@@ -69,4 +71,5 @@ void OrbController::handleMessage(const Message& msg)
 void OrbController::onStart(Entity& entity)
 {
     m_particleSystem = entity.getComponent<ParticleSystem>("echo");
+    assert(m_particleSystem);
 }

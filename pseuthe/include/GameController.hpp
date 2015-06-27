@@ -71,6 +71,7 @@ private:
     sf::Uint8 m_planktonCount;
     float m_spawnTime;
     sf::Uint8 m_initialPartCount;
+    float m_partDecayRate;
 
     void spawnPlayer();
     void addBodyPart(float health = 100.f);

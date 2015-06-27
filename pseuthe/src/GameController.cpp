@@ -45,7 +45,7 @@ namespace
     const float partScale = 0.9f;
     const float partPadding = 1.f;
     const float partSize = 32.f;
-    const float playerSize = 38.4f;
+    const float playerSize = 32.f;
     const sf::Vector2f spawnPosition(960.f, 540.f);
 
     const float planktonSize = 32.f;
@@ -85,7 +85,8 @@ GameController::GameController(Scene& scene, MessageBus& mb, App& app, PhysicsWo
     m_nextPartScale         (0.f),
     m_planktonCount         (0u),
     m_spawnTime             (easySpawnTime),
-    m_initialPartCount      (easyPartCount)
+    m_initialPartCount      (easyPartCount),
+    m_partDecayRate         (easyDecayTime)
 {
     //find two off sceen areas for spawning teh planktons
     auto& worldBounds = m_physicsWorld.getWorldSize();
@@ -139,15 +140,23 @@ void GameController::handleMessage(const Message& msg)
             }
             break;
         case Message::UIEvent::RequestDifficultyChange:
-            if (msg.ui.difficulty == Difficulty::Easy)
+            switch (msg.ui.difficulty)
             {
+            case Difficulty::Easy:
                 m_spawnTime = easySpawnTime;
                 m_initialPartCount = easyPartCount;
-            }
-            else
-            {
+                m_partDecayRate = easyDecayTime;
+                break;
+            case Difficulty::Medium:
                 m_spawnTime = hardSpawnTime;
                 m_initialPartCount = hardPartCount;
+                m_partDecayRate = mediumDecayTime;
+                break;
+            case Difficulty::Hard:
+                m_spawnTime = hardSpawnTime;
+                m_initialPartCount = hardPartCount;
+                m_partDecayRate = hardDecayTime;
+                break;
             }
             break;
         default:break;
@@ -219,7 +228,6 @@ void GameController::spawnPlayer()
     const auto& anims = cd->getAnimations();
     if(!anims.empty()) cd->play(cd->getAnimations()[0]);
     cd->setName("drawable");
-    cd->setScale(1.2f, 1.2f);
     entity->addComponent<AnimatedDrawable>(cd);
 
     auto physComponent = m_physicsWorld.addBody(playerSize);
@@ -298,6 +306,7 @@ void GameController::addBodyPart(float health)
 
     auto bpCont = std::make_unique<BodypartController>(m_messageBus);
     bpCont->setHealth(health);
+    bpCont->setDecayRate(m_partDecayRate);
     bodyPart->addComponent<BodypartController>(bpCont);
 
     m_player->addChild(bodyPart);
@@ -344,15 +353,11 @@ void GameController::spawnPlankton()
         switch (Util::Random::value(0, 1)) //random graphic
         {
         case 0:
-            (type == PlanktonController::Type::Good) ?
-            ad = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/food01_good.png")) :
-            ad = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/food01_bad.png"));
+            ad = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/food01.png"));
             ad->loadAnimationData("assets/images/player/food01.cra");
             break;
         case 1:
-            (type == PlanktonController::Type::Good) ?
-            ad = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/food02_good.png")) :
-            ad = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/food02_bad.png"));
+            ad = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/food02.png"));
             ad->loadAnimationData("assets/images/player/food02.cra");
             break;
         default: break;
@@ -426,7 +431,7 @@ void GameController::resetScore()
 float GameController::getScore() const
 {
     int multiplier = 0;
-    for (auto i = 0; i < scoreCounts.size(); ++i)
+    for (auto i = 0u; i < scoreCounts.size(); ++i)
     {
         multiplier += i * scoreCounts[i];
     }

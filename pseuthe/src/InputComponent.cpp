@@ -53,7 +53,7 @@ namespace
     const float healthReduction = 3.f; //reduction per second
     const float planktonHealth = 50.f;
     const float bonusHealth = 100.f;
-    const sf::Color defaultColour(190u, 190u, 255u);
+    const sf::Color defaultColour(200u, 200u, 230u, 180u);
 
     const float minTrailRate = 1.f;
     const float maxTrailRate = 50.f;

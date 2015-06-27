@@ -30,28 +30,48 @@ source distribution.
 #ifndef SCORES_HPP_
 #define SCORES_HPP_
 
+#include <StateIds.hpp>
+
 #include <vector>
+#include <string>
 
 class Scores final
 {
 public:
-    struct Header
+    struct Chunk
     {
-        int ident;
+        unsigned int offset;
         unsigned int size;
     };
 
-    struct Value
+    struct Header
+    {
+        int ident;
+        int version;
+        Chunk chunks[3];
+    };
+
+    struct Item
     {
         char name[17];
         float score;
     };
 
-    static void load(std::vector<Value>& dst);
-    static void save(const std::vector<Value>& src);
+    Scores() = default;
+    ~Scores() = default;
+    Scores(const Scores&) = delete;
+    const Scores& operator = (const Scores&) = delete;
+
+    void load();
+    void save();
+    int add(const std::string&, float, Difficulty);
+
+    const std::vector<Item>& getScores(Difficulty) const;
 
 private:
-
+    std::vector<Item> m_easyScores;
+    std::vector<Item> m_mediumScores;
+    std::vector<Item> m_hardScores;
 };
 
 #endif //SCORES_HPP_

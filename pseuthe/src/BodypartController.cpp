@@ -42,7 +42,7 @@ namespace
     const float minBounds = 0.f;
     const float impactReduction = 0.6f; //reduction of velocity when hitting edges
     const float maxHealth = 100.f;
-    const float healthReduction = 4.f; //reduction per second
+    const float decayRate = 4.f; //reduction per second
     const float minHealth = 2.f; //don't want non-tail parts completely dying
     const float hitPoint = 0.5f; //lose this if hit by a ball
 
@@ -58,7 +58,8 @@ BodypartController::BodypartController(MessageBus& mb)
     m_drawable      (nullptr),
     m_sparkles      (nullptr),
     m_echo          (nullptr),
-    m_health        (maxHealth)
+    m_health        (maxHealth),
+    m_decayRate     (decayRate)
 {
 
 }
@@ -95,7 +96,7 @@ void BodypartController::entityUpdate(Entity& entity, float dt)
     //reduce health if this is the tail
     if (m_physComponent->getContraintCount() < 2)
     {
-        m_health -= healthReduction * dt;
+        m_health -= m_decayRate * dt;
         if (m_health <= 0)
         {
             entity.destroy();
@@ -118,9 +119,9 @@ void BodypartController::handleMessage(const Message& msg)
     {
     case Message::Type::Physics:
 
-        if ((msg.physics.entityId[0] == getParentUID() || msg.physics.entityId[1] == getParentUID()))
+        if ((msg.physics.entityId[0] == getParentUID() || msg.physics.entityId[1] == getParentUID())
+            && msg.physics.event == Message::PhysicsEvent::Collision)
         {
-            //hmm we also get damage from plankton - unintentional bonus?
             if (m_health > minHealth)
             {
                 m_health -= hitPoint;
@@ -143,7 +144,7 @@ void BodypartController::handleMessage(const Message& msg)
                 m_sparkles->start(4u, 0.f, 0.6f);
                 break;
             case PlanktonController::Type::Bad:
-                m_health -= planktonHealth;
+                m_health -= planktonHealth * 0.7f;
                 newMessage.player.action = Message::PlayerEvent::HealthLost;
                 m_echo->start(1u, 0.f, 0.02f);
                 break;
@@ -188,4 +189,10 @@ void BodypartController::setHealth(float health)
 {
     assert(health >= 0 && health <= maxHealth);
     m_health = health;
+}
+
+void BodypartController::setDecayRate(float rate)
+{
+    assert(rate > 0 && rate < maxHealth);
+    m_decayRate = rate;
 }
