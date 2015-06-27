@@ -81,7 +81,7 @@ void AnimatedDrawable::entityUpdate(Entity&, float dt)
         float frameTime = 1.f / m_frameRate;
         m_elapsedTime += dt;
 
-        while (m_elapsedTime >= frameTime && (m_currentFrame < m_lastFrame || m_loop))
+        while (m_elapsedTime >= frameTime && (m_currentFrame <= m_lastFrame || m_loop))
         {
             //while not at the end of the range or loop set to true
             //move frame to the right
@@ -98,13 +98,16 @@ void AnimatedDrawable::entityUpdate(Entity&, float dt)
             m_elapsedTime -= frameTime;
             
             m_currentFrame++;
-            if (m_currentFrame > m_lastFrame)
+        }
+
+        if (m_currentFrame > m_lastFrame)
+        {
+            if (!m_loop)
             {
-                if (m_loop)
-                    setFrame(m_firstFrame);
-                else
-                    m_playing = false;
+                m_playing = false;
+                LOG("stopped animation", Logger::Type::Info);
             }
+            setFrame(m_firstFrame);
         }
 
         m_sprite.setTextureRect(m_subRect);
@@ -289,6 +292,8 @@ void AnimatedDrawable::loadAnimationData(const std::string& path)
     {
         std::cerr << "Animated Sprite: " << err << std::endl;
     }
+
+    setFrame(m_currentFrame);
 }
 
 const std::vector<Animation>& AnimatedDrawable::getAnimations()const

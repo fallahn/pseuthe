@@ -42,7 +42,6 @@ namespace
 
     float fadeDelay = 2.f; //delay starting the fade while the initial state is loaded
     const std::string impactSoundPath = "assets/sound/chimes01/";
-    const std::string fxSoundPath = "assets/sound/fx/";
 }
 
 AudioManager::AudioManager()
@@ -64,17 +63,9 @@ AudioManager::AudioManager()
         }
     }
 
-    files = FileSystem::listFiles(fxSoundPath);
-    for (const auto& file : files)
-    {
-        if (FileSystem::getFileExtension(file) == ".wav")
-        {
-            m_fxSounds.emplace_back(sf::SoundBuffer());
-            m_fxSounds.back().loadFromFile(fxSoundPath + file);
-        }
-    }
-
     m_switchFx.loadFromFile("assets/sound/switch.wav");
+    m_healthLost.loadFromFile("assets/sound/healthlost.wav");
+    m_healthGained.loadFromFile("assets/sound/healthgained.wav");
 }
 
 
@@ -150,10 +141,12 @@ void AudioManager::handleMessage(const Message& msg)
         switch (msg.player.action)
         {
         case Message::PlayerEvent::HealthAdded:
-            LOG("play sound health added", Logger::Type::Info);
+            //LOG("play sound health added", Logger::Type::Info);
+            m_soundPlayer.play(m_healthGained);
             break;
         case Message::PlayerEvent::HealthLost:
-            LOG("play sound health lost", Logger::Type::Info);
+            //LOG("play sound health lost", Logger::Type::Info);
+            m_soundPlayer.play(m_healthLost);
             break;
         default:break;
         }

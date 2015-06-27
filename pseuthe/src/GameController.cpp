@@ -62,9 +62,13 @@ namespace
     const float mediumDecayTime = 5.f;
     const float hardDecayTime = 6.5f;
 
+    const float easySpeed = 1.f;
+    const float mediumSpeed = 1.45f;
+    const float hardSpeed = 1.9f;
+
     sf::Clock spawnClock;
-    const float easySpawnTime = 6.f;
-    const float hardSpawnTime = 7.5f;
+    const float easySpawnTime = 4.f;
+    const float hardSpawnTime = 6.5f;
 
     sf::Clock scoreClock;
     std::vector<int> scoreCounts(maxBodyParts + 1);
@@ -86,7 +90,8 @@ GameController::GameController(Scene& scene, MessageBus& mb, App& app, PhysicsWo
     m_planktonCount         (0u),
     m_spawnTime             (easySpawnTime),
     m_initialPartCount      (easyPartCount),
-    m_partDecayRate         (easyDecayTime)
+    m_partDecayRate         (easyDecayTime),
+    m_speedMultiplier       (easySpeed)
 {
     //find two off sceen areas for spawning teh planktons
     auto& worldBounds = m_physicsWorld.getWorldSize();
@@ -146,16 +151,19 @@ void GameController::handleMessage(const Message& msg)
                 m_spawnTime = easySpawnTime;
                 m_initialPartCount = easyPartCount;
                 m_partDecayRate = easyDecayTime;
+                m_speedMultiplier = easySpeed;
                 break;
             case Difficulty::Medium:
                 m_spawnTime = hardSpawnTime;
                 m_initialPartCount = hardPartCount;
                 m_partDecayRate = mediumDecayTime;
+                m_speedMultiplier = mediumSpeed;
                 break;
             case Difficulty::Hard:
                 m_spawnTime = hardSpawnTime;
                 m_initialPartCount = hardPartCount;
                 m_partDecayRate = hardDecayTime;
+                m_speedMultiplier = hardSpeed;
                 break;
             }
             break;
@@ -227,7 +235,17 @@ void GameController::spawnPlayer()
     cd->setBlendMode(sf::BlendAdd);
     const auto& anims = cd->getAnimations();
     if(!anims.empty()) cd->play(cd->getAnimations()[0]);
-    cd->setName("drawable");
+    cd->setName("head");
+    entity->addComponent<AnimatedDrawable>(cd);
+
+    cd = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/mouth.png"));
+    cd->loadAnimationData("assets/images/player/mouth.cra");
+    cd->setOrigin(sf::Vector2f(cd->getFrameSize()) / 2.f);
+    cd->setBlendMode(sf::BlendAdd);
+    //anims = cd->getAnimations();
+    //if (!anims.empty()) 
+    //cd->play(cd->getAnimations()[0]);
+    cd->setName("mouth");
     entity->addComponent<AnimatedDrawable>(cd);
 
     auto physComponent = m_physicsWorld.addBody(playerSize);
@@ -248,6 +266,13 @@ void GameController::spawnPlayer()
     sparkle->setName("sparkle");
     sparkle->start(1u, 0.f, 0.5f);
     entity->addComponent<ParticleSystem>(sparkle);
+
+    auto echo = ParticleSystem::create(Particle::Type::Echo, m_messageBus);
+    echo->setTexture(m_appInstance.getTexture("assets/images/particles/circle.png"));
+    echo->setParticleSize({ playerSize, playerSize });
+    echo->setColour({ 240u, 35u, 30u });
+    echo->setName("echo");
+    entity->addComponent<ParticleSystem>(echo);
 
     auto controlComponent = std::make_unique<InputComponent>(m_messageBus);
     entity->addComponent<InputComponent>(controlComponent);
@@ -338,6 +363,7 @@ void GameController::spawnPlankton()
     physComponent->setPosition(entity->getWorldPosition());
     physComponent->setTriggerOnly(true);
     physComponent->setName("control");
+    physComponent->setVelocity(physComponent->getVelocity() * m_speedMultiplier);
     entity->addComponent<PhysicsComponent>(physComponent);
 
     AnimatedDrawable::Ptr ad;

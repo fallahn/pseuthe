@@ -50,7 +50,7 @@ namespace
     const float impactReduction = 0.7f; //reduction of velocity when hitting edges
 
     const float maxHealth = 100.f;
-    const float healthReduction = 3.f; //reduction per second
+    const float healthReduction = 4.f; //reduction per second
     const float planktonHealth = 50.f;
     const float bonusHealth = 100.f;
     const sf::Color defaultColour(200u, 200u, 230u, 180u);
@@ -61,14 +61,18 @@ namespace
     const float dragMultiplier = 2900.f;
 
     const float joyDeadZone = 25.f;
+
+    Animation mouthAnim("", 0, 0, false);
 }
 
 InputComponent::InputComponent(MessageBus& mb)
     : Component         (mb),
     m_physicsComponent  (nullptr),
-    m_drawable          (nullptr),
+    m_headDrawable      (nullptr),
+    m_mouthDrawable     (nullptr),
     m_trailParticles    (nullptr),
     m_sparkleParticles  (nullptr),
+    m_echo              (nullptr),
     m_health            (maxHealth),
     m_parseInput        (true),
     m_mass              (0.f),
@@ -128,7 +132,8 @@ void InputComponent::entityUpdate(Entity& entity, float dt)
         m_physicsComponent->setPosition({ maxBounds, currentPosition.y });
     }
 
-    m_drawable->setRotation(Util::Vector::rotation(m_physicsComponent->getVelocity()));
+    m_headDrawable->setRotation(Util::Vector::rotation(m_physicsComponent->getVelocity()));
+    m_mouthDrawable->setRotation(m_headDrawable->getRotation());
 
     //update health if we have no tail
     if (m_physicsComponent->getContraintCount() < 1 && m_parseInput)
@@ -150,7 +155,8 @@ void InputComponent::entityUpdate(Entity& entity, float dt)
 
         auto colour = defaultColour;
         colour.a = static_cast<sf::Uint8>(std::max((m_health / maxHealth) * static_cast<float>(defaultColour.a), 0.f));
-        m_drawable->setColour(colour);
+        m_headDrawable->setColour(colour);
+        m_mouthDrawable->setColour(colour);
     }
 }
 
@@ -202,7 +208,7 @@ void InputComponent::handleMessage(const Message& msg)
             case PlanktonController::Type::Bad:
                 m_health -= planktonHealth;
                 newMessage.player.action = Message::PlayerEvent::HealthLost;
-                //TODO same particle effect as hit from physics?
+                m_echo->start(1u, 0.f, 0.02f);
                 break;
             case PlanktonController::Type::Bonus:
                 m_health += bonusHealth;
@@ -220,6 +226,22 @@ void InputComponent::handleMessage(const Message& msg)
             sendMessage(newMessage);
         }
     }
+    else if (msg.type == Message::Type::Physics)
+    {
+        switch (msg.physics.event)
+        {
+        default: break;
+        case Message::PhysicsEvent::Trigger:
+            if (msg.physics.entityId[0] == getParentUID()
+                || msg.physics.entityId[1] == getParentUID())
+            {
+                if (!m_mouthDrawable->playing())
+                    m_mouthDrawable->play(mouthAnim);
+                //else LOG("already playing" + std::to_string(Util::Random::value(0, 1000)), Logger::Type::Info);
+            }
+            break;
+        }
+    }
 }
 
 void InputComponent::onStart(Entity& entity)
@@ -227,15 +249,23 @@ void InputComponent::onStart(Entity& entity)
     m_physicsComponent = entity.getComponent<PhysicsComponent>("control");
     assert(m_physicsComponent);
 
-    m_drawable = entity.getComponent<AnimatedDrawable>("drawable");
-    assert(m_drawable);
-    m_drawable->setColour(defaultColour);
+    m_headDrawable = entity.getComponent<AnimatedDrawable>("head");
+    assert(m_headDrawable);
+    m_headDrawable->setColour(defaultColour);
+
+    m_mouthDrawable = entity.getComponent<AnimatedDrawable>("mouth");
+    assert(m_mouthDrawable);
+    m_mouthDrawable->setColour(defaultColour);
+    if (!m_mouthDrawable->getAnimations().empty()) mouthAnim = m_mouthDrawable->getAnimations()[0];
 
     m_trailParticles = entity.getComponent<ParticleSystem>("trail");
     assert(m_trailParticles);
 
     m_sparkleParticles = entity.getComponent<ParticleSystem>("sparkle");
     assert(m_sparkleParticles);
+
+    m_echo = entity.getComponent<ParticleSystem>("echo");
+    assert(m_echo);
 }
 
 //private

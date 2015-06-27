@@ -72,6 +72,7 @@ private:
     float m_spawnTime;
     sf::Uint8 m_initialPartCount;
     float m_partDecayRate;
+    float m_speedMultiplier;
 
     void spawnPlayer();
     void addBodyPart(float health = 100.f);

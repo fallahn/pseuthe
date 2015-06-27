@@ -103,7 +103,7 @@ void PhysicsComponent::destroy()
 void PhysicsComponent::physicsUpdate(float dt, const sf::FloatRect& bounds)
 {
     //hackiness to stop some phys bodies ocassionally going mental
-    if (Util::Vector::lengthSquared(m_velocity) > uberLimit) m_velocity = sf::Vector2f();
+    //if (Util::Vector::lengthSquared(m_velocity) > uberLimit) m_velocity = sf::Vector2f();
 
 
     m_position += m_velocity * dt;

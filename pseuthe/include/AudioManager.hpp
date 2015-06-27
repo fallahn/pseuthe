@@ -54,8 +54,9 @@ private:
     SoundPlayer m_soundPlayer;
 
     std::vector<sf::SoundBuffer> m_impactSounds;
-    std::vector<sf::SoundBuffer> m_fxSounds;
     sf::SoundBuffer m_switchFx;
+    sf::SoundBuffer m_healthLost;
+    sf::SoundBuffer m_healthGained;
 
     bool m_muted;
 };

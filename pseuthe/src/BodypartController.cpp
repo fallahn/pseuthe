@@ -97,7 +97,7 @@ void BodypartController::entityUpdate(Entity& entity, float dt)
     if (m_physComponent->getContraintCount() < 2)
     {
         m_health -= m_decayRate * dt;
-        if (m_health <= 0)
+        if (m_health <= 0 && m_echo->getParticleCount() == 0)
         {
             entity.destroy();
             Message msg;

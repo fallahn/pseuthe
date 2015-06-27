@@ -51,9 +51,11 @@ public:
 private:
 
     PhysicsComponent* m_physicsComponent;
-    AnimatedDrawable* m_drawable;
+    AnimatedDrawable* m_headDrawable;
+    AnimatedDrawable* m_mouthDrawable;
     ParticleSystem* m_trailParticles;
     ParticleSystem* m_sparkleParticles;
+    ParticleSystem* m_echo;
 
     float m_health;
     bool m_parseInput;
