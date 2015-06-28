@@ -119,6 +119,7 @@ public:
             Died
         }action;
         PlanktonController::Type type;
+        bool touchingPlayer;
     };
 
     struct ComponentEvent

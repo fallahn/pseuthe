@@ -47,6 +47,7 @@ namespace
     const float partSize = 32.f;
     const float playerSize = 32.f;
     const sf::Vector2f spawnPosition(960.f, 540.f);
+    const float wigglerOffset = 24.f;
 
     const float planktonSize = 32.f;
     int goodPlankton = 0;
@@ -69,6 +70,7 @@ namespace
     sf::Clock spawnClock;
     const float easySpawnTime = 4.f;
     const float hardSpawnTime = 6.5f;
+    const float spawnTimeIncrease = 0.4f;
 
     sf::Clock scoreClock;
     std::vector<int> scoreCounts(maxBodyParts + 1);
@@ -113,6 +115,7 @@ void GameController::update(float dt)
         if (m_planktonCount < maxPlankton && m_player)
         {
             spawnPlankton();
+            m_spawnTime += spawnTimeIncrease;
         }
     }
 
@@ -242,10 +245,23 @@ void GameController::spawnPlayer()
     cd->loadAnimationData("assets/images/player/mouth.cra");
     cd->setOrigin(sf::Vector2f(cd->getFrameSize()) / 2.f);
     cd->setBlendMode(sf::BlendAdd);
-    //anims = cd->getAnimations();
-    //if (!anims.empty()) 
-    //cd->play(cd->getAnimations()[0]);
     cd->setName("mouth");
+    entity->addComponent<AnimatedDrawable>(cd);
+
+    cd = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/wiggler.png"));
+    cd->loadAnimationData("assets/images/player/wiggler.cra");
+    cd->setOrigin(cd->getFrameSize().x + wigglerOffset, cd->getFrameSize().y / 2.f);
+    cd->setBlendMode(sf::BlendAdd);
+    cd->setName("wigglerA");
+    if (!cd->getAnimations().empty()) cd->play(cd->getAnimations()[0]);
+    entity->addComponent<AnimatedDrawable>(cd);
+
+    cd = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/wiggler.png"));
+    cd->loadAnimationData("assets/images/player/wiggler.cra");
+    cd->setOrigin(cd->getFrameSize().x + wigglerOffset, cd->getFrameSize().y / 2.f);
+    cd->setBlendMode(sf::BlendAdd);
+    cd->setName("wigglerB");
+    if (!cd->getAnimations().empty()) cd->play(cd->getAnimations()[0]);
     entity->addComponent<AnimatedDrawable>(cd);
 
     auto physComponent = m_physicsWorld.addBody(playerSize);
@@ -280,7 +296,7 @@ void GameController::spawnPlayer()
     m_constraintLength = playerSize + partSize + partPadding;
     m_nextPartSize = partSize;
     m_nextPartScale = partScale;
-    
+
     m_player = entity.get();
     m_scene.getLayer(Scene::Layer::FrontMiddle).addChild(entity);
 

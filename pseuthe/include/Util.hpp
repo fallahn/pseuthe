@@ -167,18 +167,6 @@ namespace Util
 
     namespace Position
     {
-        //TODO template this?
-        /*static inline void centreOrigin(sf::Sprite& sprite)
-        {
-            sf::FloatRect bounds = sprite.getLocalBounds();
-            sprite.setOrigin(std::floor(bounds.width / 2.f), std::floor(bounds.height / 2.f));
-        }
-        static inline void centreOrigin(sf::Text& text)
-        {
-            sf::FloatRect bounds = text.getLocalBounds();
-            text.setOrigin(std::floor(bounds.width / 2.f), std::floor(bounds.height / 2.f));
-        }*/
-
         template <typename T>
         static inline void centreOrigin(T& transformable)
         {
@@ -215,6 +203,14 @@ namespace Util
         static inline float round(float v)
         {
             return std::floor(v + 0.5f);
+        }
+
+        static inline float shortestRotation(float start, float end)
+        {
+            float diff = end - start;
+            if (diff > 180.f) diff -= 360.f;
+            else if (diff < -180.f) diff += 360.f;
+            return diff;
         }
     }
 }

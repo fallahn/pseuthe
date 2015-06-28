@@ -105,7 +105,6 @@ void AnimatedDrawable::entityUpdate(Entity&, float dt)
             if (!m_loop)
             {
                 m_playing = false;
-                LOG("stopped animation", Logger::Type::Info);
             }
             setFrame(m_firstFrame);
         }

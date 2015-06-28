@@ -283,7 +283,7 @@ void App::loadSettings()
 
     if (fileSize != expectedSize)
     {
-        Logger::Log("settings file not expectred file size", Logger::Type::Error, Logger::Output::All);
+        Logger::Log("settings file not expected file size", Logger::Type::Error, Logger::Output::All);
         file.close();
         return;
     }

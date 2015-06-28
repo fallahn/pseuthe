@@ -63,6 +63,7 @@ namespace
     const float joyDeadZone = 25.f;
 
     Animation mouthAnim("", 0, 0, false);
+    const float wigglerRotation = 35.f;
 }
 
 InputComponent::InputComponent(MessageBus& mb)
@@ -70,6 +71,8 @@ InputComponent::InputComponent(MessageBus& mb)
     m_physicsComponent  (nullptr),
     m_headDrawable      (nullptr),
     m_mouthDrawable     (nullptr),
+    m_wigglerA          (nullptr),
+    m_wigglerB          (nullptr),
     m_trailParticles    (nullptr),
     m_sparkleParticles  (nullptr),
     m_echo              (nullptr),
@@ -133,7 +136,11 @@ void InputComponent::entityUpdate(Entity& entity, float dt)
     }
 
     m_headDrawable->setRotation(Util::Vector::rotation(m_physicsComponent->getVelocity()));
-    m_mouthDrawable->setRotation(m_headDrawable->getRotation());
+    auto rotation = m_headDrawable->getRotation();
+    m_mouthDrawable->setRotation(rotation);
+
+    m_wigglerA->rotate(Util::Math::shortestRotation(m_wigglerA->getRotation(), rotation - wigglerRotation) * dt);
+    m_wigglerB->rotate(Util::Math::shortestRotation(m_wigglerB->getRotation(), rotation + wigglerRotation) * dt);
 
     //update health if we have no tail
     if (m_physicsComponent->getContraintCount() < 1 && m_parseInput)
@@ -157,6 +164,8 @@ void InputComponent::entityUpdate(Entity& entity, float dt)
         colour.a = static_cast<sf::Uint8>(std::max((m_health / maxHealth) * static_cast<float>(defaultColour.a), 0.f));
         m_headDrawable->setColour(colour);
         m_mouthDrawable->setColour(colour);
+        m_wigglerA->setColour(colour);
+        m_wigglerB->setColour(colour);
     }
 }
 
@@ -193,6 +202,7 @@ void InputComponent::handleMessage(const Message& msg)
     else if (msg.type == Message::Type::Plankton)
     {
         if (msg.plankton.action == Message::PlanktonEvent::Died
+            && msg.plankton.touchingPlayer
             && m_physicsComponent->getContraintCount() == 0) //no body parts
         {
             Message newMessage;
@@ -257,6 +267,14 @@ void InputComponent::onStart(Entity& entity)
     assert(m_mouthDrawable);
     m_mouthDrawable->setColour(defaultColour);
     if (!m_mouthDrawable->getAnimations().empty()) mouthAnim = m_mouthDrawable->getAnimations()[0];
+
+    m_wigglerA = entity.getComponent<AnimatedDrawable>("wigglerA");
+    assert(m_wigglerA);
+    m_wigglerA->setColour(defaultColour);
+
+    m_wigglerB = entity.getComponent<AnimatedDrawable>("wigglerB");
+    assert(m_wigglerB);
+    m_wigglerB->setColour(defaultColour);
 
     m_trailParticles = entity.getComponent<ParticleSystem>("trail");
     assert(m_trailParticles);

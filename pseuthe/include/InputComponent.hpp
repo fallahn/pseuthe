@@ -53,6 +53,8 @@ private:
     PhysicsComponent* m_physicsComponent;
     AnimatedDrawable* m_headDrawable;
     AnimatedDrawable* m_mouthDrawable;
+    AnimatedDrawable* m_wigglerA;
+    AnimatedDrawable* m_wigglerB;
     ParticleSystem* m_trailParticles;
     ParticleSystem* m_sparkleParticles;
     ParticleSystem* m_echo;

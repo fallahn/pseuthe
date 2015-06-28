@@ -46,9 +46,10 @@ namespace
     const float maxHealth = 100.f;
     const float healthReduction = 45.f; //reduction per second
 
-    const float rotationSpeed = 50.f;
-    const float rotationSpeedMultiplier = 0.95f;
+    const float rotationSpeed = 6.f;
     const float rotationTolerance = 0.1f;
+
+    const float wallDamage = 18.f; //reduction in hgealth when rebounding
 }
 
 PlanktonController::PlanktonController(MessageBus& mb)
@@ -61,8 +62,7 @@ PlanktonController::PlanktonController(MessageBus& mb)
     m_ident             (nullptr),
     m_health            (maxHealth),
     m_enemyId           (0u),
-    m_targetRotation    (0.f),
-    m_currentRotation   (0.f)
+    m_targetRotation    (0.f)
 {
 
 }
@@ -84,26 +84,12 @@ void PlanktonController::entityUpdate(Entity& entity, float dt)
 
     if ((m_flags & Flags::RequestRotation) && m_type != Type::Bonus)
     {           
-        //if (m_currentRotation < m_targetRotation) //TODO work out rotation direction
-        //{
-        //    if (m_currentRotation < 0)
-        //        m_currentRotation += rotationSpeed * dt;
-        //    else
-        //        m_currentRotation -= rotationSpeed * dt;
-        //}
-        //else
-        //{
-        //    if (m_currentRotation > 0)
-        //        m_currentRotation += rotationSpeed * dt;
-        //    else
-        //        m_currentRotation -= rotationSpeed * dt;
-        //}
-        //m_drawable->setRotation(m_currentRotation);
+        float currentRotation = m_drawable->getRotation();
+        m_drawable->rotate(Util::Math::shortestRotation(currentRotation, m_targetRotation) * rotationSpeed * dt);
 
-        //const float diff = m_currentRotation - m_targetRotation;
-        //if (diff < rotationTolerance && diff > -rotationTolerance)
+        const float diff = currentRotation - m_targetRotation;
+        if (diff < rotationTolerance && diff > -rotationTolerance)
         {
-            m_drawable->setRotation(m_targetRotation);
             m_flags &= ~Flags::RequestRotation;
         }
     }
@@ -127,9 +113,11 @@ void PlanktonController::entityUpdate(Entity& entity, float dt)
             msg.type = Message::Type::Plankton;
             msg.plankton.action = Message::PlanktonEvent::Died;
             msg.plankton.type = m_type;
+            msg.plankton.touchingPlayer = ((m_flags & Flags::TouchingPlayer) != 0);
             sendMessage(msg);
         }
     }
+    
 
     //set colour
     sf::Color colour;
@@ -162,7 +150,7 @@ void PlanktonController::handleMessage(const Message& msg)
             if ((msg.physics.entityId[0] == m_enemyId || msg.physics.entityId[1] == m_enemyId)
                 && (msg.physics.entityId[0] == getParentUID() || msg.physics.entityId[1] == getParentUID()))
             {
-                m_flags |= Flags::HealthHit;
+                m_flags |= Flags::HealthHit | Flags::TouchingPlayer;
             }
             break;
         case Message::PhysicsEvent::Collision:
@@ -171,7 +159,8 @@ void PlanktonController::handleMessage(const Message& msg)
             {
                 m_targetRotation = Util::Vector::rotation(m_physComponent->getVelocity());
                 m_flags |= Flags::RequestRotation;
-                m_health -= 10.f;
+                m_flags &= ~Flags::TouchingPlayer;
+                m_health -= wallDamage;
             }
             break;
         default: break;
@@ -195,6 +184,7 @@ void PlanktonController::onStart(Entity& entity)
     assert(m_physComponent);
 
     m_targetRotation = Util::Vector::rotation(m_physComponent->getVelocity());
+    if (m_targetRotation < 0) m_targetRotation += 360.f;
     m_flags |= Flags::RequestRotation;
 
     m_drawable = entity.getComponent<AnimatedDrawable>("drawable");

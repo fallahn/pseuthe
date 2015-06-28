@@ -131,6 +131,7 @@ void BodypartController::handleMessage(const Message& msg)
         break;
     case Message::Type::Plankton:
         if (msg.plankton.action == Message::PlanktonEvent::Died
+            && msg.plankton.touchingPlayer
             && m_physComponent->getContraintCount() < 2) //we're on the end
         {
             Message newMessage;

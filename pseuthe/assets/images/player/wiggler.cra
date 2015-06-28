@@ -3,13 +3,13 @@
     {
       "Start": 0,
       "End": 7,
-      "Loop": false,
+      "Loop": true,
       "Name": "default"
     }
   ],
   "FrameCount": 8,
-  "FrameSize": "64, 64",
+  "FrameSize": "64, 32",
   "FrameRate": 24.0,
-  "Texture": "mouth.png",
+  "Texture": "wiggler.png",
   "NormalMap": "none.png"
 }

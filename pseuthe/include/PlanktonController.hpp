@@ -63,7 +63,8 @@ private:
     {
         HealthHit       = 0x1,
         RequestRotation = 0x2,
-        Suicide         = 0x4
+        Suicide         = 0x4,
+        TouchingPlayer  = 0x8
     };
     sf::Uint32 m_flags;
 
@@ -77,7 +78,6 @@ private:
     sf::Uint64 m_enemyId;
 
     float m_targetRotation;
-    float m_currentRotation;
 };
 
 
