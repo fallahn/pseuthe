@@ -89,6 +89,7 @@
     <ClCompile Include="src\GameController.cpp" />
     <ClCompile Include="src\GameState.cpp" />
     <ClCompile Include="src\GradientDrawable.cpp" />
+    <ClCompile Include="src\HelpState.cpp" />
     <ClCompile Include="src\InputComponent.cpp" />
     <ClCompile Include="src\LightPosition.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -137,6 +138,7 @@
     <ClInclude Include="include\GameController.hpp" />
     <ClInclude Include="include\GameState.hpp" />
     <ClInclude Include="include\GradientDrawable.hpp" />
+    <ClInclude Include="include\HelpState.hpp" />
     <ClInclude Include="include\InputComponent.hpp" />
     <ClInclude Include="include\JsonUtil.hpp" />
     <ClInclude Include="include\LightPosition.hpp" />

@@ -57,6 +57,7 @@ private:
     ui::Container m_uiContainer;
 
     void buildMenu(const sf::Font&);
+    void startGame();
 };
 
 #endif //MENU_STATE_HPP_

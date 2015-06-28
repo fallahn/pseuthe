@@ -50,14 +50,11 @@ MenuState::MenuState(StateStack& stateStack, Context context)
 
     auto& font = context.appInstance.getFont("assets/fonts/N_E_B.ttf");
 
-    m_texts.emplace_back("Press Space To Play", font, 35u);
-    auto& spaceText = m_texts.back();
-    Util::Position::centreOrigin(spaceText);
-    spaceText.setPosition(context.defaultView.getCenter());
-    spaceText.move(0.f, 400.f);
-
     m_texts.emplace_back("https://github.com/fallahn/pseuthe", context.appInstance.getFont("assets/fonts/VeraMono.ttf"), 18u);
     m_texts.back().setPosition(1520.f, 1050.f);
+
+    m_texts.emplace_back("Press Tab for Help", context.appInstance.getFont("assets/fonts/VeraMono.ttf"), 18u);
+    m_texts.back().setPosition(10.f, 1050.f);
 
     buildMenu(font);
 
@@ -97,20 +94,15 @@ bool MenuState::handleEvent(const sf::Event& evt)
 {
     if (evt.type == sf::Event::KeyReleased)
     {
-        //TODO repeated code here... fix this
         switch (evt.key.code)
         {
+        case sf::Keyboard::Tab:
+            requestStackPush(States::ID::Help);
+            return false;
         case sf::Keyboard::Space:
         case sf::Keyboard::Escape:
         case sf::Keyboard::Return:
-            requestStackPop();
-
-            Message msg;
-            msg.type = Message::Type::UI;
-            msg.ui.type = Message::UIEvent::MenuClosed;
-            msg.ui.value = 0.f;
-            msg.ui.stateId = States::ID::Menu;
-            m_messageBus.send(msg);
+            startGame();
             return false;
         default: break;
         }
@@ -120,14 +112,7 @@ bool MenuState::handleEvent(const sf::Event& evt)
         switch (evt.joystickButton.button)
         {
         case 7:
-            requestStackPop();
-
-            Message msg;
-            msg.type = Message::Type::UI;
-            msg.ui.type = Message::UIEvent::MenuClosed;
-            msg.ui.value = 0.f;
-            msg.ui.stateId = States::ID::Menu;
-            m_messageBus.send(msg);
+            startGame();
             return false;
         default: break;
         }
@@ -281,4 +266,26 @@ void MenuState::buildMenu(const sf::Font& font)
         getContext().renderWindow.close();
     });
     m_uiContainer.addControl(quitButton);
+
+    auto startButton = std::make_shared<ui::Button>(font, getContext().appInstance.getTexture("assets/images/ui/start_button.png"));
+    startButton->setText("Press Space to Begin");
+    startButton->setAlignment(ui::Alignment::Centre);
+    startButton->setPosition(960.f, 875.f);
+    startButton->setCallback([this]()
+    {
+        startGame();
+    });
+    m_uiContainer.addControl(startButton);
+}
+
+void MenuState::startGame()
+{
+    requestStackPop();
+
+    Message msg;
+    msg.type = Message::Type::UI;
+    msg.ui.type = Message::UIEvent::MenuClosed;
+    msg.ui.value = 0.f;
+    msg.ui.stateId = States::ID::Menu;
+    m_messageBus.send(msg);
 }

@@ -25,39 +25,42 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//shows score summary
+//displays the help menu
 
-#ifndef SCORE_STATE_HPP_
-#define SCORE_STATE_HPP_
+#ifndef HELP_STATE_HPP_
+#define HELP_STATE_HPP_
 
 #include <State.hpp>
-#include <UIContainer.hpp>
 
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
 
 class MessageBus;
-class ScoreState final : public State
+class HelpState final : public State
 {
 public:
-    ScoreState(StateStack& stateStack, Context context);
-    ~ScoreState() = default;
+    HelpState(StateStack&, Context);
+    ~HelpState() = default;
 
-    bool update(float dt) override;
+    bool update(float) override;
     void draw() override;
-    bool handleEvent(const sf::Event& evt) override;
+    bool handleEvent(const sf::Event&) override;
     void handleMessage(const Message&) override;
 
 private:
+
+    enum class Mode
+    {
+        FadeIn,
+        Static,
+        FadeOut
+    } m_mode;
+
     MessageBus& m_messageBus;
     sf::Sprite m_menuSprite;
-    sf::Sprite m_cursorSprite;
     std::vector<sf::Text> m_texts;
 
-    ui::Container m_uiContainer;
-
-    void buildMenu(const sf::Font&);
-    void closeMenu();
+    float m_fadeTime;
 };
 
-#endif //SCORE_STATE_HPP_
+#endif //HELP_STATE_HPP_

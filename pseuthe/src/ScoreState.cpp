@@ -137,15 +137,7 @@ bool ScoreState::handleEvent(const sf::Event& evt)
         case sf::Keyboard::Space:
         case sf::Keyboard::Escape:
         case sf::Keyboard::Return:
-            requestStackPop();
-            requestStackPush(States::ID::Menu);
-
-            Message msg;
-            msg.type = Message::Type::UI;
-            msg.ui.type = Message::UIEvent::MenuClosed;
-            msg.ui.value = 0.f;
-            msg.ui.stateId = States::ID::Score;
-            m_messageBus.send(msg);
+            closeMenu();
             return false;
         default: break;
         }
@@ -155,15 +147,7 @@ bool ScoreState::handleEvent(const sf::Event& evt)
         switch (evt.joystickButton.button)
         {
         case 7:
-            requestStackPop();
-            requestStackPush(States::ID::Menu);
-
-            Message msg;
-            msg.type = Message::Type::UI;
-            msg.ui.type = Message::UIEvent::MenuClosed;
-            msg.ui.value = 0.f;
-            msg.ui.stateId = States::ID::Score;
-            m_messageBus.send(msg);
+            closeMenu();
             return false;
         default: break;
         }
@@ -205,4 +189,17 @@ void ScoreState::buildMenu(const sf::Font& font)
     });
     m_uiContainer.addControl(applyButton);
 
+}
+
+void ScoreState::closeMenu()
+{
+    requestStackPop();
+    requestStackPush(States::ID::Menu);
+
+    Message msg;
+    msg.type = Message::Type::UI;
+    msg.ui.type = Message::UIEvent::MenuClosed;
+    msg.ui.value = 0.f;
+    msg.ui.stateId = States::ID::Score;
+    m_messageBus.send(msg);
 }

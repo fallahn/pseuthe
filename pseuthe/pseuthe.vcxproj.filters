@@ -198,6 +198,9 @@
     <ClCompile Include="src\Score.cpp">
       <Filter>Source Files\system</Filter>
     </ClCompile>
+    <ClCompile Include="src\HelpState.cpp">
+      <Filter>Source Files\states</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\BodypartController.hpp">
@@ -349,6 +352,9 @@
     </ClInclude>
     <ClInclude Include="include\Score.hpp">
       <Filter>Header Files\system</Filter>
+    </ClInclude>
+    <ClInclude Include="include\HelpState.hpp">
+      <Filter>Header Files\states</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

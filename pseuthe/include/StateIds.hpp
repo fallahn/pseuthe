@@ -35,7 +35,8 @@ namespace States
         None,
         Main,
         Menu,
-        Score
+        Score,
+        Help
     };
 }
 

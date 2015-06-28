@@ -68,6 +68,7 @@ add_executable(
 	src/GameController.cpp
 	src/GameState.cpp
 	src/GradientDrawable.cpp
+	src/HelpState.hpp
 	src/InputComponent.cpp
 	src/LightPosition.cpp
 	src/MenuState.cpp

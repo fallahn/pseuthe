@@ -50,7 +50,7 @@ namespace
     const float impactReduction = 0.7f; //reduction of velocity when hitting edges
 
     const float maxHealth = 100.f;
-    const float healthReduction = 4.f; //reduction per second
+    const float healthReduction = 4.5f; //reduction per second
     const float planktonHealth = 50.f;
     const float bonusHealth = 100.f;
     const sf::Color defaultColour(200u, 200u, 230u, 180u);
