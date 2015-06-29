@@ -56,7 +56,7 @@ private:
 
     ui::Container m_uiContainer;
 
-    void buildMenu(const sf::Font&);
+    void buildMenu(const sf::Font&, const sf::Font&);
     void closeMenu();
 };
 

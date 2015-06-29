@@ -38,6 +38,7 @@ namespace
     const int ident = 0x534e5542;
     const int version = 2;
     const std::string scoreFile = "scores.dat";
+    const std::size_t maxScores = 100;
 }
 
 void Scores::load()
@@ -140,6 +141,8 @@ int Scores::add(const std::string& name, float value, Difficulty difficulty)
     {
         return sv1.score > sv2.score;
     });
+
+    if (scores->size() > maxScores) scores->pop_back();
 
     auto result = std::find_if(scores->begin(), scores->end(),
         [&name, value](const Scores::Item& sv)

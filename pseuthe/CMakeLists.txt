@@ -68,7 +68,7 @@ add_executable(
 	src/GameController.cpp
 	src/GameState.cpp
 	src/GradientDrawable.cpp
-	src/HelpState.hpp
+	src/HelpState.cpp
 	src/InputComponent.cpp
 	src/LightPosition.cpp
 	src/MenuState.cpp
@@ -97,6 +97,7 @@ add_executable(
 	src/UIComboBox.cpp
 	src/UIContainer.cpp
 	src/UIControl.cpp
+	src/UIScoreList.cpp
 	src/UISelection.cpp
 	src/UISlider.cpp)
 

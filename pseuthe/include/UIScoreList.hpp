@@ -25,30 +25,23 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef UI_BUTTON_HPP_
-#define UI_BUTTON_HPP_
+#ifndef UI_SCORE_LIST_HPP_
+#define UI_SCORE_LIST_HPP_
 
 #include <UIControl.hpp>
-#include <Resource.hpp>
+#include <Score.hpp>
 
-#include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
 
-#include <vector>
-#include <string>
 #include <memory>
-#include <functional>
 
 namespace ui
 {
-    class Button final : public Control
+    class ScoreList final : public Control
     {
     public:
-        using Ptr = std::shared_ptr<Button>;
-        using Callback = std::function<void()>;
-
-        Button(const sf::Font& font, const sf::Texture& texture);
-        ~Button() = default;
+        explicit ScoreList(const sf::Font&);
+        ~ScoreList() = default;
 
         bool selectable() const override;
         void select() override;
@@ -57,37 +50,29 @@ namespace ui
         void activate() override;
         void deactivate() override;
 
-        void handleEvent(const sf::Event& e, const sf::Vector2f& mousePos) override;
+        void handleEvent(const sf::Event&, const sf::Vector2f&) override;
+        void update(float) override;
 
-        void setAlignment(Alignment a) override;
-        bool contains(const sf::Vector2f& mousePos)const override;
+        void setAlignment(Alignment) override;
+        bool contains(const sf::Vector2f&) const override;
 
-        void setCallback(Callback c);
-        void setText(const std::string& text);
-        void setTextColour(const sf::Color& c);
-        void setFontSize(sf::Uint16 size);
-        void setTogglable(bool b);
-
-
+        void scroll(float);
+        void setList(const std::vector<Scores::Item>&);
+        void setIndex(sf::Uint32);
+        
+        float getVerticalSpacing() const;
     private:
-        enum State
-        {
-            Normal = 0,
-            Selected,
-            Active,
-            Count
-        };
 
-        Callback m_callback;
-        const sf::Texture& m_texture;
-        sf::Sprite m_sprite;
-        sf::Text m_text;
-        bool m_toggleButton;
+        std::vector<sf::Text> m_texts;
+        sf::FloatRect m_bounds;
+        const sf::Font& m_font;
+        float m_scrollTargetDistance;
+        float m_scrollCurrentDistance;
+        float m_scrollSpeed;
+        bool m_doScroll;
 
-        std::vector<sf::IntRect> m_subRects;
-
-        void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
+        void draw(sf::RenderTarget&, sf::RenderStates) const override;
     };
 }
 
-#endif //UI_BUTTON_HPP_
+#endif //UI_SCORE_LIST_HPP_

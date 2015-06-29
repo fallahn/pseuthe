@@ -195,11 +195,14 @@
     <ClCompile Include="src\PlanktonController.cpp">
       <Filter>Source Files\components</Filter>
     </ClCompile>
-    <ClCompile Include="src\Score.cpp">
-      <Filter>Source Files\system</Filter>
-    </ClCompile>
     <ClCompile Include="src\HelpState.cpp">
       <Filter>Source Files\states</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Score.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UIScoreList.cpp">
+      <Filter>Source Files\ui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -350,11 +353,14 @@
     <ClInclude Include="include\PlanktonController.hpp">
       <Filter>Header Files\components</Filter>
     </ClInclude>
-    <ClInclude Include="include\Score.hpp">
-      <Filter>Header Files\system</Filter>
-    </ClInclude>
     <ClInclude Include="include\HelpState.hpp">
       <Filter>Header Files\states</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Score.hpp">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UIScoreList.hpp">
+      <Filter>Header Files\ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

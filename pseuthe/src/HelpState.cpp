@@ -39,8 +39,8 @@ namespace
 
 HelpState::HelpState(StateStack& stack, Context context)
     : State     (stack, context),
-    m_messageBus(context.appInstance.getMessageBus()),
     m_mode      (Mode::FadeIn),
+    m_messageBus(context.appInstance.getMessageBus()),
     m_fadeTime  (0.f)
 {
     m_menuSprite.setTexture(context.appInstance.getTexture("assets/images/help_menu.png"));

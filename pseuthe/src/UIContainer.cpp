@@ -37,9 +37,8 @@ namespace
     const float deadzone = 40.f;
 }
 
-Container::Container(/*SoundPlayer& sp*/)
+Container::Container()
     : m_selectedIndex   (-1),
-    /*m_soundPlayer       (sp),*/
     m_background        (sf::Vector2f(1920.f, 1080.f))
 {
     m_background.setFillColor(sf::Color::Transparent);

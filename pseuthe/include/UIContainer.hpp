@@ -45,8 +45,8 @@ namespace ui
     public:
         typedef std::shared_ptr<Container> Ptr;
 
-        /*explicit*/ Container(/*SoundPlayer& sp*/);
-        Container(Container&& c):m_selectedIndex(c.m_selectedIndex),/*m_soundPlayer(c.m_soundPlayer),*/ m_background(c.m_background){}
+        Container();
+        Container(Container&& c):m_selectedIndex(c.m_selectedIndex), m_background(c.m_background){}
         Container& operator=(Container&&){ return *this; }
 
         ~Container() = default;
@@ -63,8 +63,6 @@ namespace ui
     private:
         std::vector<Control::Ptr> m_controls;
         sf::Int16 m_selectedIndex;
-
-        /*SoundPlayer& m_soundPlayer;*/
 
         sf::RectangleShape m_background;
 

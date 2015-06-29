@@ -119,6 +119,7 @@
     <ClCompile Include="src\UIComboBox.cpp" />
     <ClCompile Include="src\UIContainer.cpp" />
     <ClCompile Include="src\UIControl.cpp" />
+    <ClCompile Include="src\UIScoreList.cpp" />
     <ClCompile Include="src\UISelection.cpp" />
     <ClCompile Include="src\UISlider.cpp" />
   </ItemGroup>
@@ -171,6 +172,7 @@
     <ClInclude Include="include\UIComboBox.hpp" />
     <ClInclude Include="include\UIContainer.hpp" />
     <ClInclude Include="include\UIControl.hpp" />
+    <ClInclude Include="include\UIScoreList.hpp" />
     <ClInclude Include="include\UISelection.hpp" />
     <ClInclude Include="include\UISlider.hpp" />
     <ClInclude Include="include\Util.hpp" />

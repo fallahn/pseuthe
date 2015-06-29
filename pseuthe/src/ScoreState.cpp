@@ -31,12 +31,13 @@ source distribution.
 #include <MessageBus.hpp>
 
 #include <UIButton.hpp>
+#include <UIScoreList.hpp>
 
 #include <SFML/Window/Event.hpp>
 
 namespace
 {
-    const float scorePadding = 18.f;
+    
 }
 
 ScoreState::ScoreState(StateStack& stateStack, Context context)
@@ -72,29 +73,7 @@ ScoreState::ScoreState(StateStack& stateStack, Context context)
     titleText.setPosition(context.defaultView.getCenter());
     titleText.move(0.f, -206.f);
 
-
-
-    //scores
-    const auto& scores = context.appInstance.getScores();
-    int index = context.appInstance.getLastScoreIndex();
-    int start = std::max(0, index - 2);
-    int end = std::min(index + 3, static_cast<int>(scores.size()));
-
-    for (int i = start; i < end; ++i)
-    {
-        m_texts.emplace_back(std::to_string(i + 1) + ".    " + std::string(scores[i].name) + " - " + std::to_string(scores[i].score), scoreFont, 42u);
-        auto& text = m_texts.back();
-        if (i == index) text.setStyle(sf::Text::Bold);
-        Util::Position::centreOrigin(text);
-        text.setPosition(context.defaultView.getCenter());
-        int offset = i - index;
-        text.move(0.f, (text.getLocalBounds().height + scorePadding) * offset);
-        sf::Uint8 alpha = 255u - std::abs(offset) * 100u;
-        sf::Color colour(255u, 255u, 255u, alpha);
-        text.setColor(colour);
-    }
-
-    buildMenu(menuFont);
+    buildMenu(menuFont, scoreFont);
 
     m_cursorSprite.setPosition(context.renderWindow.mapPixelToCoords(sf::Mouse::getPosition(context.renderWindow)));
 
@@ -109,6 +88,7 @@ ScoreState::ScoreState(StateStack& stateStack, Context context)
 //public
 bool ScoreState::update(float dt)
 {
+    m_uiContainer.update(dt);
     return true;
 }
 
@@ -169,9 +149,36 @@ void ScoreState::handleMessage(const Message&)
 }
 
 //private
-void ScoreState::buildMenu(const sf::Font& font)
+void ScoreState::buildMenu(const sf::Font& menuFont, const sf::Font& scoreFont)
 {
-    auto applyButton = std::make_shared<ui::Button>(font, getContext().appInstance.getTexture("assets/images/ui/button.png"));
+    const auto& scores = getContext().appInstance.getScores();
+    auto list = std::make_shared<ui::ScoreList>(scoreFont);
+    list->setAlignment(ui::Alignment::Centre);
+    list->setPosition(960.f, 590.f);
+    list->setList(scores);
+    list->setIndex(getContext().appInstance.getLastScoreIndex());
+    m_uiContainer.addControl(list);
+    
+    auto upScroll = std::make_shared<ui::Button>(menuFont, getContext().appInstance.getTexture("assets/images/ui/scroll_arrow_vertical.png"));
+    upScroll->setAlignment(ui::Alignment::Centre);
+    upScroll->setPosition(1310, 470.f);
+    upScroll->setCallback([list]()
+    {
+        list->scroll(list->getVerticalSpacing());
+    });
+    m_uiContainer.addControl(upScroll);
+
+    auto downScroll = std::make_shared<ui::Button>(menuFont, getContext().appInstance.getTexture("assets/images/ui/scroll_arrow_vertical.png"));
+    downScroll->setAlignment(ui::Alignment::Centre);
+    downScroll->setRotation(180.f);
+    downScroll->setPosition(1310.f, 720.f);
+    downScroll->setCallback([list]()
+    {
+        list->scroll(-list->getVerticalSpacing());
+    });
+    m_uiContainer.addControl(downScroll);
+
+    auto applyButton = std::make_shared<ui::Button>(menuFont, getContext().appInstance.getTexture("assets/images/ui/button.png"));
     applyButton->setText("OK");
     applyButton->setAlignment(ui::Alignment::Centre);
     applyButton->setPosition(960.f, 875.f);
