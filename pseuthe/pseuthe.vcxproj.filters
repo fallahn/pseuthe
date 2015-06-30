@@ -204,6 +204,9 @@
     <ClCompile Include="src\UIScoreList.cpp">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
+    <ClCompile Include="src\TitleState.cpp">
+      <Filter>Source Files\states</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\BodypartController.hpp">
@@ -361,6 +364,9 @@
     </ClInclude>
     <ClInclude Include="include\UIScoreList.hpp">
       <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TitleState.hpp">
+      <Filter>Header Files\states</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

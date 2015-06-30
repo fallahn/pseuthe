@@ -30,6 +30,7 @@ source distribution.
 #include <GameState.hpp>
 #include <ScoreState.hpp>
 #include <HelpState.hpp>
+#include <TitleState.hpp>
 #include <Util.hpp>
 
 #include <SFML/Window/Event.hpp>
@@ -61,8 +62,8 @@ App::App()
     m_difficulty        (Difficulty::Easy)
 {
     registerStates();
-    m_stateStack.pushState(States::ID::Main);
-    m_stateStack.pushState(States::ID::Menu);
+    m_stateStack.pushState(States::ID::Title);
+    //m_stateStack.pushState(States::ID::Menu);
 
     loadSettings();
     m_scores.load();
@@ -264,6 +265,7 @@ void App::registerStates()
     m_stateStack.registerState<GameState>(States::ID::Main);
     m_stateStack.registerState<ScoreState>(States::ID::Score);
     m_stateStack.registerState<HelpState>(States::ID::Help);
+    m_stateStack.registerState<TitleState>(States::ID::Title);
 }
 
 void App::loadSettings()

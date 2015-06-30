@@ -183,6 +183,7 @@ namespace Shader
             "    colour.g = texture2D(u_sourceTexture, texCoord).g;\n" \
             "    colour.b = texture2D(u_sourceTexture, texCoord - offset).b;\n" \
             "#endif\n" \
+
             /*noise*/
             "    float x = (texCoord.x + 4.0) * texCoord.y * u_time * 10.0;\n" \
             "    x = mod(x, 13.0) * mod(x, 123.0);\n" \
@@ -193,6 +194,21 @@ namespace Shader
             "    result += colour * vec3(sinCos.x, sinCos.y, sinCos.x) * (noiseStrength * 0.08);\n" \
             "    colour += (result - colour) * noiseStrength;\n" \
             "    gl_FragColor = vec4(colour, 1.0);" \
+            "}";
+    }
+
+    namespace Scanline
+    {
+        static const std::string frag =
+            "#version 120\n" \
+
+            "uniform sampler2D u_sourceTexture;\n" \
+
+            "void main()\n" \
+            "{\n" \
+            "    vec3 colour = texture2D(u_sourceTexture, gl_TexCoord[0].xy).rgb;\n" \
+            "    if(mod(floor(gl_FragCoord.y), 2) == 0) colour *= 0.5;\n" \
+            "    gl_FragColor = vec4(colour, 0.5);\n" \
             "}";
     }
 

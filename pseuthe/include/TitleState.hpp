@@ -25,41 +25,50 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//plays a given sound effect
+//displays splash screen at startup
 
-#ifndef SOUND_PLAYER_HPP_
-#define SOUND_PLAYER_HPP_
+#ifndef TITLE_STATE_HPP_
+#define TITLE_STATE_HPP_
 
-#include <SFML/System/Vector2.hpp>
-#include <SFML/Audio/SoundBuffer.hpp>
-#include <SFML/Audio/Sound.hpp>
+#include <State.hpp>
+#include <SoundPlayer.hpp>
 
-#include <map>
-#include <list>
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Shader.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 
-class SoundPlayer final
+class MessageBus;
+class TitleState final : public State
 {
 public:
+    TitleState(StateStack&, Context);
+    ~TitleState() = default;
 
-    SoundPlayer();
-    ~SoundPlayer() = default;
-    SoundPlayer(const SoundPlayer&) = delete;
-    const SoundPlayer& operator = (const SoundPlayer&) = delete;
-
-    void update();
-    void play(const sf::SoundBuffer&, bool = false);
-    
-    void setListenerPosition(const sf::Vector2f& position);
-    sf::Vector2f getListenerPosition() const;
-
-    static void setVolume(float volume);
-    static float getVolume();
+    bool handleEvent(const sf::Event&) override;
+    void handleMessage(const Message&) override;
+    bool update(float dt) override;
+    void draw() override;
 
 private:
+    sf::Sprite m_sprite;
+    sf::RectangleShape m_rectangleShape;
+    sf::Shader m_noiseShader;
+    sf::Shader m_lineShader;
+    float m_windowRatio;
 
-    std::list<sf::Sound> m_sounds;
+    MessageBus& m_mesageBus;
 
-    void flushSounds();
+    float m_fadeTime;
+    enum class Fade
+    {
+        In,
+        Hold,
+        Out
+    }m_fade;
+
+    SoundPlayer m_soundPlayer;
+    sf::SoundBuffer m_startupSound;
 };
 
-#endif //SOUND_PLAYER_HPP_
+
+#endif //TITLE_STATE_HPP_
