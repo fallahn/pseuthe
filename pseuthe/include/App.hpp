@@ -94,7 +94,6 @@ public:
     const std::vector<Scores::Item>& getScores() const;
     int getLastScoreIndex() const;
 
-    void setDifficulty(Difficulty);
     Difficulty getDifficulty() const;
 
 private:
@@ -112,6 +111,7 @@ private:
 
     Scores m_scores;
     Difficulty m_difficulty;
+    Difficulty m_pendingDifficulty;
 
     void handleEvents();
     void handleMessages();

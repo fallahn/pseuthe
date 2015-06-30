@@ -59,11 +59,11 @@ App::App()
     : m_videoSettings   (),
     m_renderWindow      (m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle),
     m_stateStack        ({ m_renderWindow, *this }),
-    m_difficulty        (Difficulty::Easy)
+    m_difficulty        (Difficulty::Easy),
+    m_pendingDifficulty (Difficulty::Easy)
 {
     registerStates();
     m_stateStack.pushState(States::ID::Title);
-    //m_stateStack.pushState(States::ID::Menu);
 
     loadSettings();
     m_scores.load();
@@ -186,11 +186,6 @@ const std::vector<Scores::Item>& App::getScores() const
     return m_scores.getScores(m_difficulty);
 }
 
-void App::setDifficulty(Difficulty d)
-{
-    m_difficulty = d;
-}
-
 Difficulty App::getDifficulty() const
 {
     return m_difficulty;
@@ -238,7 +233,26 @@ void App::handleMessages()
 {
     while (!m_messageBus.empty())
     {
-        m_stateStack.handleMessage(m_messageBus.poll());
+        auto msg = m_messageBus.poll();
+
+        switch (msg.type)
+        {
+        case Message::Type::Player:
+            if (msg.player.action == Message::PlayerEvent::Spawned)
+            {
+                m_difficulty = m_pendingDifficulty;
+            }
+            break;
+        case Message::Type::UI:
+            if (msg.ui.type == Message::UIEvent::RequestDifficultyChange)
+            {
+                m_pendingDifficulty = msg.ui.difficulty;
+            }
+            break;
+        default: break;
+        }
+
+        m_stateStack.handleMessage(msg);
     }
 }
 

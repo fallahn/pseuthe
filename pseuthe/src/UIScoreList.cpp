@@ -82,16 +82,7 @@ void ScoreList::update(float dt)
             return;
         }
 
-        sf::Color colour = sf::Color::White;
-        for (auto& text : m_texts)
-        {
-            text.move(0.f, scrollAmount);
-            const float diff = std::abs(centre - text.getPosition().y);
-            const float ratio = 1.f - (diff / m_bounds.height);
-            colour.a = static_cast<sf::Uint8>(ratio * 255.f);
-            text.setColor(colour);
-            text.setScale(ratio, ratio);
-        }
+        updateTexts(scrollAmount);
         
         m_scrollCurrentDistance -= scrollAmount;
     }
@@ -145,6 +136,8 @@ void ScoreList::setList(const std::vector<Scores::Item>& list)
         text.setPosition(centre);
         text.move(0.f, (verticalSpace) * i);
     }
+
+    updateTexts(0.f);
 }
 
 void ScoreList::setIndex(sf::Uint32 index)
@@ -159,7 +152,9 @@ void ScoreList::setIndex(sf::Uint32 index)
             text.setStyle(sf::Text::Regular);
         }
         m_texts[index].setStyle(sf::Text::Bold | sf::Text::Italic);
-        scroll((centre - m_texts[index].getPosition().y) + 0.01f);
+
+        const float dist = centre - m_texts[index].getPosition().y;
+        if(dist != 0) scroll(dist);
     }
 }
 
@@ -178,5 +173,21 @@ void ScoreList::draw(sf::RenderTarget& rt, sf::RenderStates states) const
         {
             rt.draw(text, states);
         }
+    }
+}
+
+void ScoreList::updateTexts(float scrollAmount)
+{
+    const float centre = m_bounds.height / 2.f;
+    sf::Color colour = sf::Color::White;
+
+    for (auto& text : m_texts)
+    {
+        text.move(0.f, scrollAmount);
+        const float diff = std::abs(centre - text.getPosition().y);
+        const float ratio = 1.f - (diff / m_bounds.height);
+        colour.a = static_cast<sf::Uint8>(ratio * 255.f);
+        text.setColor(colour);
+        text.setScale(ratio, ratio);
     }
 }

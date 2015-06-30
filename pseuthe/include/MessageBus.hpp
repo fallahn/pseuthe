@@ -106,7 +106,8 @@ public:
             PartAdded,
             PartRemoved,
             HealthAdded,
-            HealthLost
+            HealthLost,
+            Spawned
         }action;
         float value;
     };

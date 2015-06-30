@@ -72,6 +72,7 @@ namespace ui
         bool m_doScroll;
 
         void draw(sf::RenderTarget&, sf::RenderStates) const override;
+        void updateTexts(float);
     };
 }
 

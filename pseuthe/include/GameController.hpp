@@ -30,6 +30,8 @@ source distribution.
 #ifndef GAME_CONTROLLER_HPP_
 #define GAME_CONTROLLER_HPP_
 
+#include <StateIds.hpp>
+
 #include <SFML/Config.hpp>
 #include <SFML/Graphics/Rect.hpp>
 
@@ -73,6 +75,9 @@ private:
     sf::Uint8 m_initialPartCount;
     float m_partDecayRate;
     float m_speedMultiplier;
+
+    Difficulty m_difficulty;
+    void setDifficulty(Difficulty);
 
     void spawnPlayer();
     void addBodyPart(float health = 100.f);

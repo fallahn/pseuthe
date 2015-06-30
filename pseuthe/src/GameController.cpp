@@ -93,7 +93,8 @@ GameController::GameController(Scene& scene, MessageBus& mb, App& app, PhysicsWo
     m_spawnTime             (easySpawnTime),
     m_initialPartCount      (easyPartCount),
     m_partDecayRate         (easyDecayTime),
-    m_speedMultiplier       (easySpeed)
+    m_speedMultiplier       (easySpeed),
+    m_difficulty            (Difficulty::Easy)
 {
     //find two off sceen areas for spawning teh planktons
     auto& worldBounds = m_physicsWorld.getWorldSize();
@@ -148,27 +149,7 @@ void GameController::handleMessage(const Message& msg)
             }
             break;
         case Message::UIEvent::RequestDifficultyChange:
-            switch (msg.ui.difficulty)
-            {
-            case Difficulty::Easy:
-                m_spawnTime = easySpawnTime;
-                m_initialPartCount = easyPartCount;
-                m_partDecayRate = easyDecayTime;
-                m_speedMultiplier = easySpeed;
-                break;
-            case Difficulty::Medium:
-                m_spawnTime = hardSpawnTime;
-                m_initialPartCount = hardPartCount;
-                m_partDecayRate = mediumDecayTime;
-                m_speedMultiplier = mediumSpeed;
-                break;
-            case Difficulty::Hard:
-                m_spawnTime = hardSpawnTime;
-                m_initialPartCount = hardPartCount;
-                m_partDecayRate = hardDecayTime;
-                m_speedMultiplier = hardSpeed;
-                break;
-            }
+            m_difficulty = msg.ui.difficulty;
             break;
         default:break;
         }
@@ -224,6 +205,31 @@ void GameController::handleMessage(const Message& msg)
             break;
         default: break;
         }
+    }
+}
+
+void GameController::setDifficulty(Difficulty difficulty)
+{
+    switch (difficulty)
+    {
+    case Difficulty::Easy:
+        m_spawnTime = easySpawnTime;
+        m_initialPartCount = easyPartCount;
+        m_partDecayRate = easyDecayTime;
+        m_speedMultiplier = easySpeed;
+        break;
+    case Difficulty::Medium:
+        m_spawnTime = hardSpawnTime;
+        m_initialPartCount = hardPartCount;
+        m_partDecayRate = mediumDecayTime;
+        m_speedMultiplier = mediumSpeed;
+        break;
+    case Difficulty::Hard:
+        m_spawnTime = hardSpawnTime;
+        m_initialPartCount = hardPartCount;
+        m_partDecayRate = hardDecayTime;
+        m_speedMultiplier = hardSpeed;
+        break;
     }
 }
 
@@ -301,6 +307,13 @@ void GameController::spawnPlayer()
     m_scene.getLayer(Scene::Layer::FrontMiddle).addChild(entity);
 
     resetScore();
+    setDifficulty(m_difficulty);
+
+    Message msg;
+    msg.type = Message::Type::Player;
+    msg.player.action = Message::PlayerEvent::Spawned;
+    msg.player.value = 0.f;
+    m_messageBus.send(msg);
 }
 
 void GameController::addBodyPart(float health)

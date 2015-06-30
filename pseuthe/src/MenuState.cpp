@@ -235,8 +235,6 @@ void MenuState::buildMenu(const sf::Font& font)
         msg.ui.type = Message::UIEvent::RequestDifficultyChange;
         msg.ui.difficulty = static_cast<Difficulty>(s->getSelectedValue());
         m_messageBus.send(msg);
-
-        getContext().appInstance.setDifficulty(msg.ui.difficulty);
     });
     difficultySelection->selectItem(static_cast<int>(getContext().appInstance.getDifficulty()));
     m_uiContainer.addControl(difficultySelection);
