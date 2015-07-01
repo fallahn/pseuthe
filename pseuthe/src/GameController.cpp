@@ -70,7 +70,7 @@ namespace
     sf::Clock spawnClock;
     const float easySpawnTime = 4.f;
     const float hardSpawnTime = 6.5f;
-    const float spawnTimeIncrease = 0.4f;
+    const float spawnTimeIncrease = 0.3f;
 
     sf::Clock scoreClock;
     std::vector<int> scoreCounts(maxBodyParts + 1);
@@ -97,7 +97,7 @@ GameController::GameController(Scene& scene, MessageBus& mb, App& app, PhysicsWo
     m_controlType           (ControlType::Classic),
     m_difficulty            (Difficulty::Easy)
 {
-    //find two off sceen areas for spawning teh planktons
+    //find two off screen areas for spawning teh planktons
     auto& worldBounds = m_physicsWorld.getWorldSize();
     m_planktonSpawns[0].left = worldBounds.left;
     m_planktonSpawns[0].width = std::abs(worldBounds.left);

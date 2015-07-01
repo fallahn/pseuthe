@@ -152,9 +152,10 @@ void ScoreList::setIndex(sf::Uint32 index)
             text.setStyle(sf::Text::Regular);
         }
         m_texts[index].setStyle(sf::Text::Bold | sf::Text::Italic);
+        m_texts[index].setColor({ 255u, 240u, 200u });
 
         const float dist = centre - m_texts[index].getPosition().y;
-        if(dist != 0) scroll(dist);
+        updateTexts(dist);
     }
 }
 
@@ -179,13 +180,13 @@ void ScoreList::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 void ScoreList::updateTexts(float scrollAmount)
 {
     const float centre = m_bounds.height / 2.f;
-    sf::Color colour = sf::Color::White;
 
     for (auto& text : m_texts)
     {
         text.move(0.f, scrollAmount);
         const float diff = std::abs(centre - text.getPosition().y);
         const float ratio = 1.f - (diff / m_bounds.height);
+        sf::Color colour = text.getColor();
         colour.a = static_cast<sf::Uint8>(ratio * 255.f);
         text.setColor(colour);
         text.setScale(ratio, ratio);

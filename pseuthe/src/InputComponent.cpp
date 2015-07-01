@@ -44,7 +44,7 @@ namespace
     const float force = 550.f;
     const float speed = 450.f;
     const float maxSpeed = speed * speed;
-    const float rotationSpeed = 100.f;
+    const float rotationSpeed = 170.f;
 
     const float maxBounds = 1920.f;
     const float minBounds = 0.f;
@@ -62,6 +62,7 @@ namespace
     const float dragMultiplier = 2900.f;
 
     const float joyDeadZone = 25.f;
+    const float joyMaxAxis = 100.f;
 
     Animation mouthAnim("", 0, 0, false);
     const float wigglerRotation = 35.f;
@@ -343,24 +344,24 @@ sf::Vector2f InputComponent::getControllerClassic(float dt)
         auto axisPosX = sf::Joystick::getAxisPosition(0, sf::Joystick::PovX);
         if (axisPosX < -joyDeadZone || axisPosX > joyDeadZone)
         {
-            forceVec.x = force * (axisPosX / 100.f) * m_invMass;
+            forceVec.x = force * (axisPosX / joyMaxAxis) * m_invMass;
         }
         auto axisPosY = -sf::Joystick::getAxisPosition(0, sf::Joystick::PovY);
         if (axisPosY < -joyDeadZone || axisPosY > joyDeadZone)
         {
-            forceVec.y = force * (axisPosY / 100.f) * m_invMass;
+            forceVec.y = force * (axisPosY / joyMaxAxis) * m_invMass;
         }
 
         axisPosX = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
         if (axisPosX < -joyDeadZone || axisPosX > joyDeadZone)
         {
-            forceVec.x = force * (axisPosX / 100.f) * m_invMass;
+            forceVec.x = force * (axisPosX / joyMaxAxis) * m_invMass;
         }
 
         axisPosY = sf::Joystick::getAxisPosition(0, sf::Joystick::Y);
         if (axisPosY < -joyDeadZone || axisPosY > joyDeadZone)
         {
-            forceVec.y = force * (axisPosY / 100.f) * m_invMass;
+            forceVec.y = force * (axisPosY / joyMaxAxis) * m_invMass;
         }
     }
     forceVec *= dt;
@@ -370,16 +371,18 @@ sf::Vector2f InputComponent::getControllerClassic(float dt)
 sf::Vector2f InputComponent::getKeyboardArcade(float dt)
 {
     auto forwardVec = m_physicsComponent->getVelocity();
+    const float rotation = rotationSpeed * (1.f - (Util::Vector::lengthSquared(forwardVec) / maxSpeed));
+
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)
         || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
     {
-        forwardVec = Util::Vector::rotate(forwardVec, -rotationSpeed * dt);
+        forwardVec = Util::Vector::rotate(forwardVec, -rotation * dt);
     }
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)
         || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
     {
-        forwardVec = Util::Vector::rotate(forwardVec, rotationSpeed * dt);
+        forwardVec = Util::Vector::rotate(forwardVec, rotation * dt);
     }
     m_physicsComponent->setVelocity(forwardVec);
 
@@ -412,17 +415,18 @@ sf::Vector2f InputComponent::getControllerArcade(float dt)
     if (sf::Joystick::isConnected(0))
     {
         auto forwardVec = m_physicsComponent->getVelocity();
+        const float rotation = rotationSpeed * (1.f - (Util::Vector::lengthSquared(forwardVec) / maxSpeed));
 
         auto axisPos = sf::Joystick::getAxisPosition(0, sf::Joystick::PovX);
         if (axisPos < -joyDeadZone || axisPos > joyDeadZone)
         {
-            forwardVec = Util::Vector::rotate(forwardVec, (rotationSpeed * (axisPos / 100.f)) * dt);
+            forwardVec = Util::Vector::rotate(forwardVec, (rotation * (axisPos / joyMaxAxis)) * dt);
         }
 
         axisPos = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
         if (axisPos < -joyDeadZone || axisPos > joyDeadZone)
         {
-            forwardVec = Util::Vector::rotate(forwardVec, (rotationSpeed * (axisPos / 100.f)) * dt);
+            forwardVec = Util::Vector::rotate(forwardVec, (rotation * (axisPos / joyMaxAxis)) * dt);
         }
 
         m_physicsComponent->setVelocity(forwardVec);
@@ -432,14 +436,19 @@ sf::Vector2f InputComponent::getControllerArcade(float dt)
         {
             forceVec.x += 1.f;
         }
-        if (sf::Joystick::isButtonPressed(0, 1))
+        if (sf::Joystick::isButtonPressed(0, 1)
+            && Util::Vector::lengthSquared(forwardVec) > 10.f)
         {
             forceVec.x -= 1.f;
         }
         axisPos = sf::Joystick::getAxisPosition(0, sf::Joystick::Z);
         if (axisPos < -joyDeadZone || axisPos > joyDeadZone)
         {
-            forceVec.x = (axisPos / 100.f);
+            forceVec.x = -(axisPos / joyMaxAxis);
+            if (forceVec.x < 0 && Util::Vector::lengthSquared(forwardVec) < 10.f)
+            {
+                forceVec.x = 0.f;
+            }
         }
 
         forceVec *= force * m_invMass * dt;
