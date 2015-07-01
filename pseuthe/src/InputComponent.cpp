@@ -244,7 +244,13 @@ void InputComponent::handleMessage(const Message& msg)
                 || msg.physics.entityId[1] == getParentUID())
             {
                 if (!m_mouthDrawable->playing())
+                {
                     m_mouthDrawable->play(mouthAnim);
+                    Message newMessage;
+                    newMessage.type = Message::Type::Player;
+                    newMessage.player.action = Message::PlayerEvent::BeganEating;
+                    sendMessage(newMessage);
+                }
                 //else LOG("already playing" + std::to_string(Util::Random::value(0, 1000)), Logger::Type::Info);
             }
             break;

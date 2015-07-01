@@ -57,6 +57,7 @@ private:
     sf::SoundBuffer m_switchFx;
     sf::SoundBuffer m_healthLost;
     sf::SoundBuffer m_healthGained;
+    sf::SoundBuffer m_eating;
 
     bool m_muted;
 };

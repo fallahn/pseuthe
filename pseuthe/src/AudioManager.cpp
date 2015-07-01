@@ -66,6 +66,7 @@ AudioManager::AudioManager()
     m_switchFx.loadFromFile("assets/sound/switch.wav");
     m_healthLost.loadFromFile("assets/sound/healthlost.wav");
     m_healthGained.loadFromFile("assets/sound/healthgained.wav");
+    m_eating.loadFromFile("assets/sound/nomnom.wav");
 }
 
 
@@ -147,6 +148,9 @@ void AudioManager::handleMessage(const Message& msg)
         case Message::PlayerEvent::HealthLost:
             //LOG("play sound health lost", Logger::Type::Info);
             m_soundPlayer.play(m_healthLost);
+            break;
+        case Message::PlayerEvent::BeganEating:
+            m_soundPlayer.play(m_eating);
             break;
         default:break;
         }
