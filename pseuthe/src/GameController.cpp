@@ -94,6 +94,7 @@ GameController::GameController(Scene& scene, MessageBus& mb, App& app, PhysicsWo
     m_initialPartCount      (easyPartCount),
     m_partDecayRate         (easyDecayTime),
     m_speedMultiplier       (easySpeed),
+    m_controlType           (ControlType::Classic),
     m_difficulty            (Difficulty::Easy)
 {
     //find two off sceen areas for spawning teh planktons
@@ -150,6 +151,20 @@ void GameController::handleMessage(const Message& msg)
             break;
         case Message::UIEvent::RequestDifficultyChange:
             m_difficulty = msg.ui.difficulty;
+            break;
+        case ::Message::UIEvent::RequestControlsArcade:
+            m_controlType = ControlType::Arcade;
+            if (m_player)
+            {
+                m_player->getComponent<InputComponent>("controller")->setControlType(ControlType::Arcade);
+            }
+            break;
+        case ::Message::UIEvent::RequestControlsClassic:
+            m_controlType = ControlType::Classic;
+            if (m_player)
+            {
+                m_player->getComponent<InputComponent>("controller")->setControlType(ControlType::Classic);
+            }
             break;
         default:break;
         }
@@ -297,6 +312,7 @@ void GameController::spawnPlayer()
     entity->addComponent<ParticleSystem>(echo);
 
     auto controlComponent = std::make_unique<InputComponent>(m_messageBus);
+    controlComponent->setName("controller");
     entity->addComponent<InputComponent>(controlComponent);
 
     m_constraintLength = playerSize + partSize + partPadding;
@@ -498,13 +514,13 @@ std::string GameController::getName() const
 {
     std::string name("H");
     name += std::to_string(Util::Random::value(100, 999));
-    name += "M";
+    name += (m_controlType == ControlType::Arcade) ? "A" : "C";
     name += std::to_string(Util::Random::value(19, 89));
     name += "-0x";
 
     for (auto i = 0; i < 6; ++i)
     {
-        name += namechars[Util::Random::value(0, 17)];
+        name += namechars[Util::Random::value(0, 16)];
     }
 
     assert(name.size() == 16);

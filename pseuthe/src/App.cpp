@@ -53,13 +53,15 @@ namespace
     const std::string settingsFile("settings.set");
 
     int lastScoreIndex = 0;
+
+    int settingsIdent = 0xfc41414b;
+    int settingsVersion = 3;
 }
 
 App::App()
     : m_videoSettings   (),
     m_renderWindow      (m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle),
     m_stateStack        ({ m_renderWindow, *this }),
-    m_difficulty        (Difficulty::Easy),
     m_pendingDifficulty (Difficulty::Easy)
 {
     registerStates();
@@ -136,14 +138,14 @@ const App::AudioSettings& App::getAudioSettings() const
     return m_audioSettings;
 }
 
-void App::setAudioSettings(AudioSettings as)
-{
-    m_audioSettings = as;
-}
-
 const App::VideoSettings& App::getVideoSettings() const
 {
     return m_videoSettings;
+}
+
+const App::GameSettings& App::getGameSettings() const
+{
+    return m_gameSettings;
 }
 
 void App::applyVideoSettings(const VideoSettings& settings)
@@ -178,7 +180,7 @@ MessageBus& App::getMessageBus()
 
 void App::addScore(const std::string& name, float value)
 {
-    lastScoreIndex = m_scores.add(name, value, m_difficulty);
+    lastScoreIndex = m_scores.add(name, value, m_gameSettings.difficulty);
 }
 
 int App::getLastScoreIndex() const
@@ -188,12 +190,7 @@ int App::getLastScoreIndex() const
 
 const std::vector<Scores::Item>& App::getScores() const
 {
-    return m_scores.getScores(m_difficulty);
-}
-
-Difficulty App::getDifficulty() const
-{
-    return m_difficulty;
+    return m_scores.getScores(m_gameSettings.difficulty);
 }
 
 //private
@@ -245,13 +242,31 @@ void App::handleMessages()
         case Message::Type::Player:
             if (msg.player.action == Message::PlayerEvent::Spawned)
             {
-                m_difficulty = m_pendingDifficulty;
+                m_gameSettings.difficulty = m_pendingDifficulty;
             }
             break;
         case Message::Type::UI:
-            if (msg.ui.type == Message::UIEvent::RequestDifficultyChange)
+            switch (msg.ui.type)
             {
+            case Message::UIEvent::RequestDifficultyChange:
                 m_pendingDifficulty = msg.ui.difficulty;
+                break;
+            case Message::UIEvent::RequestAudioMute:
+                m_audioSettings.muted = true;
+                break;
+            case Message::UIEvent::RequestAudioUnmute:
+                m_audioSettings.muted = false;
+                break;
+            case Message::UIEvent::RequestVolumeChange:
+                m_audioSettings.volume = msg.ui.value;
+                break;
+            case Message::UIEvent::RequestControlsArcade:
+                m_gameSettings.controlType = ControlType::Arcade;
+                break;
+            case Message::UIEvent::RequestControlsClassic:
+                m_gameSettings.controlType = ControlType::Classic;
+                break;
+            default: break;
             }
             break;
         default: break;
@@ -302,33 +317,31 @@ void App::loadSettings()
     int fileSize = static_cast<int>(file.tellg());
     file.seekg(0, std::ios::beg);
 
-    int expectedSize = sizeof(m_videoSettings.VideoMode) + sizeof(m_videoSettings.WindowStyle) + sizeof(AudioSettings) + sizeof(Difficulty);
-
-    if (fileSize != expectedSize)
+    if (fileSize < sizeof(SettingsFile))
     {
         Logger::Log("settings file not expected file size", Logger::Type::Error, Logger::Output::All);
         file.close();
         return;
     }
 
-    std::vector<char> data(expectedSize);
-    file.read(&data[0], expectedSize);
+    SettingsFile settings;
+    file.read((char*)&settings, sizeof(SettingsFile));
     file.close();
+    
+    if (settings.ident != settingsIdent || settings.version != settingsVersion)
+    {
+        Logger::Log("settings file invalid or wrong version", Logger::Type::Error, Logger::Output::All);
+        return;
+    }
 
     VideoSettings  newVideoSettings;
+    newVideoSettings.VideoMode = settings.videoMode;
+    newVideoSettings.WindowStyle = settings.windowStyle;
 
-    char* dataPtr = &data[0];
-    std::memcpy(&newVideoSettings.VideoMode, dataPtr, sizeof(m_videoSettings.VideoMode));
-    dataPtr += sizeof(m_videoSettings.VideoMode);
-
-    std::memcpy(&newVideoSettings.WindowStyle, dataPtr, sizeof(m_videoSettings.WindowStyle));
-    dataPtr += sizeof(m_videoSettings.WindowStyle);
-
-    std::memcpy(&m_audioSettings, dataPtr, sizeof(m_audioSettings));
+    m_audioSettings = settings.audioSettings;
     m_audioSettings.volume = Util::Math::clamp(m_audioSettings.volume, 0.f, 1.f);
-    dataPtr += sizeof(AudioSettings);
 
-    std::memcpy(&m_difficulty, dataPtr, sizeof(Difficulty));
+    m_gameSettings = settings.gameSettings;
 
     applyVideoSettings(newVideoSettings);
 }
@@ -343,20 +356,16 @@ void App::saveSettings()
         return;
     }
 
-    std::vector<char> data(sizeof(m_videoSettings.VideoMode) + sizeof(m_videoSettings.WindowStyle) + sizeof(AudioSettings) + sizeof(Difficulty));
-    char* dataPtr = &data[0];
-    std::memcpy(dataPtr, &m_videoSettings.VideoMode, sizeof(m_videoSettings.VideoMode));
-    dataPtr += sizeof(m_videoSettings.VideoMode);
+    SettingsFile settings;
+    settings.ident = settingsIdent;
+    settings.version = settingsVersion;
+    settings.videoMode = m_videoSettings.VideoMode;
+    settings.windowStyle = m_videoSettings.WindowStyle;
 
-    std::memcpy(dataPtr, &m_videoSettings.WindowStyle, sizeof(m_videoSettings.WindowStyle));
-    dataPtr += sizeof(m_videoSettings.WindowStyle);
+    settings.audioSettings = m_audioSettings;
+    settings.gameSettings = m_gameSettings;
 
-    std::memcpy(dataPtr, &m_audioSettings, sizeof(m_audioSettings));
-    dataPtr += sizeof(m_audioSettings);
-
-    std::memcpy(dataPtr, &m_difficulty, sizeof(Difficulty));
-
-    file.write(&data[0], data.size());
+    file.write((char*)&settings, sizeof(SettingsFile));
     file.close();
 }
 

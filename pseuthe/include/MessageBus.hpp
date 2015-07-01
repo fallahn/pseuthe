@@ -91,7 +91,9 @@ public:
             MenuOpened,
             MenuClosed,
             RequestState,
-            RequestDifficultyChange
+            RequestDifficultyChange,
+            RequestControlsClassic,
+            RequestControlsArcade
         }type;
         float value;
         States::ID stateId;

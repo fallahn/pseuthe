@@ -41,12 +41,18 @@ namespace States
     };
 }
 
-
+//TODO there should be a more intuitive place to put these
 enum class Difficulty
 {
     Easy,
     Medium,
     Hard
+};
+
+enum class ControlType
+{
+    Classic,
+    Arcade
 };
 
 #endif //STATE_IDS_HPP_

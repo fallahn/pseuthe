@@ -56,7 +56,7 @@ ScoreState::ScoreState(StateStack& stateStack, Context context)
 
     m_texts.emplace_back("", menuFont, 35u);
     auto& titleText = m_texts.back();
-    switch (context.appInstance.getDifficulty())
+    switch (context.appInstance.getGameSettings().difficulty)
     {
     default:
     case Difficulty::Easy:

@@ -76,6 +76,8 @@ private:
     float m_partDecayRate;
     float m_speedMultiplier;
 
+    ControlType m_controlType;
+
     Difficulty m_difficulty;
     void setDifficulty(Difficulty);
 

@@ -31,6 +31,7 @@ source distribution.
 #define INPUT_COMPONENT_HPP_
 
 #include <Component.hpp>
+#include <StateIds.hpp>
 
 #include <SFML/System/Vector2.hpp>
 
@@ -42,11 +43,6 @@ class ParticleSystem;
 class InputComponent final : public Component
 {
 public:
-    enum class ControlType
-    {
-        Classic,
-        Arcade
-    };
 
     explicit InputComponent(MessageBus&);
     ~InputComponent() = default;

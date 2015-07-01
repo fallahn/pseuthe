@@ -71,6 +71,12 @@ public:
         float volume = 1.f;
     };
 
+    struct GameSettings final
+    {
+        Difficulty difficulty = Difficulty::Easy;
+        ControlType controlType = ControlType::Classic;
+    };
+
     App();
     ~App() = default;
     App(const App&) = delete;
@@ -81,10 +87,11 @@ public:
     void resume();
 
     const AudioSettings& getAudioSettings() const;
-    void setAudioSettings(AudioSettings);
 
     const VideoSettings& getVideoSettings() const;
     void applyVideoSettings(const VideoSettings&);
+
+    const GameSettings& getGameSettings() const;
 
     sf::Font& getFont(const std::string& path);
     sf::Texture& getTexture(const std::string& path);
@@ -94,9 +101,20 @@ public:
     const std::vector<Scores::Item>& getScores() const;
     int getLastScoreIndex() const;
 
-    Difficulty getDifficulty() const;
-
 private:
+
+    struct SettingsFile final
+    {
+        int ident;
+        int version;
+
+        sf::VideoMode videoMode;
+        sf::Int32 windowStyle;
+        AudioSettings audioSettings;
+        GameSettings gameSettings;
+    };
+
+    GameSettings m_gameSettings;
     AudioSettings m_audioSettings;
 
     VideoSettings m_videoSettings;
@@ -110,7 +128,6 @@ private:
     MessageBus m_messageBus;
 
     Scores m_scores;
-    Difficulty m_difficulty;
     Difficulty m_pendingDifficulty;
 
     void handleEvents();
