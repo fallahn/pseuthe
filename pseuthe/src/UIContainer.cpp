@@ -84,7 +84,6 @@ void Container::handleEvent(const sf::Event& e, const sf::Vector2f& mousePos)
             if (hasSelection())
             {
                 m_controls[m_selectedIndex]->activate();
-                //m_soundPlayer.play(SoundPlayer::AudioId::UISelect);
             }
         }
     }
@@ -123,7 +122,6 @@ void Container::handleEvent(const sf::Event& e, const sf::Vector2f& mousePos)
             if (hasSelection())
             {
                 m_controls[m_selectedIndex]->activate();
-                //m_soundPlayer.play(SoundPlayer::AudioId::UISelect);
             }
         }
     }

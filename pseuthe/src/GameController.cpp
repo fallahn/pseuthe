@@ -313,6 +313,7 @@ void GameController::spawnPlayer()
 
     auto controlComponent = std::make_unique<InputComponent>(m_messageBus);
     controlComponent->setName("controller");
+    controlComponent->setControlType(m_controlType);
     entity->addComponent<InputComponent>(controlComponent);
 
     m_constraintLength = playerSize + partSize + partPadding;

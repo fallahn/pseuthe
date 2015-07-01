@@ -200,7 +200,6 @@ void MenuState::buildMenu(const sf::Font& font)
 
     auto difficultySelection = std::make_shared<ui::Selection>(font, getContext().appInstance.getTexture("assets/images/ui/scroll_arrow.png"), 375.f);
     difficultySelection->setPosition(600.f, 650.f);
-    //difficultySelection->setAlignment(ui::Alignment::Centre);
     difficultySelection->addItem("Easy", static_cast<int>(Difficulty::Easy));
     difficultySelection->addItem("Medium", static_cast<int>(Difficulty::Medium));
     difficultySelection->addItem("Hard", static_cast<int>(Difficulty::Hard));
@@ -219,14 +218,13 @@ void MenuState::buildMenu(const sf::Font& font)
 
     auto controlsCheckbox = std::make_shared<ui::CheckBox>(font, getContext().appInstance.getTexture("assets/images/ui/checkbox.png"));
     controlsCheckbox->setPosition(1100.f, 650.f);
-    controlsCheckbox->setText("Arcade Controls");
+    controlsCheckbox->setText("Arcade Mode");
     controlsCheckbox->setCallback([this](const ui::CheckBox* checkBox)
     {
         Message msg;
         msg.type = Message::Type::UI;
         msg.ui.type = (checkBox->checked()) ? Message::UIEvent::RequestControlsArcade : Message::UIEvent::RequestControlsClassic;
         m_messageBus.send(msg);
-
     }, ui::CheckBox::Event::CheckChanged);
     controlsCheckbox->check((getContext().appInstance.getGameSettings().controlType == ControlType::Classic) ? false : true);
     m_uiContainer.addControl(controlsCheckbox);

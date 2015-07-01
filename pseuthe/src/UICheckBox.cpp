@@ -162,8 +162,8 @@ bool CheckBox::checked() const
 
 void CheckBox::check(bool checked)
 {
-    if (m_checkChanged) m_checkChanged(this);
     m_checked = checked;
+    if (m_checkChanged) m_checkChanged(this);
     deselect();
 }
 

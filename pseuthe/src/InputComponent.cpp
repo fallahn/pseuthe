@@ -394,11 +394,13 @@ sf::Vector2f InputComponent::getKeyboardArcade(float dt)
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)
         || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
     {
-        forceVec.x -= 1.f;
-        forceVec = Util::Vector::rotate(forceVec, Util::Vector::rotation(forwardVec));
+        if (Util::Vector::lengthSquared(forwardVec)> 10.f)
+        {
+            forceVec.x -= 1.f;
+            forceVec = Util::Vector::rotate(forceVec, Util::Vector::rotation(forwardVec));
+        }
     }
 
-    if (Util::Vector::lengthSquared(forceVec) > 1.f) forceVec = Util::Vector::normalise(forceVec);
     forceVec *= force * m_invMass * dt;
 
     return forceVec;
@@ -411,21 +413,21 @@ sf::Vector2f InputComponent::getControllerArcade(float dt)
     {
         auto forwardVec = m_physicsComponent->getVelocity();
 
-        auto axisPosX = sf::Joystick::getAxisPosition(0, sf::Joystick::PovX);
-        if (axisPosX < -joyDeadZone || axisPosX > joyDeadZone)
+        auto axisPos = sf::Joystick::getAxisPosition(0, sf::Joystick::PovX);
+        if (axisPos < -joyDeadZone || axisPos > joyDeadZone)
         {
-            forwardVec = Util::Vector::rotate(forwardVec, (rotationSpeed * (axisPosX / 100.f)) * dt);
+            forwardVec = Util::Vector::rotate(forwardVec, (rotationSpeed * (axisPos / 100.f)) * dt);
         }
 
-        axisPosX = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
-        if (axisPosX < -joyDeadZone || axisPosX > joyDeadZone)
+        axisPos = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
+        if (axisPos < -joyDeadZone || axisPos > joyDeadZone)
         {
-            forwardVec = Util::Vector::rotate(forwardVec, (rotationSpeed * (axisPosX / 100.f)) * dt);
+            forwardVec = Util::Vector::rotate(forwardVec, (rotationSpeed * (axisPos / 100.f)) * dt);
         }
 
         m_physicsComponent->setVelocity(forwardVec);
 
-
+        //check buttons and z-axis(assumes triggers for xbox controller)
         if (sf::Joystick::isButtonPressed(0, 0))
         {
             forceVec.x += 1.f;
@@ -434,6 +436,12 @@ sf::Vector2f InputComponent::getControllerArcade(float dt)
         {
             forceVec.x -= 1.f;
         }
+        axisPos = sf::Joystick::getAxisPosition(0, sf::Joystick::Z);
+        if (axisPos < -joyDeadZone || axisPos > joyDeadZone)
+        {
+            forceVec.x = (axisPos / 100.f);
+        }
+
         forceVec *= force * m_invMass * dt;
         forceVec = Util::Vector::rotate(forceVec, Util::Vector::rotation(forwardVec));
     }
