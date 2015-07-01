@@ -44,6 +44,7 @@ namespace
     const float force = 550.f;
     const float speed = 450.f;
     const float maxSpeed = speed * speed;
+    const float rotationSpeed = 100.f;
 
     const float maxBounds = 1920.f;
     const float minBounds = 0.f;
@@ -66,6 +67,8 @@ namespace
     const float wigglerRotation = 35.f;
 }
 
+using namespace std::placeholders;
+
 InputComponent::InputComponent(MessageBus& mb)
     : Component         (mb),
     m_physicsComponent  (nullptr),
@@ -81,7 +84,8 @@ InputComponent::InputComponent(MessageBus& mb)
     m_mass              (0.f),
     m_invMass           (1.f)
 {
-
+    getKeyboard = std::bind(&InputComponent::getKeyboardClassic, this, _1);
+    getController = std::bind(&InputComponent::getControllerClassic, this, _1);
 }
 
 Component::Type InputComponent::type() const
@@ -94,20 +98,13 @@ void InputComponent::entityUpdate(Entity& entity, float dt)
     sf::Vector2f forceVec;    
     if (m_parseInput)
     {
-        forceVec = getKeyboard();
-        if (Util::Vector::lengthSquared(forceVec) > 0.1f)
+        forceVec = getKeyboard(dt);
+
+        if (Util::Vector::lengthSquared(forceVec) < 0.1f)
         {
-            Util::Vector::normalise(forceVec);
-            forceVec *= force * m_invMass * dt;
-        }
-        else
-        {
-            forceVec = getController();
-            forceVec *= dt;
+            forceVec = getController(dt);
         }
     }
-
-    //forceVec = Util::Vector::rotate(forceVec, m_drawable->getRotation() + 90.f);
 
     //limit speed
     auto currentSpeed = Util::Vector::lengthSquared(m_physicsComponent->getVelocity() + forceVec);
@@ -286,8 +283,24 @@ void InputComponent::onStart(Entity& entity)
     assert(m_echo);
 }
 
+void InputComponent::setControlType(ControlType type)
+{
+    switch (type)
+    {
+    case ControlType::Classic:
+        getKeyboard = std::bind(&InputComponent::getKeyboardClassic, this, _1);
+        getController = std::bind(&InputComponent::getControllerClassic, this, _1);
+        break;
+    case ControlType::Arcade:
+        getKeyboard = std::bind(&InputComponent::getKeyboardArcade, this, _1);
+        getController = std::bind(&InputComponent::getControllerArcade, this, _1);
+        break;
+    default:break;
+    }
+}
+
 //private
-sf::Vector2f InputComponent::getKeyboard()
+sf::Vector2f InputComponent::getKeyboardClassic(float dt)
 {
     sf::Vector2f forceVec;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)
@@ -313,10 +326,14 @@ sf::Vector2f InputComponent::getKeyboard()
     {
         forceVec.x += 1.f;
     }
+
+    if (Util::Vector::lengthSquared(forceVec) > 1.f) forceVec = Util::Vector::normalise(forceVec);
+    forceVec *= force * m_invMass * dt;
+
     return forceVec;
 }
 
-sf::Vector2f InputComponent::getController()
+sf::Vector2f InputComponent::getControllerClassic(float dt)
 {
     //TODO how do we maintain the analog of the controller? (normalising the vector breaks this)
     //try and remember dot product tomorrow... cos you're too tired now.
@@ -345,6 +362,80 @@ sf::Vector2f InputComponent::getController()
         {
             forceVec.y = force * (axisPosY / 100.f) * m_invMass;
         }
+    }
+    forceVec *= dt;
+    return forceVec;
+}
+
+sf::Vector2f InputComponent::getKeyboardArcade(float dt)
+{
+    auto forwardVec = m_physicsComponent->getVelocity();
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)
+        || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+    {
+        forwardVec = Util::Vector::rotate(forwardVec, -rotationSpeed * dt);
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)
+        || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+    {
+        forwardVec = Util::Vector::rotate(forwardVec, rotationSpeed * dt);
+    }
+    m_physicsComponent->setVelocity(forwardVec);
+
+    sf::Vector2f forceVec;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)
+        || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+    {
+        forceVec.x += 1.f;
+        forceVec = Util::Vector::rotate(forceVec, Util::Vector::rotation(forwardVec));
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)
+        || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+    {
+        forceVec.x -= 1.f;
+        forceVec = Util::Vector::rotate(forceVec, Util::Vector::rotation(forwardVec));
+    }
+
+    if (Util::Vector::lengthSquared(forceVec) > 1.f) forceVec = Util::Vector::normalise(forceVec);
+    forceVec *= force * m_invMass * dt;
+
+    return forceVec;
+}
+
+sf::Vector2f InputComponent::getControllerArcade(float dt)
+{
+    sf::Vector2f forceVec; //mag ik hebben het gouda kaas alsjeblieft?
+    if (sf::Joystick::isConnected(0))
+    {
+        auto forwardVec = m_physicsComponent->getVelocity();
+
+        auto axisPosX = sf::Joystick::getAxisPosition(0, sf::Joystick::PovX);
+        if (axisPosX < -joyDeadZone || axisPosX > joyDeadZone)
+        {
+            forwardVec = Util::Vector::rotate(forwardVec, (rotationSpeed * (axisPosX / 100.f)) * dt);
+        }
+
+        axisPosX = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
+        if (axisPosX < -joyDeadZone || axisPosX > joyDeadZone)
+        {
+            forwardVec = Util::Vector::rotate(forwardVec, (rotationSpeed * (axisPosX / 100.f)) * dt);
+        }
+
+        m_physicsComponent->setVelocity(forwardVec);
+
+
+        if (sf::Joystick::isButtonPressed(0, 0))
+        {
+            forceVec.x += 1.f;
+        }
+        if (sf::Joystick::isButtonPressed(0, 1))
+        {
+            forceVec.x -= 1.f;
+        }
+        forceVec *= force * m_invMass * dt;
+        forceVec = Util::Vector::rotate(forceVec, Util::Vector::rotation(forwardVec));
     }
 
     return forceVec;

@@ -34,12 +34,20 @@ source distribution.
 
 #include <SFML/System/Vector2.hpp>
 
+#include <functional>
+
 class PhysicsComponent;
 class AnimatedDrawable;
 class ParticleSystem;
 class InputComponent final : public Component
 {
 public:
+    enum class ControlType
+    {
+        Classic,
+        Arcade
+    };
+
     explicit InputComponent(MessageBus&);
     ~InputComponent() = default;
 
@@ -48,7 +56,10 @@ public:
     void handleMessage(const Message&) override;
     void onStart(Entity&) override;
 
+    void setControlType(ControlType);
+
 private:
+    using ControlFunction = std::function<sf::Vector2f(float)>;
 
     PhysicsComponent* m_physicsComponent;
     AnimatedDrawable* m_headDrawable;
@@ -65,8 +76,14 @@ private:
     float m_mass;
     float m_invMass;
 
-    sf::Vector2f getKeyboard();
-    sf::Vector2f getController();
+    ControlFunction getKeyboard;
+    ControlFunction getController;
+
+    sf::Vector2f getKeyboardClassic(float);
+    sf::Vector2f getControllerClassic(float);
+
+    sf::Vector2f getKeyboardArcade(float);
+    sf::Vector2f getControllerArcade(float);
 };
 
 #endif //INPUT_COMPONENT_HPP_

@@ -63,7 +63,12 @@ App::App()
     m_pendingDifficulty (Difficulty::Easy)
 {
     registerStates();
+#ifndef _DEBUG_
     m_stateStack.pushState(States::ID::Title);
+#else
+    m_stateStack.pushState(States::ID::Main);
+    m_stateStack.pushState(States::ID::Menu);
+#endif //_DEBUG_
 
     loadSettings();
     m_scores.load();
