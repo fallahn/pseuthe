@@ -55,6 +55,7 @@ namespace
 
     const int maxBodyParts = 8;
     const int maxPlankton = 8;
+    const float maxBodyHealth = 100.f;
 
     const sf::Uint8 easyPartCount = 3u;
     const sf::Uint8 hardPartCount = 2u;
@@ -192,9 +193,19 @@ void GameController::handleMessage(const Message& msg)
             m_constraintLength /= partScale;
             break;
         case Message::PlayerEvent::HealthAdded:
-            if (msg.player.value > 0 && m_playerPhysicsComponents.size() < maxBodyParts)
+            if (msg.player.value > 0)
             {
-                addBodyPart(msg.player.value);
+                int partCount = static_cast<int>(std::floor(msg.player.value / maxBodyHealth));
+                float healthRemainder = msg.player.value - (partCount * maxBodyHealth);
+
+                while (partCount-- && m_playerPhysicsComponents.size() < maxBodyParts)
+                {
+                    addBodyPart(maxBodyHealth);
+                }
+                if (m_playerPhysicsComponents.size() < maxBodyParts)
+                {
+                    addBodyPart(healthRemainder);
+                }
             }
             break;
         default: break;

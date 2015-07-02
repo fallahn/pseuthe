@@ -45,6 +45,7 @@ namespace
 
     const float maxHealth = 100.f;
     const float healthReduction = 45.f; //reduction per second
+    const float uberTypeHealthReduction = 28.f;
 
     const float rotationSpeed = 6.f;
     const float rotationTolerance = 0.1f;
@@ -133,6 +134,10 @@ void PlanktonController::entityUpdate(Entity& entity, float dt)
     case Type::Bonus:
         colour = bonusColour;
         m_drawable->rotate(Util::Vector::dot({ 1.f, 0.f }, m_physComponent->getVelocity()) * dt);
+        break;
+    case Type::UberLife:
+        colour = bonusColour;
+        m_health -= uberTypeHealthReduction * dt;
         break;
     }
     colour.a = static_cast<sf::Uint8>(std::max((m_health / maxHealth) * static_cast<float>(colour.a), 0.f));

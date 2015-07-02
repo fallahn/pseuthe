@@ -45,6 +45,7 @@ namespace
     const float speed = 450.f;
     const float maxSpeed = speed * speed;
     const float rotationSpeed = 170.f;
+    const float maxRotationSpeed = maxSpeed * 2.f;
 
     const float maxBounds = 1920.f;
     const float minBounds = 0.f;
@@ -377,7 +378,7 @@ sf::Vector2f InputComponent::getControllerClassic(float dt)
 sf::Vector2f InputComponent::getKeyboardArcade(float dt)
 {
     auto forwardVec = m_physicsComponent->getVelocity();
-    const float rotation = rotationSpeed * (1.f - (Util::Vector::lengthSquared(forwardVec) / maxSpeed));
+    const float rotation = rotationSpeed * (1.f - (Util::Vector::lengthSquared(forwardVec) / maxRotationSpeed));
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)
         || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
@@ -421,7 +422,7 @@ sf::Vector2f InputComponent::getControllerArcade(float dt)
     if (sf::Joystick::isConnected(0))
     {
         auto forwardVec = m_physicsComponent->getVelocity();
-        const float rotation = rotationSpeed * (1.f - (Util::Vector::lengthSquared(forwardVec) / maxSpeed));
+        const float rotation = rotationSpeed * (1.f - (Util::Vector::lengthSquared(forwardVec) / maxRotationSpeed));
 
         auto axisPos = sf::Joystick::getAxisPosition(0, sf::Joystick::PovX);
         if (axisPos < -joyDeadZone || axisPos > joyDeadZone)

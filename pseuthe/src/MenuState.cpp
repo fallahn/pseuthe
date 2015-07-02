@@ -218,15 +218,15 @@ void MenuState::buildMenu(const sf::Font& font)
 
     auto controlsCheckbox = std::make_shared<ui::CheckBox>(font, getContext().appInstance.getTexture("assets/images/ui/checkbox.png"));
     controlsCheckbox->setPosition(1100.f, 650.f);
-    controlsCheckbox->setText("Arcade Mode");
+    controlsCheckbox->setText("Classic Mode");
     controlsCheckbox->setCallback([this](const ui::CheckBox* checkBox)
     {
         Message msg;
         msg.type = Message::Type::UI;
-        msg.ui.type = (checkBox->checked()) ? Message::UIEvent::RequestControlsArcade : Message::UIEvent::RequestControlsClassic;
+        msg.ui.type = (checkBox->checked()) ? Message::UIEvent::RequestControlsClassic : Message::UIEvent::RequestControlsArcade;
         m_messageBus.send(msg);
     }, ui::CheckBox::Event::CheckChanged);
-    controlsCheckbox->check((getContext().appInstance.getGameSettings().controlType == ControlType::Classic) ? false : true);
+    controlsCheckbox->check((getContext().appInstance.getGameSettings().controlType == ControlType::Classic) ? true : false);
     m_uiContainer.addControl(controlsCheckbox);
 
 

@@ -42,7 +42,8 @@ public:
     {
         Good = 0,
         Bad,
-        /*Ugly*/Bonus
+        /*Ugly*/Bonus,
+        UberLife
     };
 
     explicit PlanktonController(MessageBus&);

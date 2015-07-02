@@ -78,8 +78,8 @@ void CausticDrawable::entityUpdate(Entity& entity, float dt)
     //get entity position and update alpha
     auto position = entity.getPosition();
     float currentDistance = (position.x < 960) ? 
-        currentDistance = min + position.x :
-        currentDistance = max - position.x;
+        min + position.x :
+        max - position.x;
 
     const float alpha = std::min(currentDistance / distanceToFullBright, 1.f);
     m_shader->setParameter("u_alpha", alpha);

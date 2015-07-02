@@ -48,6 +48,7 @@ namespace
 
     const float planktonHealth = 50.f;
     const float bonusHealth = 100.f;
+    const float uberHealth = 1000.f;
 
     const sf::Color defaultColour(200u, 200u, 230u, 180u);
 }
@@ -154,6 +155,11 @@ void BodypartController::handleMessage(const Message& msg)
                 newMessage.player.action = Message::PlayerEvent::HealthAdded;
                 //TODO prevent health counting down for short duration
 
+                m_sparkles->start(4u, 0.f, 0.6f);
+                break;
+            case PlanktonController::Type::UberLife:
+                m_health += uberHealth;
+                newMessage.player.action = Message::PlayerEvent::HealthAdded;
                 m_sparkles->start(4u, 0.f, 0.6f);
                 break;
             default:break;
