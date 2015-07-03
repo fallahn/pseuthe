@@ -64,6 +64,7 @@ namespace
 
     const float joyDeadZone = 25.f;
     const float joyMaxAxis = 100.f;
+    const float minAccelerationRate = 20.f; //braking is only applied to values greater than this
 
     Animation mouthAnim("", 0, 0, false);
     const float wigglerRotation = 35.f;
@@ -404,7 +405,7 @@ sf::Vector2f InputComponent::getKeyboardArcade(float dt)
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)
         || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
     {
-        if (Util::Vector::lengthSquared(forwardVec)> 10.f)
+        if (Util::Vector::lengthSquared(forwardVec)> minAccelerationRate)
         {
             forceVec.x -= 1.f;
             forceVec = Util::Vector::rotate(forceVec, Util::Vector::rotation(forwardVec));
@@ -444,7 +445,7 @@ sf::Vector2f InputComponent::getControllerArcade(float dt)
             forceVec.x += 1.f;
         }
         if (sf::Joystick::isButtonPressed(0, 1)
-            && Util::Vector::lengthSquared(forwardVec) > 10.f)
+            && Util::Vector::lengthSquared(forwardVec) > minAccelerationRate)
         {
             forceVec.x -= 1.f;
         }
@@ -452,7 +453,7 @@ sf::Vector2f InputComponent::getControllerArcade(float dt)
         if (axisPos < -joyDeadZone || axisPos > joyDeadZone)
         {
             forceVec.x = -(axisPos / joyMaxAxis);
-            if (forceVec.x < 0 && Util::Vector::lengthSquared(forwardVec) < 10.f)
+            if (forceVec.x < 0 && Util::Vector::lengthSquared(forwardVec) < minAccelerationRate)
             {
                 forceVec.x = 0.f;
             }

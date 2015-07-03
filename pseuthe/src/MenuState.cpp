@@ -100,7 +100,7 @@ bool MenuState::handleEvent(const sf::Event& evt)
             requestStackPush(States::ID::Help);
             return false;
         case sf::Keyboard::Space:
-        case sf::Keyboard::Escape:
+        //case sf::Keyboard::Escape:
         case sf::Keyboard::Return:
             startGame();
             return false;

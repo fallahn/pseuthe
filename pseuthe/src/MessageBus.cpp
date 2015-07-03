@@ -47,13 +47,12 @@ void MessageBus::send(const Message& m)
 
 bool MessageBus::empty()
 {
-    auto result = m_messages.empty();
-    if (result)
+    auto empty = m_messages.empty();
+    if (empty)
     {
-        m_messages = std::move(m_deferredMessages);
-        m_deferredMessages = std::queue<Message>();
+        m_deferredMessages.swap(m_messages);
         m_polling = false;
     }
 
-    return result;
+    return empty;
 }

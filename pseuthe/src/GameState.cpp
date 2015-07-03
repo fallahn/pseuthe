@@ -45,7 +45,7 @@ source distribution.
 namespace
 {
     const int nubbinCount = 19;
-    const std::string version("version 0.6.5");
+    const std::string version("version 0.6.6");
 }
 
 GameState::GameState(StateStack& stateStack, Context context)
@@ -120,7 +120,7 @@ bool GameState::handleEvent(const sf::Event& evt)
     {
         switch (evt.key.code)
         {
-        case sf::Keyboard::Space:
+        //case sf::Keyboard::Space:
         case sf::Keyboard::Escape:
             requestStackPush(States::ID::Menu);
             break;

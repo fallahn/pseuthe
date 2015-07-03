@@ -39,18 +39,19 @@ source distribution.
 
 namespace
 {
-    const sf::Color goodColour(220u, 230u, 210u, 180u);
-    const sf::Color badColour(230u, 220u, 210u, 180u);
+    const sf::Color goodColour(200u, 230u, 200u, 180u);
+    const sf::Color badColour(230u, 200u, 200u, 180u);
     const sf::Color bonusColour(170u, 170u, 200u, 180u);
 
     const float maxHealth = 100.f;
     const float healthReduction = 45.f; //reduction per second
-    const float uberTypeHealthReduction = 28.f;
+    const float uberTypeHealthReduction = 8.f;
+    const float badTypeHealthReduction = 2.f;
 
     const float rotationSpeed = 6.f;
     const float rotationTolerance = 0.1f;
 
-    const float wallDamage = 18.f; //reduction in hgealth when rebounding
+    const float wallDamage = 8.f; //reduction in health when rebounding
 }
 
 PlanktonController::PlanktonController(MessageBus& mb)
@@ -130,6 +131,7 @@ void PlanktonController::entityUpdate(Entity& entity, float dt)
         break;
     case Type::Bad:
         colour = badColour;
+        m_health -= badTypeHealthReduction * dt;
         break;
     case Type::Bonus:
         colour = bonusColour;

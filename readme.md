@@ -12,10 +12,10 @@ the sole aim of survival - absorb and consume the healthy microbes whilst
 avoiding those detrimental to your health.
 
 A note on controls:
-By default controls are absolute - pressing left will apply a force moving
-the player to the left of the screen, etc. If you prefer more intuitive
-controls (and like to steer plankton like a racing car) then select 'Arcade
-Mode' on the main menu. Points are awarded equally in either scheme.
+By default controls are set to 'arcade' mode - that is, the player is
+steered much like a car in a 2D racing game. If you prefer the challenge
+of using slightly more accurate physics, select 'Classic' mode on the main
+menu.
 
 Pseuthe is best played with a controller.
 
