@@ -317,7 +317,7 @@ void App::loadSettings()
     int fileSize = static_cast<int>(file.tellg());
     file.seekg(0, std::ios::beg);
 
-    if (fileSize < sizeof(SettingsFile))
+    if (fileSize < static_cast<int>(sizeof(SettingsFile)))
     {
         Logger::Log("settings file not expected file size", Logger::Type::Error, Logger::Output::All);
         file.close();
