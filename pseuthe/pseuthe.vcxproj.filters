@@ -207,6 +207,12 @@
     <ClCompile Include="src\TitleState.cpp">
       <Filter>Source Files\states</Filter>
     </ClCompile>
+    <ClCompile Include="src\TailDrawable.cpp">
+      <Filter>Source Files\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TailDrawablePhysics.cpp">
+      <Filter>Source Files\components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\BodypartController.hpp">
@@ -367,6 +373,9 @@
     </ClInclude>
     <ClInclude Include="include\TitleState.hpp">
       <Filter>Header Files\states</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TailDrawable.hpp">
+      <Filter>Header Files\components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

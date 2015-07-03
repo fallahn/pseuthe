@@ -92,6 +92,8 @@ add_executable(
 	src/SoundPlayer.cpp
 	src/State.cpp
 	src/StateStack.cpp
+	src/TailDrawable.cpp
+	src/TailDrawablePhysics.cpp
 	src/TitleState.cpp
 	src/UIButton.cpp
 	src/UICheckBox.cpp
