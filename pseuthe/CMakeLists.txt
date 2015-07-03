@@ -1,57 +1,56 @@
 project(pseuthe)
 cmake_minimum_required(VERSION 2.8)
 
+if(NOT CMAKE_BUILD_TYPE)
+  SET(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build (Debug or Release)" FORCE)
+endif()
+
+SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
+SET(PSEUTHE_STATIC_SFML FALSE CACHE BOOL "Choose whether SFML is linked statically or not.")
+SET(PSEUTHE_STATIC_RUNTIME FALSE CACHE BOOL "Use statically linked standard/runtime libraries? This option must match the one used for SFML.")
+
 #prefer clang, comment out if using g++ (4.9+)
-#SET (CMAKE_C_COMPILER    "/usr/bin/clang")
-#SET (CMAKE_CXX_COMPILER  "/usr/bin/clang++")
-#SET (CMAKE_AR            "/usr/bin/llvm-ar")
-#SET (CMAKE_LINKER        "/usr/bin/llvm-ld")
-#SET (CMAKE_NM            "/usr/bin/llvm-nm")
-#SET (CMAKE_OBJDUMP       "/usr/bin/llvm-objdump")
-#SET (CMAKE_RANLIB        "/usr/bin/llvm-ranlib")
+#SET(CMAKE_C_COMPILER    "/usr/bin/clang")
+#SET(CMAKE_CXX_COMPILER  "/usr/bin/clang++")
+#SET(CMAKE_AR            "/usr/bin/llvm-ar")
+#SET(CMAKE_LINKER        "/usr/bin/llvm-ld")
+#SET(CMAKE_NM            "/usr/bin/llvm-nm")
+#SET(CMAKE_OBJDUMP       "/usr/bin/llvm-objdump")
+#SET(CMAKE_RANLIB        "/usr/bin/llvm-ranlib")
 
-SET (CMAKE_C_FLAGS                "-Wall -std=c99")
-SET (CMAKE_C_FLAGS_DEBUG          "-g -_DEBUG_")
-SET (CMAKE_C_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
-SET (CMAKE_C_FLAGS_RELEASE        "-O4 -DNDEBUG")
-SET (CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -g")
+if(CMAKE_COMPILER_IS_GNUCXX)
+  if(PSEUTHE_STATIC_RUNTIME)
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++1y -static")
+  else()
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++1y")
+  endif()
+endif()
 
-SET (CMAKE_CXX_FLAGS                "-Wall")
-SET (CMAKE_CXX_FLAGS_DEBUG          "-g -_DEBUG_")
-SET (CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
-SET (CMAKE_CXX_FLAGS_RELEASE        "-O4 -DNDEBUG")
-SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
+if(PSEUTHE_STATIC_SFML)
+  SET(SFML_STATIC_LIBRARIES TRUE)
+endif()
 
-#---------------------------------------------
 
-SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y")
+find_package(SFML 2 REQUIRED graphics window audio system )
 
-SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
-
-find_package(SFML 2 REQUIRED system window graphics audio)
 if(UNIX)
-find_package(X11 REQUIRED)
-endif(UNIX)
+  find_package(X11 REQUIRED)
+endif()
 
 #optional package manager on arch (PKGBUILD script currently missing)
 #include (FindPkgConfig)
 #PKG_SEARCH_MODULE(SFML 2 REQUIRED system window graphics audio)
 
-
 include_directories(
-	${SFML_INCLUDE_DIRS}
+	${SFML_INCLUDE_DIR}
 	${CMAKE_SOURCE_DIR}/include)
 
-link_libraries(
-	${SFML_LIBRARIES})
-
 if(X11_FOUND)
-include_directories(${X11_INCLUDE_DIRS})
-link_libraries(${X11_LIBRARIES})
-endif(X11_FOUND)
+  include_directories(${X11_INCLUDE_DIRS})
+endif()
 
-add_executable(
-	pseuthe src/main.cpp
+add_executable(pseuthe
+  src/main.cpp
 	src/Affectors.cpp
 	src/AnimatedDrawable.cpp
 	src/App.cpp
@@ -104,7 +103,25 @@ add_executable(
 	src/UISelection.cpp
 	src/UISlider.cpp)
 
-#copy resources to output directory
-#file(COPY ${CMAKE_SOURCE_DIR}/res DESTINATION ${CMAKE_DESTDIR})
-		
+target_link_libraries(pseuthe
+	${SFML_LIBRARIES}
+  ${SFML_DEPENDENCIES})
 
+if(UNIX)
+  target_link_libraries(pseuthe
+    ${X11_LIBRARIES})
+endif()
+
+#install executable
+install(TARGETS pseuthe
+	RUNTIME DESTINATION .)
+
+#install game data
+install(DIRECTORY assets
+	DESTINATION .)
+
+#install the OpenAL DLL
+if(WIN32)
+  install(FILES ${SFML_INCLUDE_DIR}/../bin/openal32.dll
+    DESTINATION .)
+endif()
