@@ -55,7 +55,7 @@ void Scores::load()
     int fileSize = static_cast<int>(file.tellg());
     file.seekg(0, std::ios::beg);
 
-    if (fileSize < sizeof(Header))
+    if (fileSize < static_cast<int>(sizeof(Header)))
     {
         Logger::Log("unexpected file size for score data.", Logger::Type::Error, Logger::Output::All);
         file.close();

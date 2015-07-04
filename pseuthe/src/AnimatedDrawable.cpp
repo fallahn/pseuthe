@@ -88,7 +88,7 @@ void AnimatedDrawable::entityUpdate(Entity&, float dt)
             m_subRect.left += m_frameSize.x;
 
             //wrap around if at texture edge
-            if (m_subRect.left + m_subRect.width > m_textureSize.x)
+            if (m_subRect.left + m_subRect.width > static_cast<int>(m_textureSize.x))
             {
                 m_subRect.left = 0;
                 m_subRect.top += m_frameSize.y;
