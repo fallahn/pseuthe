@@ -103,6 +103,11 @@ bool HelpState::update(float dt)
         }
         else
         {
+            Message msg;
+            msg.type = Message::Type::UI;
+            msg.ui.type = Message::UIEvent::MenuClosed;
+            msg.ui.stateId = States::ID::Help;
+            m_messageBus.send(msg);
             requestStackPop();
         }
         break;

@@ -240,9 +240,9 @@ sf::Vector2f AnimatedDrawable::getRightVector() const
 void AnimatedDrawable::loadAnimationData(const std::string& path)
 {
     std::ifstream file(path);
-    if (!file.good() || Util::File::validLength(file))
+    if (!file.good() || !Util::File::validLength(file))
     {
-        LOG("faile to open " + path + ", or file empty", Logger::Type::Error);
+        LOG("failed to open " + path + ", or file empty", Logger::Type::Error);
         file.close();
         return;
     }

@@ -128,9 +128,26 @@ bool MenuState::handleEvent(const sf::Event& evt)
     return false; //consume events
 }
 
-void MenuState::handleMessage(const Message&)
+void MenuState::handleMessage(const Message& msg)
 {
-
+    switch (msg.type)
+    {
+    case Message::Type::UI:
+        switch (msg.ui.type)
+        {
+        case Message::UIEvent::MenuClosed:
+            if (msg.ui.stateId == States::ID::Help)
+            {
+                const auto& rw = getContext().renderWindow;
+                auto mousePos = rw.mapPixelToCoords(sf::Mouse::getPosition(rw));
+                m_cursorSprite.setPosition(mousePos);
+            }
+            break;
+        default: break;
+        }
+        break;
+    default: break;
+    }
 }
 
 //private

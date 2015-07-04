@@ -36,6 +36,7 @@ source distribution.
 #include <InputComponent.hpp>
 #include <BodypartController.hpp>
 #include <AnimatedDrawable.hpp>
+#include <TailDrawable.hpp>
 #include <PlanktonController.hpp>
 
 #include <memory>
@@ -326,6 +327,11 @@ void GameController::spawnPlayer()
     controlComponent->setName("controller");
     controlComponent->setControlType(m_controlType);
     entity->addComponent<InputComponent>(controlComponent);
+
+
+    auto tail = std::make_unique<TailDrawable>(m_messageBus);
+    entity->addComponent(tail);
+
 
     m_constraintLength = playerSize + partSize + partPadding;
     m_nextPartSize = partSize;

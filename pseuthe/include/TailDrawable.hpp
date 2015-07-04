@@ -35,6 +35,7 @@ source distribution.
 #include <SFML/Graphics/Drawable.hpp>
 
 #include <vector>
+#include <memory>
 
 class TailDrawable final : public Component, public sf::Drawable
 {
@@ -46,59 +47,73 @@ public:
     void entityUpdate(Entity&, float) override;
     void handleMessage(const Message&) override;
 
+    void onStart(Entity&) override;
+
 private:
 
     struct Mass final
     {
-        explicit Mass(float = 0.f);
+        using Ptr = std::unique_ptr<Mass>;
+        explicit Mass(float);
         ~Mass() = default;
 
-        float mass;
-        sf::Vector2f velocity;
-        sf::Vector2f force;
-        sf::Vector2f position;
+        float getMass() const;
+        const sf::Vector2f& getVelocity() const;
+        const sf::Vector2f& getForce() const;
+        const sf::Vector2f& getPosition() const;
+
+        void setVelocity(const sf::Vector2f&);
+        void setPosition(const sf::Vector2f&);
 
         void reset();
         void applyForce(const sf::Vector2f&);
         void simulate(float);
+
+    private:
+        float m_mass;
+        sf::Vector2f m_velocity;
+        sf::Vector2f m_force;
+        sf::Vector2f m_position;
+
     };
 
     struct Constraint final
     {
-        //TODO most of these values will be fine as consts
-        Constraint(Mass&, Mass&, float stiffness, float length, float friction);
+        using Ptr = std::unique_ptr<Constraint>;
+
+        Constraint(Mass&, Mass&);
         ~Constraint() = default;
 
-        Mass* massA;
-        Mass* massB;
-        float stiffness;
-        float length;
-        float friction;
-
         void solve();
+
+    private:
+        Mass& m_massA;
+        Mass& m_massB;
     };
 
     class Simulation final
     {
     public:
-        //TODO set fixed values for these rather than ctor params
-        Simulation(int massCount, float mass, float stiffness, float constraintlength, float constraintFriction, float airFriction, const sf::Vector2f& start, const sf::Vector2f& end);
+        Simulation(const sf::Vector2f& start, const sf::Vector2f& end);
         ~Simulation() = default;
         Simulation(const Simulation&) = delete;
         Simulation& operator = (const Simulation&) = delete;
 
-        const std::vector<Mass*>& getMasses() const;
+        const std::vector<Mass::Ptr>& getMasses() const;
+        void setAnchor(const sf::Vector2f&);
+        float getScale() const;
 
         void reset();
         void solve();
         void simulate(float);
-        void execute(float);
+        void update(float);
 
     private:
-        std::vector<Mass*> m_masses;
-        std::vector<Constraint*> m_constraints;
-        float m_airFriction;
-    };
+        std::vector<Mass::Ptr> m_masses;
+        std::vector<Constraint::Ptr> m_constraints;
+        sf::Vector2f m_anchor;
+    }m_simulation;
+
 
     void draw(sf::RenderTarget&, sf::RenderStates) const override;
 };

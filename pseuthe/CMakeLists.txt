@@ -9,7 +9,7 @@ SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 SET(PSEUTHE_STATIC_SFML FALSE CACHE BOOL "Choose whether SFML is linked statically or not.")
 SET(PSEUTHE_STATIC_RUNTIME FALSE CACHE BOOL "Use statically linked standard/runtime libraries? This option must match the one used for SFML.")
 
-#prefer clang, comment out if using g++ (4.9+)
+#use if you prefer clang, comment out if using g++ (4.9+)
 #SET(CMAKE_C_COMPILER    "/usr/bin/clang")
 #SET(CMAKE_CXX_COMPILER  "/usr/bin/clang++")
 #SET(CMAKE_AR            "/usr/bin/llvm-ar")

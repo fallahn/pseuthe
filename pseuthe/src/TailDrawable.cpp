@@ -26,6 +26,65 @@ source distribution.
 *********************************************************************/
 
 #include <TailDrawable.hpp>
+#include <Entity.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
+
+namespace
+{
+    const float maxDt = 0.002f;
+}
+
+TailDrawable::TailDrawable(MessageBus& mb)
+    :Component(mb),
+    m_simulation({0.f, 0.f}, {-790.f, 0.f})
+{
+
+}
+
+//public
+Component::Type TailDrawable::type() const
+{
+    return Component::Type::Drawable;
+}
+
+void TailDrawable::entityUpdate(Entity& entity, float dt)
+{
+    //set simluation's anchor based on ent position
+    m_simulation.setAnchor(entity.getWorldPosition());
+
+    int iterCount = static_cast<int>(dt / maxDt) + 1;
+    if (iterCount) dt /= iterCount;
+
+    for (int i = 0; i < iterCount; ++ i)
+        m_simulation.update(dt);
+}
+
+void TailDrawable::handleMessage(const Message&)
+{
+
+}
+
+void TailDrawable::onStart(Entity& entity)
+{
+    auto position = entity.getWorldPosition();
+    auto& masses = m_simulation.getMasses();
+    for (auto& m : masses)
+    {
+        m->setPosition(m->getPosition() + (position / m_simulation.getScale()));
+    }
+}
+
+//private
+void TailDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
+{
+    std::vector<sf::Vertex> verts;
+    const auto& masses = m_simulation.getMasses();
+    for (const auto& m : masses)
+    {
+        verts.emplace_back(m->getPosition() * m_simulation.getScale());
+    }
+
+    rt.draw(verts.data(), verts.size(), sf::LinesStrip);
+}
