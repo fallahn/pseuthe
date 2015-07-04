@@ -45,8 +45,11 @@ sf::Shader& ShaderResource::get(Shader::Type type)
 void ShaderResource::preload(Shader::Type type, const std::string& vertShader, const std::string& fragShader)
 {
     auto shader = std::make_unique<sf::Shader>();
-    auto result = shader->loadFromMemory(vertShader, fragShader);
-    assert(result);
+#ifndef _DEBUG_
+    shader->loadFromMemory(vertShader, fragShader)
+#else
+    assert(shader->loadFromMemory(vertShader, fragShader));
+#endif //_DEBUG_
 
     m_shaders.insert(std::make_pair(type, std::move(shader)));
 }

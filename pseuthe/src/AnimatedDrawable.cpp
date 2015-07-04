@@ -240,8 +240,12 @@ sf::Vector2f AnimatedDrawable::getRightVector() const
 void AnimatedDrawable::loadAnimationData(const std::string& path)
 {
     std::ifstream file(path);
-    assert(file.good());
-    assert(Util::File::validLength(file));
+    if (!file.good() || Util::File::validLength(file))
+    {
+        LOG("faile to open " + path + ", or file empty", Logger::Type::Error);
+        file.close();
+        return;
+    }
     
     std::string jsonString;
     while (!file.eof())
@@ -250,7 +254,12 @@ void AnimatedDrawable::loadAnimationData(const std::string& path)
         file >> temp;
         jsonString += temp;
     }
-    assert(!jsonString.empty());
+    if (jsonString.empty())
+    {
+        LOG(path + "failed to read, or file empty", Logger::Type::Error);
+        file.close();
+        return;
+    }
     file.close();
     
     picojson::value pv;
@@ -280,16 +289,16 @@ void AnimatedDrawable::loadAnimationData(const std::string& path)
         if (pv.get("FrameSize").is<std::string>())
             setFrameSize(Util::Vector::vec2FromString<int>(pv.get("FrameSize").get<std::string>()));
         else
-            std::cerr << path << " missing frame size" << std::endl;
+            Logger::Log(path + " missing frame size", Logger::Type::Error, Logger::Output::All);
     
         if (pv.get("FrameRate").is<double>())
             m_frameRate = static_cast<float>(pv.get("FrameRate").get<double>());
         else
-            std::cerr << path << " missing frame rate" << std::endl;
+            Logger::Log(path + " missing frame rate", Logger::Type::Error, Logger::Output::All);
     }
     else
     {
-        std::cerr << "Animated Sprite: " << err << std::endl;
+        Logger::Log("Animated Sprite: " + err, Logger::Type::Error, Logger::Output::All);
     }
 
     setFrame(m_currentFrame);
@@ -319,8 +328,6 @@ void AnimatedDrawable::setFrame(sf::Uint8 index)
     assert(index < m_frameCount);
 
     auto position = m_textureSize.x / m_frameSize.x;
-
-    assert(position > 0);
 
     auto x = index % position;
     auto y = index / position;

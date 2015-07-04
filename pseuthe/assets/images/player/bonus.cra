@@ -9,7 +9,7 @@
   ],
   "FrameCount": 10,
   "FrameSize": "64, 64",
-  "FrameRate": 16.0,
+  "FrameRate": 19.0,
   "Texture": "bonus.png",
   "NormalMap": "none.png"
 }
