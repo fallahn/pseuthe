@@ -40,6 +40,7 @@ source distribution.
 class PhysicsComponent;
 class AnimatedDrawable;
 class ParticleSystem;
+class TailDrawable;
 class InputComponent final : public Component
 {
 public:
@@ -65,6 +66,7 @@ private:
     ParticleSystem* m_trailParticles;
     ParticleSystem* m_sparkleParticles;
     ParticleSystem* m_echo;
+    TailDrawable* m_tail;
 
     float m_health;
     bool m_parseInput;

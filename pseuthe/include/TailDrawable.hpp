@@ -33,11 +33,14 @@ source distribution.
 #include <Component.hpp>
 
 #include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/Transformable.hpp>
 
 #include <vector>
 #include <memory>
+#include <utility>
 
-class TailDrawable final : public Component, public sf::Drawable
+class TailDrawable final : public Component, public sf::Drawable, public sf::Transformable
 {
 public:
     explicit TailDrawable(MessageBus&);
@@ -46,8 +49,11 @@ public:
     Component::Type type() const override;
     void entityUpdate(Entity&, float) override;
     void handleMessage(const Message&) override;
-
     void onStart(Entity&) override;
+
+    void setColour(const sf::Color&);
+
+    void addTail(const sf::Vector2f&);
 
 private:
 
@@ -94,6 +100,8 @@ private:
     class Simulation final
     {
     public:
+        using Ptr = std::unique_ptr<Simulation>;
+
         Simulation(const sf::Vector2f& start, const sf::Vector2f& end);
         ~Simulation() = default;
         Simulation(const Simulation&) = delete;
@@ -112,9 +120,12 @@ private:
         std::vector<Mass::Ptr> m_masses;
         std::vector<Constraint::Ptr> m_constraints;
         sf::Vector2f m_anchor;
-    }m_simulation;
+    };
+    
+    std::vector<std::pair<Simulation::Ptr, sf::Vector2f>> m_simulations;
+    //std::vector<Simulation::Ptr> m_simulations;
 
-
+    sf::Color m_colour;
     void draw(sf::RenderTarget&, sf::RenderStates) const override;
 };
 

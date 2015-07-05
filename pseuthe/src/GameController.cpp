@@ -323,15 +323,16 @@ void GameController::spawnPlayer()
     echo->setName("echo");
     entity->addComponent<ParticleSystem>(echo);
 
+    auto tail = std::make_unique<TailDrawable>(m_messageBus);
+    tail->addTail({ -15.f, -15.f });
+    tail->addTail({ -15.f, 15.f });
+    tail->setName("tail");
+    entity->addComponent(tail);
+
     auto controlComponent = std::make_unique<InputComponent>(m_messageBus);
     controlComponent->setName("controller");
     controlComponent->setControlType(m_controlType);
     entity->addComponent<InputComponent>(controlComponent);
-
-
-    auto tail = std::make_unique<TailDrawable>(m_messageBus);
-    entity->addComponent(tail);
-
 
     m_constraintLength = playerSize + partSize + partPadding;
     m_nextPartSize = partSize;

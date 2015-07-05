@@ -33,11 +33,11 @@ source distribution.
 
 namespace
 {
-    const float scale = 100.f; //scale pixels to metres
+    const float pixelScale = 100.f; //scale pixels to metres
 
     const int jointCount = 18;
     const float jointMass = 0.15f;
-    const float stiffness = 8000.f;
+    const float stiffness = 5000.f;
     const float constraintLength = 0.1f;
     const float friction = 1.2f;
     const float airFriction = 0.32f;
@@ -118,17 +118,16 @@ void TailDrawable::Constraint::solve()
 
 //----simulation----//
 TailDrawable::Simulation::Simulation(const sf::Vector2f& start, const sf::Vector2f& end)
-    : m_anchor(start / scale)
+    : m_anchor(start / pixelScale)
 {
     for (auto i = 0; i < jointCount; ++i)
         m_masses.emplace_back(std::make_unique<Mass>(jointMass));
 
-    //TODO make this run along the start / end vector
+    auto direction = Util::Vector::normalise(end - start) * constraintLength;
 
-    const float yIncr = (end.y - start.y) / (jointCount - 1) / scale;
     for (auto i = 0; i < jointCount; ++i)
     {
-        m_masses[i]->setPosition({ i * constraintLength, m_anchor.y + (i * yIncr) });
+        m_masses[i]->setPosition(direction * static_cast<float>(i));
     }
 
     for (auto i = 0; i < jointCount - 1; ++i)
@@ -144,12 +143,12 @@ const std::vector<TailDrawable::Mass::Ptr>& TailDrawable::Simulation::getMasses(
 
 void TailDrawable::Simulation::setAnchor(const sf::Vector2f& position)
 {
-    m_anchor = position / scale;
+    m_anchor = position / pixelScale;
 }
 
 float TailDrawable::Simulation::getScale() const
 {
-    return scale;
+    return pixelScale;
 }
 
 void TailDrawable::Simulation::reset()

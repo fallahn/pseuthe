@@ -29,6 +29,7 @@ source distribution.
 #include <PhysicsComponent.hpp>
 #include <AnimatedDrawable.hpp>
 #include <ParticleSystem.hpp>
+#include <TailDrawable.hpp>
 #include <Entity.hpp>
 #include <Util.hpp>
 #include <MessageBus.hpp>
@@ -82,6 +83,7 @@ InputComponent::InputComponent(MessageBus& mb)
     m_trailParticles    (nullptr),
     m_sparkleParticles  (nullptr),
     m_echo              (nullptr),
+    m_tail              (nullptr),
     m_health            (maxHealth),
     m_parseInput        (true),
     m_mass              (0.f),
@@ -142,7 +144,9 @@ void InputComponent::entityUpdate(Entity& entity, float dt)
     m_wigglerA->rotate(Util::Math::shortestRotation(m_wigglerA->getRotation(), rotation - wigglerRotation) * dt);
     m_wigglerB->rotate(Util::Math::shortestRotation(m_wigglerB->getRotation(), rotation + wigglerRotation) * dt);
 
-    //update health if we have no tail
+    m_tail->setRotation(rotation);
+
+    //update health if we have no body parts
     if (m_physicsComponent->getContraintCount() < 1 && m_parseInput)
     {
         m_health -= healthReduction * dt;
@@ -166,6 +170,7 @@ void InputComponent::entityUpdate(Entity& entity, float dt)
         m_mouthDrawable->setColour(colour);
         m_wigglerA->setColour(colour);
         m_wigglerB->setColour(colour);
+        m_tail->setColour(colour);
     }
 }
 
@@ -290,6 +295,10 @@ void InputComponent::onStart(Entity& entity)
 
     m_echo = entity.getComponent<ParticleSystem>("echo");
     assert(m_echo);
+
+    m_tail = entity.getComponent<TailDrawable>("tail");
+    assert(m_tail);
+    m_tail->setColour(defaultColour);
 }
 
 void InputComponent::setControlType(ControlType type)

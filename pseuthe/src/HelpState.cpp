@@ -55,7 +55,7 @@ HelpState::HelpState(StateStack& stack, Context context)
     titleText.setPosition(centrePos);
     titleText.move(0.f, -100.f);
 
-    m_texts.emplace_back("Absorb green plankton to survive and grow", font, charSize);
+    m_texts.emplace_back("Absorb green plankton to prevent starvation", font, charSize);
     auto& text01 = m_texts.back();
     Util::Position::centreOrigin(text01);
     text01.setPosition(centrePos);
@@ -67,13 +67,13 @@ HelpState::HelpState(StateStack& stack, Context context)
     text02.setPosition(centrePos);
     text02.move(0.f, 70.f);
 
-    m_texts.emplace_back("Collisions will also damage your body", font, charSize);
+    m_texts.emplace_back("Look out for special plankton to eat", font, charSize);
     auto& text03 = m_texts.back();
     Util::Position::centreOrigin(text03);
     text03.setPosition(centrePos);
     text03.move(0.f, 140.f);
 
-    m_texts.emplace_back("Live as long as you can.", font, charSize);
+    m_texts.emplace_back("Avoid collisions and live as long as you can.", font, charSize);
     auto& text04 = m_texts.back();
     Util::Position::centreOrigin(text04);
     text04.setPosition(centrePos);

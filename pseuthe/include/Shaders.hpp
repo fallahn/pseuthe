@@ -164,10 +164,18 @@ namespace Shader
             "const float maxOffset = 1.0 / 450.0;\n" \
             "#endif\n" \
 
+            "const float centreDistanceSquared = 0.25;\n" \
+            "float distanceSquared(vec2 coord)\n" \
+            "{\n" \
+            "    return (coord.x * coord.x) + (coord.y * coord.y);\n" \
+            "}\n" \
 
             "void main()\n" \
             "{\n" \
+            "    vec2 distortOffset = vec2(0.01, 0.01);\n" \
             "    vec2 texCoord = gl_TexCoord[0].xy;\n" \
+            "    float distSquared = distanceSquared(0.5 - texCoord);\n" \
+            "    if(distSquared > centreDistanceSquared) texCoord += ((vec2(0.5, 0.5) - texCoord) * (centreDistanceSquared - distSquared)) * 0.18;\n" \
             "    vec2 offset = vec2((maxOffset / 2.0) - (texCoord.x * maxOffset), (maxOffset / 2.0) - (texCoord.y * maxOffset));\n"
             "    vec3 colour = vec3(0.0);\n" \
             "#if defined(BLUR)\n" \
