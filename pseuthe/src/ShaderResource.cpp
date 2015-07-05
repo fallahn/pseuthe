@@ -46,7 +46,7 @@ void ShaderResource::preload(Shader::Type type, const std::string& vertShader, c
 {
     auto shader = std::make_unique<sf::Shader>();
 #ifndef _DEBUG_
-    shader->loadFromMemory(vertShader, fragShader)
+    shader->loadFromMemory(vertShader, fragShader);
 #else
     assert(shader->loadFromMemory(vertShader, fragShader));
 #endif //_DEBUG_
