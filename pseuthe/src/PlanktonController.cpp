@@ -31,6 +31,7 @@ source distribution.
 #include <PhysicsComponent.hpp>
 #include <AnimatedDrawable.hpp>
 #include <ParticleSystem.hpp>
+#include <TailDrawable.hpp>
 #include <Util.hpp>
 
 #include <SFML/Graphics/Color.hpp>
@@ -45,7 +46,7 @@ namespace
 
     const float maxHealth = 100.f;
     const float healthReduction = 45.f; //reduction per second
-    const float uberTypeHealthReduction = 8.f;
+    const float uberTypeHealthReduction = 1;// 8.f;
     const float badTypeHealthReduction = 2.f;
 
     const float rotationSpeed = 6.f;
@@ -62,6 +63,7 @@ PlanktonController::PlanktonController(MessageBus& mb)
     m_drawable          (nullptr),
     m_trail             (nullptr),
     m_ident             (nullptr),
+    m_tail              (nullptr),
     m_health            (maxHealth),
     m_enemyId           (0u),
     m_targetRotation    (0.f)
@@ -88,6 +90,8 @@ void PlanktonController::entityUpdate(Entity& entity, float dt)
     {           
         float currentRotation = m_drawable->getRotation();
         m_drawable->rotate(Util::Math::shortestRotation(currentRotation, m_targetRotation) * rotationSpeed * dt);
+
+        if (m_type == Type::UberLife) m_tail->setRotation(m_drawable->getRotation());
 
         const float diff = currentRotation - m_targetRotation;
         if (diff < rotationTolerance && diff > -rotationTolerance)
@@ -144,6 +148,7 @@ void PlanktonController::entityUpdate(Entity& entity, float dt)
     }
     colour.a = static_cast<sf::Uint8>(std::max((m_health / maxHealth) * static_cast<float>(colour.a), 0.f));
     m_drawable->setColour(colour);
+    if (m_type == Type::UberLife) m_tail->setColour(colour);
 }
 
 void PlanktonController::handleMessage(const Message& msg)
@@ -202,6 +207,13 @@ void PlanktonController::onStart(Entity& entity)
 
     m_ident = entity.getComponent<ParticleSystem>("ident");
     assert(m_ident);
+
+    if (m_type == Type::UberLife)
+    {
+        m_tail = entity.getComponent<TailDrawable>("tail");
+        assert(m_tail);
+        m_tail->setColour(bonusColour);
+    }
 }
 
 void PlanktonController::setType(Type t)

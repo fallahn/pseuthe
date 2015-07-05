@@ -438,7 +438,12 @@ void GameController::spawnPlankton()
             (badPlankton >= goodPlankton) ? PlanktonController::Type::Bad : PlanktonController::Type::Good :
             (badPlankton < goodPlankton) ? PlanktonController::Type::Bad : PlanktonController::Type::Good;
 
-    if (type != PlanktonController::Type::Bonus)
+    //----test code----//
+    //type = PlanktonController::Type::UberLife;
+    //-----------------//
+
+
+    if (type == PlanktonController::Type::Bad || type == PlanktonController::Type::Good)
     {
         switch (Util::Random::value(0, 1)) //random graphic
         {
@@ -453,11 +458,17 @@ void GameController::spawnPlankton()
         default: break;
         }
     }
-    else
+    else if (type == PlanktonController::Type::Bonus)
     {
         ad = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/food03.png"));
         ad->loadAnimationData("assets/images/player/food03.cra");
     }
+    else
+    {
+        ad = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/bonus.png"));
+        ad->loadAnimationData("assets/images/player/bonus.cra");
+    }
+
     ad->setBlendMode(sf::BlendAdd);
     ad->setOrigin(sf::Vector2f(ad->getFrameSize()) / 2.f);
     if(!ad->getAnimations().empty()) ad->play(ad->getAnimations()[0]);
@@ -486,12 +497,25 @@ void GameController::spawnPlankton()
         badPlankton++;
         break;
     case PlanktonController::Type::Bonus:
+    case PlanktonController::Type::UberLife:
         ident->setColour({ 158u, 148u, 224u });
         break;
     default:break;
     }
     ident->setName("ident");
     entity->addComponent<ParticleSystem>(ident);
+
+    if (type == PlanktonController::Type::UberLife)
+    {
+        auto tails = std::make_unique<TailDrawable>(m_messageBus);
+        tails->addTail({ -15.f, -12.f });
+        tails->addTail({ -9.f, -6.f });
+        tails->addTail({ -12.f, 5.f });
+        tails->addTail({ -10.f, 14.f });
+        tails->setName("tail");
+        entity->addComponent<TailDrawable>(tails);
+    }
+
 
     auto controller = std::make_unique<PlanktonController>(m_messageBus);
     assert(m_player);

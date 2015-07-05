@@ -35,6 +35,7 @@ source distribution.
 class AnimatedDrawable;
 class PhysicsComponent;
 class ParticleSystem;
+class TailDrawable;
 class PlanktonController final : public Component
 {
 public:
@@ -74,6 +75,7 @@ private:
     AnimatedDrawable* m_drawable;
     ParticleSystem* m_trail;
     ParticleSystem* m_ident;
+    TailDrawable* m_tail;
 
     float m_health;
     sf::Uint64 m_enemyId;

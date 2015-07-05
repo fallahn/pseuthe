@@ -94,7 +94,7 @@ void TailDrawable::setColour(const sf::Color& colour)
 
 void TailDrawable::addTail(const sf::Vector2f& relPosition)
 {
-    m_simulations.emplace_back(std::make_pair(std::make_unique<Simulation>(sf::Vector2f(), sf::Vector2f( -790.f, 0.f )), relPosition));
+    m_simulations.emplace_back(std::make_pair(std::make_unique<Simulation>(sf::Vector2f(), sf::Vector2f( -700.f, 0.f )), relPosition));
 }
 
 //private
