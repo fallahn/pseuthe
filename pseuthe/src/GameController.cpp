@@ -439,7 +439,7 @@ void GameController::spawnPlankton()
             (badPlankton < goodPlankton) ? PlanktonController::Type::Bad : PlanktonController::Type::Good;
 
     //----test code----//
-    if (Util::Random::value(0, 49) == 0)
+    if (Util::Random::value(0, 39) == 0)
         type = PlanktonController::Type::UberLife;
     //-----------------//
 
@@ -509,10 +509,10 @@ void GameController::spawnPlankton()
     if (type == PlanktonController::Type::UberLife)
     {
         auto tails = std::make_unique<TailDrawable>(m_messageBus);
-        tails->addTail({ -18.f, -15.f });
-        tails->addTail({ -8.f, -5.f });
-        tails->addTail({ -8.f, 5.f });
-        tails->addTail({ -18.f, 15.f });
+        tails->addTail(sf::Vector2f(-18.f, -15.f) * scale);
+        tails->addTail(sf::Vector2f(-8.f, -5.f) * scale);
+        tails->addTail(sf::Vector2f(-8.f, 5.f) * scale);
+        tails->addTail(sf::Vector2f(-18.f, 15.f) * scale);
         tails->setName("tail");
         entity->addComponent<TailDrawable>(tails);
     }

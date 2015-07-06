@@ -55,6 +55,7 @@ public:
     {
         char name[17];
         float score;
+        std::size_t hash;
     };
 
     Scores() = default;

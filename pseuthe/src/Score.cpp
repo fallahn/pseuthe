@@ -32,11 +32,12 @@ source distribution.
 #include <fstream>
 #include <cstring>
 #include <algorithm>
+#include <functional>
 
 namespace
 {
     const int ident = 0x534e5542;
-    const int version = 2;
+    const int version = 3;
     const std::string scoreFile = "scores.dat";
     const std::size_t maxScores = 100;
 }
@@ -136,6 +137,10 @@ int Scores::add(const std::string& name, float value, Difficulty difficulty)
     std::strcpy(score.name, name.c_str());
     score.score = value;
 
+    auto hashFunc = std::hash<std::string>();
+    auto hash = hashFunc(name) + static_cast<std::size_t>(value);
+    score.hash = hash;
+
     std::sort(scores->begin(), scores->end(),
         [](const Scores::Item& sv1, const Scores::Item& sv2)
     {
@@ -145,9 +150,9 @@ int Scores::add(const std::string& name, float value, Difficulty difficulty)
     if (scores->size() > maxScores) scores->pop_back();
 
     auto result = std::find_if(scores->begin(), scores->end(),
-        [&name, value](const Scores::Item& sv)
+        [hash](const Scores::Item& sv)
     {
-        return (std::string(sv.name) == name && sv.score == value);
+        return (sv.hash == hash);
     });
 
     return (result == scores->end()) ? 0 : result - scores->begin();
