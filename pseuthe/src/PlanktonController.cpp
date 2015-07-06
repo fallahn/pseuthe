@@ -46,7 +46,7 @@ namespace
 
     const float maxHealth = 100.f;
     const float healthReduction = 45.f; //reduction per second
-    const float uberTypeHealthReduction = 1;// 8.f;
+    const float uberTypeHealthReduction = 4.f;
     const float badTypeHealthReduction = 2.f;
 
     const float rotationSpeed = 6.f;

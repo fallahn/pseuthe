@@ -35,10 +35,10 @@ namespace
 {
     const float pixelScale = 100.f; //scale pixels to metres
 
-    const int jointCount = 18;
+    const int jointCount = 12;
     const float jointMass = 0.15f;
     const float stiffness = 5000.f;
-    const float constraintLength = 0.1f;
+    const float constraintLength = 0.12f;
     const float friction = 1.2f;
     const float airFriction = 0.32f;
 }

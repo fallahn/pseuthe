@@ -72,7 +72,7 @@ namespace
     sf::Clock spawnClock;
     const float easySpawnTime = 4.f;
     const float hardSpawnTime = 6.5f;
-    const float spawnTimeIncrease = 0.3f;
+    const float spawnTimeIncrease = 0.2f;
 
     sf::Clock scoreClock;
     std::vector<int> scoreCounts(maxBodyParts + 1);
@@ -359,6 +359,13 @@ void GameController::addBodyPart(float health)
     //position.x -= (m_constraintLength/* * m_playerPhysicsComponents.size()*/);
     bodyPart->setWorldPosition(position);
 
+    auto physComponent = m_physicsWorld.attachBody(m_nextPartSize, m_constraintLength, m_playerPhysicsComponents.back());
+    physComponent->setPosition(bodyPart->getWorldPosition());
+    physComponent->setVelocity(m_playerPhysicsComponents.back()->getVelocity());
+    physComponent->setName("control");
+    m_playerPhysicsComponents.push_back(physComponent.get());
+    bodyPart->addComponent<PhysicsComponent>(physComponent);
+
     auto drawable = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/bodypart01.png"));
     drawable->loadAnimationData("assets/images/player/bodypart01.cra");
     drawable->setOrigin(sf::Vector2f(drawable->getFrameSize()) / 2.f);
@@ -371,13 +378,6 @@ void GameController::addBodyPart(float health)
     drawable->setScale(m_nextPartScale, m_nextPartScale);
     drawable->setName("drawable");
     bodyPart->addComponent<AnimatedDrawable>(drawable);
-
-    auto physComponent = m_physicsWorld.attachBody(m_nextPartSize, m_constraintLength, m_playerPhysicsComponents.back());
-    physComponent->setPosition(bodyPart->getWorldPosition());
-    physComponent->setVelocity(m_playerPhysicsComponents.back()->getVelocity());
-    physComponent->setName("control");
-    m_playerPhysicsComponents.push_back(physComponent.get());
-    bodyPart->addComponent<PhysicsComponent>(physComponent);
 
     auto sparkle = ParticleSystem::create(Particle::Type::Sparkle, m_messageBus);
     sparkle->setTexture(m_appInstance.getTexture("assets/images/particles/spark.png"));
@@ -509,10 +509,10 @@ void GameController::spawnPlankton()
     if (type == PlanktonController::Type::UberLife)
     {
         auto tails = std::make_unique<TailDrawable>(m_messageBus);
-        tails->addTail({ -15.f, -12.f });
-        tails->addTail({ -9.f, -6.f });
-        tails->addTail({ -12.f, 5.f });
-        tails->addTail({ -10.f, 14.f });
+        tails->addTail({ -18.f, -15.f });
+        tails->addTail({ -8.f, -5.f });
+        tails->addTail({ -8.f, 5.f });
+        tails->addTail({ -18.f, 15.f });
         tails->setName("tail");
         entity->addComponent<TailDrawable>(tails);
     }

@@ -36,8 +36,8 @@ source distribution.
 namespace
 {
     const float maxDt = 0.002f;
-    const float thickness = 0.16f;
-    const float largeDistance = 220.f;//prevent drawing stretched tails
+    const float thickness = 0.16f; //percentage of segment length
+    const float largeDistance = 330.f;//prevent drawing stretched tails
 
     const float fadeTime = 0.5f;
 }
