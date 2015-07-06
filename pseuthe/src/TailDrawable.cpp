@@ -27,6 +27,8 @@ source distribution.
 
 #include <TailDrawable.hpp>
 #include <Entity.hpp>
+#include <MessageBus.hpp>
+#include <Util.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
@@ -35,10 +37,14 @@ namespace
 {
     const float maxDt = 0.002f;
     const float thickness = 0.16f;
+    const float largeDistance = 220.f;//prevent drawing stretched tails
+
+    const float fadeTime = 0.5f;
 }
 
 TailDrawable::TailDrawable(MessageBus& mb)
-    :Component(mb)
+    : Component (mb),
+    m_fadeTime  (0.f)
 {
 
 }
@@ -51,7 +57,9 @@ Component::Type TailDrawable::type() const
 
 void TailDrawable::entityUpdate(Entity& entity, float dt)
 {
-    setPosition(entity.getWorldPosition());
+    auto position = entity.getWorldPosition();
+
+    setPosition(position);
     auto transform = getTransform();
     for (auto& sim : m_simulations)
     {
@@ -65,12 +73,16 @@ void TailDrawable::entityUpdate(Entity& entity, float dt)
     {
         for (auto& sim : m_simulations) sim.first->update(dt);
     }
-    
+
+    m_fadeTime += dt;
 }
 
-void TailDrawable::handleMessage(const Message&)
+void TailDrawable::handleMessage(const Message& msg)
 {
+    if (msg.type == Message::Type::Physics)
+    {
 
+    }
 }
 
 void TailDrawable::onStart(Entity& entity)
@@ -78,11 +90,7 @@ void TailDrawable::onStart(Entity& entity)
     auto position = entity.getWorldPosition();
     for (auto& sim : m_simulations)
     {
-        auto& masses = sim.first->getMasses();
-        for (auto& m : masses)
-        {
-            m->setPosition(m->getPosition() + ((position + sim.second) / sim.first->getScale()));
-        }
+        sim.first->setPosition(position + sim.second);
     }
 }
 
@@ -110,6 +118,9 @@ void TailDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
         verts.emplace_back(position, sf::Color::Transparent);
         verts.emplace_back(position, sf::Color::Transparent);
 
+        sf::Color colour = m_colour;
+        colour.a = static_cast<sf::Uint8>(std::min(m_fadeTime / fadeTime, 1.f) * m_colour.a);
+
         auto size = masses.size() - 1;
         sf::Vector2f lastVec;
         
@@ -117,6 +128,7 @@ void TailDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
         {
             position = masses[i]->getPosition() * sim.first->getScale();
             sf::Vector2f vec = (masses[i + 1]->getPosition() - masses[i]->getPosition()) * sim.first->getScale();
+            if (Util::Vector::lengthSquared(vec) > largeDistance) return;
             vec *= thickness;
             vec = sf::Vector2f(vec.y, -vec.x); //rotate 90 degrees
 
@@ -126,14 +138,14 @@ void TailDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
                 vec /= 2.f;
             }
 
-            verts.emplace_back(position + vec, m_colour);
-            verts.emplace_back(position - vec, m_colour);
+            verts.emplace_back(position + vec, colour);
+            verts.emplace_back(position - vec, colour);
             lastVec = vec;
         }
 
         position = masses.back()->getPosition() * sim.first->getScale();
-        verts.emplace_back(position + lastVec, m_colour);
-        verts.emplace_back(position - lastVec, m_colour);
+        verts.emplace_back(position + lastVec, colour);
+        verts.emplace_back(position - lastVec, colour);
 
         verts.emplace_back(position + lastVec, sf::Color::Transparent);
         verts.emplace_back(position - lastVec, sf::Color::Transparent);

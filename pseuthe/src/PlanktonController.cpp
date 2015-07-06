@@ -175,6 +175,9 @@ void PlanktonController::handleMessage(const Message& msg)
                 m_health -= wallDamage;
             }
             break;
+        case Message::PhysicsEvent::Teleported:
+
+            break;
         default: break;
         }
     }

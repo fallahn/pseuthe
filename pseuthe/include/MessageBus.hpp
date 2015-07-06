@@ -64,7 +64,8 @@ public:
         {
             Collision,
             ConstraintDestroyed,
-            Trigger
+            Trigger,
+            Teleported
         }event;
 
         sf::Uint64 entityId[2];

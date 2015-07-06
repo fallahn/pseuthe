@@ -39,8 +39,6 @@ namespace
     const int maxPositionY = 1080;
 
     const float epsilon = 0.2f;
-
-    const float uberLimit = 203000.f;
 }
 
 PhysicsComponent::PhysicsComponent(float radius, MessageBus& m)
@@ -102,10 +100,6 @@ void PhysicsComponent::destroy()
 
 void PhysicsComponent::physicsUpdate(float dt, const sf::FloatRect& bounds)
 {
-    //hackiness to stop some phys bodies ocassionally going mental
-    //if (Util::Vector::lengthSquared(m_velocity) > uberLimit) m_velocity = sf::Vector2f();
-
-
     m_position += m_velocity * dt;
 
     //bounce off top / bottom bounds, wrap left / right
@@ -133,11 +127,25 @@ void PhysicsComponent::physicsUpdate(float dt, const sf::FloatRect& bounds)
         {
             //off the edge so reposition somewhere
             (m_velocity.x > 0) ? m_position.x -= bounds.width : m_position.x += bounds.width;
+            
+            Message msg;
+            msg.type = Message::Type::Physics;
+            msg.physics.event = Message::PhysicsEvent::Teleported;
+            msg.physics.entityId[0] = getParentUID();
+            msg.physics.entityId[1] = 0u;
+            sendMessage(msg);
         }
         else
         {
             m_position.x = bounds.left + 1.f;
             m_position.y = static_cast<float>(Util::Random::value(static_cast<int>(bounds.top), static_cast<int>(bounds.top + bounds.height)));
+            
+            Message msg;
+            msg.type = Message::Type::Physics;
+            msg.physics.event = Message::PhysicsEvent::Teleported;
+            msg.physics.entityId[0] = getParentUID();
+            msg.physics.entityId[1] = 0u;
+            sendMessage(msg);
         }
     }
 }

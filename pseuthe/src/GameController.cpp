@@ -43,7 +43,7 @@ source distribution.
 
 namespace
 {
-    const float partScale = 0.9f;
+    const float partScale = 0.87f;
     const float partPadding = 1.f;
     const float partSize = 32.f;
     const float playerSize = 32.f;
@@ -54,7 +54,7 @@ namespace
     int goodPlankton = 0;
     int badPlankton = 0;
 
-    const int maxBodyParts = 8;
+    const int maxBodyParts = 6;
     const int maxPlankton = 8;
     const float maxBodyHealth = 100.f;
 
@@ -66,8 +66,8 @@ namespace
     const float hardDecayTime = 6.5f;
 
     const float easySpeed = 1.f;
-    const float mediumSpeed = 1.45f;
-    const float hardSpeed = 1.9f;
+    const float mediumSpeed = 1.25f;
+    const float hardSpeed = 1.6f;
 
     sf::Clock spawnClock;
     const float easySpawnTime = 4.f;
@@ -439,7 +439,8 @@ void GameController::spawnPlankton()
             (badPlankton < goodPlankton) ? PlanktonController::Type::Bad : PlanktonController::Type::Good;
 
     //----test code----//
-    //type = PlanktonController::Type::UberLife;
+    if (Util::Random::value(0, 49) == 0)
+        type = PlanktonController::Type::UberLife;
     //-----------------//
 
 

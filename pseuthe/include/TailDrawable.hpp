@@ -110,6 +110,7 @@ private:
         const std::vector<Mass::Ptr>& getMasses() const;
         void setAnchor(const sf::Vector2f&);
         float getScale() const;
+        void setPosition(const sf::Vector2f&);
 
         void reset();
         void solve();
@@ -120,12 +121,14 @@ private:
         std::vector<Mass::Ptr> m_masses;
         std::vector<Constraint::Ptr> m_constraints;
         sf::Vector2f m_anchor;
+        sf::Vector2f m_layoutEnd;
+
+        void layoutMasses();
     };
     
     std::vector<std::pair<Simulation::Ptr, sf::Vector2f>> m_simulations;
-    //std::vector<Simulation::Ptr> m_simulations;
-
     sf::Color m_colour;
+    float m_fadeTime;
     void draw(sf::RenderTarget&, sf::RenderStates) const override;
 };
 

@@ -118,17 +118,13 @@ void TailDrawable::Constraint::solve()
 
 //----simulation----//
 TailDrawable::Simulation::Simulation(const sf::Vector2f& start, const sf::Vector2f& end)
-    : m_anchor(start / pixelScale)
+    : m_anchor  (start / pixelScale),
+    m_layoutEnd (end / pixelScale)
 {
     for (auto i = 0; i < jointCount; ++i)
         m_masses.emplace_back(std::make_unique<Mass>(jointMass));
 
-    auto direction = Util::Vector::normalise(end - start) * constraintLength;
-
-    for (auto i = 0; i < jointCount; ++i)
-    {
-        m_masses[i]->setPosition(direction * static_cast<float>(i));
-    }
+    layoutMasses();
 
     for (auto i = 0; i < jointCount - 1; ++i)
     {
@@ -143,12 +139,24 @@ const std::vector<TailDrawable::Mass::Ptr>& TailDrawable::Simulation::getMasses(
 
 void TailDrawable::Simulation::setAnchor(const sf::Vector2f& position)
 {
+    auto oldPos = m_anchor;
     m_anchor = position / pixelScale;
+    m_layoutEnd = m_anchor;
+    m_layoutEnd.x -= constraintLength;
 }
 
 float TailDrawable::Simulation::getScale() const
 {
     return pixelScale;
+}
+
+void TailDrawable::Simulation::setPosition(const sf::Vector2f& position)
+{
+    setAnchor(position);
+    for (auto& m : m_masses)
+    {
+        m->setPosition(m->getPosition() + (position / pixelScale));
+    }
 }
 
 void TailDrawable::Simulation::reset()
@@ -182,9 +190,6 @@ void TailDrawable::Simulation::simulate(float dt)
     //set first point tied to anchor
     m_masses[0]->setVelocity({});
     m_masses[0]->setPosition(m_anchor);
-
-    //m_masses.back()->setVelocity({});
-    //m_masses.back()->setPosition(m_anchor);
 }
 
 void TailDrawable::Simulation::update(float dt)
@@ -192,4 +197,15 @@ void TailDrawable::Simulation::update(float dt)
     reset();
     solve();
     simulate(dt);
+}
+
+//private
+void TailDrawable::Simulation::layoutMasses()
+{   
+    auto direction = Util::Vector::normalise(m_layoutEnd - m_anchor) * constraintLength;
+
+    for (auto i = 0; i < jointCount; ++i)
+    {
+        m_masses[i]->setPosition(m_anchor + (direction * static_cast<float>(i)));
+    }
 }
