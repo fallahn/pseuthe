@@ -32,6 +32,7 @@ source distribution.
 #include <HelpState.hpp>
 #include <TitleState.hpp>
 #include <Util.hpp>
+#include <Icon.hpp>
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/Shader.hpp>
@@ -76,6 +77,7 @@ App::App()
     m_scores.load();
 
     m_renderWindow.setVerticalSyncEnabled(m_videoSettings.VSync);
+    m_renderWindow.setIcon(icon_width, icon_height, icon_arr);
 
     //store available modes and remove unusable
     m_videoSettings.AvailableVideoModes = sf::VideoMode::getFullscreenModes();
@@ -161,6 +163,8 @@ void App::applyVideoSettings(const VideoSettings& settings)
     m_videoSettings = settings;
     m_videoSettings.AvailableVideoModes = availableModes;
     m_stateStack.updateView();
+
+    m_renderWindow.setIcon(icon_width, icon_height, icon_arr);
 }
 
 sf::Font& App::getFont(const std::string& path)

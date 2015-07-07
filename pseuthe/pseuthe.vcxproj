@@ -143,6 +143,7 @@
     <ClInclude Include="include\GameState.hpp" />
     <ClInclude Include="include\GradientDrawable.hpp" />
     <ClInclude Include="include\HelpState.hpp" />
+    <ClInclude Include="include\Icon.hpp" />
     <ClInclude Include="include\InputComponent.hpp" />
     <ClInclude Include="include\JsonUtil.hpp" />
     <ClInclude Include="include\LightPosition.hpp" />
@@ -181,6 +182,13 @@
     <ClInclude Include="include\UISelection.hpp" />
     <ClInclude Include="include\UISlider.hpp" />
     <ClInclude Include="include\Util.hpp" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="pseuthe_icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

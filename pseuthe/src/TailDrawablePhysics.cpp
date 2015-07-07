@@ -139,7 +139,6 @@ const std::vector<TailDrawable::Mass::Ptr>& TailDrawable::Simulation::getMasses(
 
 void TailDrawable::Simulation::setAnchor(const sf::Vector2f& position)
 {
-    auto oldPos = m_anchor;
     m_anchor = position / pixelScale;
     m_layoutEnd = m_anchor;
     m_layoutEnd.x -= constraintLength;
