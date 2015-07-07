@@ -74,7 +74,7 @@ public:
     struct GameSettings final
     {
         Difficulty difficulty = Difficulty::Easy;
-        ControlType controlType = ControlType::Classic;
+        ControlType controlType = ControlType::Arcade;
     };
 
     App();

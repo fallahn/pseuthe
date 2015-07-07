@@ -509,10 +509,11 @@ void GameController::spawnPlankton()
     if (type == PlanktonController::Type::UberLife)
     {
         auto tails = std::make_unique<TailDrawable>(m_messageBus);
-        tails->addTail(sf::Vector2f(-18.f, -15.f) * scale);
-        tails->addTail(sf::Vector2f(-8.f, -5.f) * scale);
-        tails->addTail(sf::Vector2f(-8.f, 5.f) * scale);
-        tails->addTail(sf::Vector2f(-18.f, 15.f) * scale);
+        tails->addTail(sf::Vector2f(-18.f, -15.f));
+        tails->addTail(sf::Vector2f(-8.f, -5.f));
+        tails->addTail(sf::Vector2f(-8.f, 5.f));
+        tails->addTail(sf::Vector2f(-18.f, 15.f));
+        tails->setScale(scale, scale);
         tails->setName("tail");
         entity->addComponent<TailDrawable>(tails);
     }

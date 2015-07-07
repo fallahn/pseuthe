@@ -40,13 +40,22 @@ namespace
     const float largeDistance = 330.f;//prevent drawing stretched tails
 
     const float fadeTime = 0.5f;
+
+    const float wiggleAmplitude = 3.5f;
 }
 
 TailDrawable::TailDrawable(MessageBus& mb)
-    : Component (mb),
-    m_fadeTime  (0.f)
+    : Component     (mb),
+    m_fadeTime      (0.f),
+    m_currentIndex  (0)
 {
-
+    //60 is our fixed step time
+    float stepCount = 60.f;// / static_cast<float>(Util::Random::value(2, 3));
+    float step = TAU / stepCount;
+    for (float i = 0.f; i < stepCount; ++i)
+    {
+        m_wavetable.push_back(std::sin(step * i) * wiggleAmplitude);
+    }
 }
 
 //public
@@ -61,10 +70,13 @@ void TailDrawable::entityUpdate(Entity& entity, float dt)
 
     setPosition(position);
     auto transform = getTransform();
-    for (auto& sim : m_simulations)
+    int wiggleOffset = m_wavetable.size() / m_simulations.size();
+    for (auto i = 0u; i < m_simulations.size(); ++i)
     {
-        sim.first->setAnchor(transform.transformPoint(sim.second));
+        auto point = m_simulations[i].second + sf::Vector2f(0.f, m_wavetable[(m_currentIndex + (i * wiggleOffset)) % m_wavetable.size()]);
+        m_simulations[i].first->setAnchor(transform.transformPoint(point));
     }
+    m_currentIndex = (m_currentIndex + 1) % m_wavetable.size();
     
     int iterCount = static_cast<int>(dt / maxDt) + 1;
     if (iterCount) dt /= iterCount;

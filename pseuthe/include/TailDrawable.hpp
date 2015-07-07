@@ -129,6 +129,10 @@ private:
     std::vector<std::pair<Simulation::Ptr, sf::Vector2f>> m_simulations;
     sf::Color m_colour;
     float m_fadeTime;
+
+    std::vector<float> m_wavetable;
+    int m_currentIndex;
+
     void draw(sf::RenderTarget&, sf::RenderStates) const override;
 };
 
