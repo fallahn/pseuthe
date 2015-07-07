@@ -30,6 +30,8 @@ source distribution.
 #include <Shaders.hpp>
 #include <Util.hpp>
 
+#include <SFML/Window/Event.hpp>
+
 namespace
 {
     const float fadeTime = 1.f;
@@ -63,7 +65,17 @@ TitleState::TitleState(StateStack& stack, Context context)
 }
 
 //public
-bool TitleState::handleEvent(const sf::Event&){ return false; }
+bool TitleState::handleEvent(const sf::Event& evt)
+{ 
+    if (evt.type == sf::Event::KeyReleased
+        || evt.type == sf::Event::JoystickButtonReleased)
+    {
+        requestStackPop();
+        requestStackPush(States::ID::Main);
+        requestStackPush(States::ID::Menu);
+    }
+    return false;
+}
 void TitleState::handleMessage(const Message&){}
 
 bool TitleState::update(float dt)

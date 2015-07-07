@@ -123,7 +123,7 @@ void PlanktonController::entityUpdate(Entity& entity, float dt)
             sendMessage(msg);
         }
     }
-    
+    else m_flags &= ~Flags::TouchingPlayer;
 
     //set colour
     sf::Color colour;
@@ -171,7 +171,6 @@ void PlanktonController::handleMessage(const Message& msg)
             {
                 m_targetRotation = Util::Vector::rotation(m_physComponent->getVelocity());
                 m_flags |= Flags::RequestRotation;
-                m_flags &= ~Flags::TouchingPlayer;
                 m_health -= wallDamage;
             }
             break;

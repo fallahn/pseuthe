@@ -28,13 +28,13 @@ source distribution.
 #include <App.hpp>
 
 #ifdef __linux
-#include <X11/Xlib.h>
+//#include <X11/Xlib.h>
 #endif // __linux
 
 int main()
 {
 #ifdef __linux
-    XInitThreads();
+    //XInitThreads();
 #endif //__linux
 
     App app;
