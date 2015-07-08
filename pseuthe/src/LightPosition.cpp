@@ -27,6 +27,7 @@ source distribution.
 
 #include <LightPosition.hpp>
 #include <Entity.hpp>
+#include <MessageBus.hpp>
 
 namespace
 {
@@ -54,8 +55,15 @@ void LightPosition::entityUpdate(Entity& entity, float dt)
     entity.move(moveSpeed * dt, 0.f);
 
     const float xPos = entity.getPosition().x;
-    if (xPos > max) entity.setPosition(xPos - (max - min), entity.getPosition().y);
+    sf::Vector2f position(xPos - (max - min), entity.getPosition().y);
+    if (xPos > max) entity.setPosition(position);
     entity.setRotation(((entity.getPosition().x / max) * 90.f) - 45.f);
+
+    Message msg;
+    msg.type = Message::Type::Drawable;
+    msg.drawable.lightX = position.x;
+    msg.drawable.lightY = position.y;
+    sendMessage(msg);
 }
 
 void LightPosition::handleMessage(const Message&)

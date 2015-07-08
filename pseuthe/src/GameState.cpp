@@ -32,6 +32,7 @@ source distribution.
 #include <ParticleField.hpp>
 #include <FadeDrawable.hpp>
 #include <CausticDrawable.hpp>
+#include <AnimatedDrawable.hpp>
 #include <LightPosition.hpp>
 #include <OrbController.hpp>
 
@@ -172,6 +173,20 @@ Entity::Ptr GameState::createEntity()
 
     auto oc = std::make_unique<OrbController>(m_messageBus);
     e->addComponent<OrbController>(oc);
+
+    auto drawable = std::make_unique<AnimatedDrawable>(m_messageBus, getContext().appInstance.getTexture("assets/images/particles/balls.png"));
+    drawable->loadAnimationData("assets/images/particles/balls.cra");
+    drawable->setOrigin(sf::Vector2f(drawable->getFrameSize()) / 2.f);
+    drawable->setBlendMode(sf::BlendAdd);
+    const auto& anims = drawable->getAnimations();
+    if (!anims.empty())
+    {
+        drawable->play(anims[0], Util::Random::value(0, drawable->getFrameCount() - 1));
+    }
+    float scale = particleSize / static_cast<float>(drawable->getFrameSize().x);
+    drawable->setScale(scale, scale);
+    drawable->setColour(colour);
+    e->addComponent<AnimatedDrawable>(drawable);
 
     //ps = ParticleSystem::create(Particle::Type::Trail, m_messageBus);
     //ps->setTexture(getContext().appInstance.getTexture("assets/images/particles/circle.png"));

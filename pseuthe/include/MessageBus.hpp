@@ -74,7 +74,8 @@ public:
 
     struct DrawableEvent
     {
-
+        float lightX;
+        float lightY;
     };
 
     struct EntityEvent

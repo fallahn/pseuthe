@@ -439,7 +439,7 @@ void GameController::spawnPlankton()
             (badPlankton < goodPlankton) ? PlanktonController::Type::Bad : PlanktonController::Type::Good;
 
     //----test code----//
-    if (Util::Random::value(0, 39) == 0)
+    if (Util::Random::value(0, 33) == 0)
         type = PlanktonController::Type::UberLife;
     //-----------------//
 

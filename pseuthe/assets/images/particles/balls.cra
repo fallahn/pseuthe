@@ -1,0 +1,15 @@
+{
+  "Animations": [
+    {
+      "Start": 0,
+      "End": 15,
+      "Loop": true,
+      "Name": "default"
+    }
+  ],
+  "FrameCount": 16,
+  "FrameSize": "256, 256",
+  "FrameRate": 16.0,
+  "Texture": "balls.png",
+  "NormalMap": "none.png"
+}
