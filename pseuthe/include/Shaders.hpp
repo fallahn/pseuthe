@@ -167,7 +167,7 @@ namespace Shader
             "const float centreDistanceSquared = 0.25;\n" \
             "float distanceSquared(vec2 coord)\n" \
             "{\n" \
-            "    return (coord.x * coord.x) + (coord.y * coord.y);\n" \
+            "    return dot(coord, coord);\n" \
             "}\n" \
 
             "void main()\n" \

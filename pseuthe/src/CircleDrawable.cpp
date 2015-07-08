@@ -41,7 +41,7 @@ CircleDrawable::CircleDrawable(float radius, MessageBus& m)
     m_circleShape   (radius)
 {
     m_circleShape.setOrigin(radius, radius);
-    m_circleShape.setOutlineThickness(2.f);
+    m_circleShape.setOutlineThickness(1.6f);
 
     float colour = std::min(radius / 50.f, 1.f);
     colour *= 210.f;

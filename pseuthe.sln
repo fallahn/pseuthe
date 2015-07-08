@@ -5,16 +5,38 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pseuthe", "pseuthe\pseuthe.vcxproj", "{7A598339-51F1-4DED-BA56-65F0A8473519}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimplexNoiseAnimator", "SimplexNoiseAnimator\SimplexNoiseAnimator.csproj", "{0F61D3AF-0057-41C8-B5A8-D4723AF37741}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
 		Debug|Win32 = Debug|Win32
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7A598339-51F1-4DED-BA56-65F0A8473519}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{7A598339-51F1-4DED-BA56-65F0A8473519}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{7A598339-51F1-4DED-BA56-65F0A8473519}.Debug|Mixed Platforms.Build.0 = Debug|Win32
 		{7A598339-51F1-4DED-BA56-65F0A8473519}.Debug|Win32.ActiveCfg = Debug|Win32
 		{7A598339-51F1-4DED-BA56-65F0A8473519}.Debug|Win32.Build.0 = Debug|Win32
+		{7A598339-51F1-4DED-BA56-65F0A8473519}.Release|Any CPU.ActiveCfg = Release|Win32
+		{7A598339-51F1-4DED-BA56-65F0A8473519}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{7A598339-51F1-4DED-BA56-65F0A8473519}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{7A598339-51F1-4DED-BA56-65F0A8473519}.Release|Win32.ActiveCfg = Release|Win32
 		{7A598339-51F1-4DED-BA56-65F0A8473519}.Release|Win32.Build.0 = Release|Win32
+		{0F61D3AF-0057-41C8-B5A8-D4723AF37741}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F61D3AF-0057-41C8-B5A8-D4723AF37741}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F61D3AF-0057-41C8-B5A8-D4723AF37741}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{0F61D3AF-0057-41C8-B5A8-D4723AF37741}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{0F61D3AF-0057-41C8-B5A8-D4723AF37741}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{0F61D3AF-0057-41C8-B5A8-D4723AF37741}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F61D3AF-0057-41C8-B5A8-D4723AF37741}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F61D3AF-0057-41C8-B5A8-D4723AF37741}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{0F61D3AF-0057-41C8-B5A8-D4723AF37741}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{0F61D3AF-0057-41C8-B5A8-D4723AF37741}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

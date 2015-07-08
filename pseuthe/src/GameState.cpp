@@ -45,7 +45,7 @@ source distribution.
 namespace
 {
     const int nubbinCount = 19;
-    const std::string version("version 0.6.17");
+    const std::string version("version 0.6.18");
 }
 
 GameState::GameState(StateStack& stateStack, Context context)
@@ -173,11 +173,11 @@ Entity::Ptr GameState::createEntity()
     auto oc = std::make_unique<OrbController>(m_messageBus);
     e->addComponent<OrbController>(oc);
 
-    ps = ParticleSystem::create(Particle::Type::Trail, m_messageBus);
-    ps->setTexture(getContext().appInstance.getTexture("assets/images/particles/circle.png"));
-    particleSize = size / 12.f;
-    ps->setParticleSize({ particleSize, particleSize });
-    e->addComponent<ParticleSystem>(ps);
+    //ps = ParticleSystem::create(Particle::Type::Trail, m_messageBus);
+    //ps->setTexture(getContext().appInstance.getTexture("assets/images/particles/circle.png"));
+    //particleSize = size / 12.f;
+    //ps->setParticleSize({ particleSize, particleSize });
+    //e->addComponent<ParticleSystem>(ps);
 
     return std::move(e);
 }
