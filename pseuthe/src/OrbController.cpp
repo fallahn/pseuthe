@@ -27,14 +27,18 @@ source distribution.
 
 #include <OrbController.hpp>
 #include <ParticleSystem.hpp>
+#include <AnimatedDrawable.hpp>
+#include <PhysicsComponent.hpp>
 #include <MessageBus.hpp>
 #include <Entity.hpp>
+#include <Util.hpp>
 
 #include <cassert>
 
 OrbController::OrbController(MessageBus& mb)
     : Component         (mb),
-    m_particleSystem    (nullptr)
+    m_particleSystem    (nullptr),
+    m_drawable          (nullptr)
 {}
 
 //public
@@ -43,9 +47,9 @@ Component::Type OrbController::type() const
     return Component::Type::Script;
 }
 
-void OrbController::entityUpdate(Entity&, float)
+void OrbController::entityUpdate(Entity&, float dt)
 {
-
+    //m_drawable->rotate(Util::Vector::dot({ 1.f, 0.f }, m_physComponent->getVelocity()) * dt);
 }
 
 void OrbController::handleMessage(const Message& msg)
@@ -72,4 +76,10 @@ void OrbController::onStart(Entity& entity)
 {
     m_particleSystem = entity.getComponent<ParticleSystem>("echo");
     assert(m_particleSystem);
+
+    m_drawable = entity.getComponent<AnimatedDrawable>("drawable");
+    assert(m_drawable);
+    
+    m_physComponent = entity.getComponent<PhysicsComponent>("phys");
+    assert(m_physComponent);
 }

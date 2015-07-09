@@ -47,7 +47,7 @@ source distribution.
 namespace
 {
     const int nubbinCount = 19;
-    const std::string version("version 0.6.19");
+    const std::string version("version 0.6.20");
 }
 
 GameState::GameState(StateStack& stateStack, Context context)
@@ -149,7 +149,7 @@ void GameState::handleMessage(const Message& msg)
 {
     if (msg.type == Message::Type::Drawable)
     {
-        sf::Vector3f lightPos(msg.drawable.lightX, msg.drawable.lightY, 30.f);
+        sf::Vector3f lightPos(msg.drawable.lightX, msg.drawable.lightY, 0.f);
         m_orbShader.setParameter("u_lightPosition", lightPos);
         m_orbShader.setParameter("u_lightIntensity", msg.drawable.lightIntensity);
     }
@@ -163,8 +163,8 @@ void GameState::handleMessage(const Message& msg)
 //private
 Entity::Ptr GameState::createEntity()
 {
-    const int maxSize = 50;
-    float size = static_cast<float>(Util::Random::value(10, maxSize));
+    const int maxSize = 46;
+    float size = static_cast<float>(Util::Random::value(16, maxSize));
 
     Entity::Ptr e = std::make_unique<Entity>(m_messageBus);
     CircleDrawable::Ptr cd = std::make_unique<CircleDrawable>(size, m_messageBus);
@@ -175,6 +175,7 @@ Entity::Ptr GameState::createEntity()
     e->addComponent<CircleDrawable>(cd);
 
     PhysicsComponent::Ptr pc = m_physWorld.addBody(size);
+    pc->setName("phys");
     e->addComponent<PhysicsComponent>(pc);
 
     ParticleSystem::Ptr ps = ParticleSystem::create(Particle::Type::Echo, m_messageBus);
@@ -184,9 +185,6 @@ Entity::Ptr GameState::createEntity()
     ps->setColour(colour);
     ps->setName("echo");
     e->addComponent<ParticleSystem>(ps);
-
-    auto oc = std::make_unique<OrbController>(m_messageBus);
-    e->addComponent<OrbController>(oc);
 
     auto drawable = std::make_unique<AnimatedDrawable>(m_messageBus, getContext().appInstance.getTexture("assets/images/particles/balls.png"));
     drawable->loadAnimationData("assets/images/particles/balls.cra");
@@ -202,7 +200,11 @@ Entity::Ptr GameState::createEntity()
     drawable->setColour(colour);
     drawable->setShader(m_orbShader);
     drawable->setNormalMap(getContext().appInstance.getTexture("assets/images/particles/ball_normal_animated.png"));
+    drawable->setName("drawable");
     e->addComponent<AnimatedDrawable>(drawable);
+
+    auto oc = std::make_unique<OrbController>(m_messageBus);
+    e->addComponent<OrbController>(oc);
 
     return std::move(e);
 }

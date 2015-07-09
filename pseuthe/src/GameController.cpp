@@ -62,16 +62,17 @@ namespace
     const sf::Uint8 hardPartCount = 2u;
 
     const float easyDecayTime = 4.f;
-    const float mediumDecayTime = 5.f;
-    const float hardDecayTime = 6.5f;
+    const float mediumDecayTime = 4.5f;
+    const float hardDecayTime = 5.5f;
 
     const float easySpeed = 1.f;
     const float mediumSpeed = 1.25f;
-    const float hardSpeed = 1.6f;
+    const float hardSpeed = 1.65f;
 
     sf::Clock spawnClock;
     const float easySpawnTime = 4.f;
-    const float hardSpawnTime = 6.5f;
+    const float mediumSpawnTime = 5.f;
+    const float hardSpawnTime = 2.5f;
     const float spawnTimeIncrease = 0.2f;
 
     sf::Clock scoreClock;
@@ -246,7 +247,7 @@ void GameController::setDifficulty(Difficulty difficulty)
         m_speedMultiplier = easySpeed;
         break;
     case Difficulty::Medium:
-        m_spawnTime = hardSpawnTime;
+        m_spawnTime = mediumSpawnTime;
         m_initialPartCount = hardPartCount;
         m_partDecayRate = mediumDecayTime;
         m_speedMultiplier = mediumSpeed;
@@ -356,11 +357,10 @@ void GameController::addBodyPart(float health)
     auto bodyPart = std::make_unique<Entity>(m_messageBus);
     auto position = m_playerPhysicsComponents.back()->getPosition();
     position -= Util::Vector::normalise(m_playerPhysicsComponents.back()->getVelocity()) * m_constraintLength;
-    //position.x -= (m_constraintLength/* * m_playerPhysicsComponents.size()*/);
-    bodyPart->setWorldPosition(position);
+    //bodyPart->setWorldPosition(position);
 
     auto physComponent = m_physicsWorld.attachBody(m_nextPartSize, m_constraintLength, m_playerPhysicsComponents.back());
-    physComponent->setPosition(bodyPart->getWorldPosition());
+    physComponent->setPosition(position);
     physComponent->setVelocity(m_playerPhysicsComponents.back()->getVelocity());
     physComponent->setName("control");
     m_playerPhysicsComponents.push_back(physComponent.get());
@@ -439,7 +439,7 @@ void GameController::spawnPlankton()
             (badPlankton < goodPlankton) ? PlanktonController::Type::Bad : PlanktonController::Type::Good;
 
     //----test code----//
-    if (Util::Random::value(0, 33) == 0)
+    if (Util::Random::value(0, 34) == 0)
         type = PlanktonController::Type::UberLife;
     //-----------------//
 

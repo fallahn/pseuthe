@@ -34,8 +34,8 @@ source distribution.
 
 namespace
 {
-    const float alpha = 120u;
-    const float baseColour = 210.f;
+    const float alpha = 100u;
+    const float baseColour = 185.f;
 }
 
 CircleDrawable::CircleDrawable(float radius, MessageBus& m)

@@ -61,11 +61,11 @@ namespace
     const float minTrailRate = 1.f;
     const float maxTrailRate = 50.f;
 
-    const float dragMultiplier = 2900.f;
+    const float dragMultiplier = 1100.f; //lower is more drag with more body parts
 
     const float joyDeadZone = 25.f;
     const float joyMaxAxis = 100.f;
-    const float minAccelerationRate = 20.f; //braking is only applied to values greater than this
+    const float minAccelerationRate = 40.f; //braking is only applied to values greater than this
 
     Animation mouthAnim("", 0, 0, false);
     const float wigglerRotation = 35.f;

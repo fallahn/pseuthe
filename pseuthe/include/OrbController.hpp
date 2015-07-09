@@ -33,6 +33,8 @@ source distribution.
 #include <Component.hpp>
 
 class ParticleSystem;
+class AnimatedDrawable;
+class PhysicsComponent;
 class OrbController final : public Component
 {
 public:
@@ -47,6 +49,8 @@ public:
 private:
 
     ParticleSystem* m_particleSystem;
+    AnimatedDrawable* m_drawable;
+    PhysicsComponent* m_physComponent;
 };
 
 #endif //ORB_CONTROLLER_HPP_
