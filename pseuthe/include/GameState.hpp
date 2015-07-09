@@ -70,8 +70,7 @@ private :
     sf::RectangleShape m_vignette;
     sf::Text m_versionText;
 
-    sf::Shader m_orbShaderTextured;
-    sf::Shader m_orbShaderColoured;
+    sf::Shader m_orbShader;
     Entity::Ptr createEntity();
 };
 

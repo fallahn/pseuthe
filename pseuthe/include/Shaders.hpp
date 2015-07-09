@@ -305,7 +305,7 @@ namespace Shader
             "uniform float u_lightIntensity = 1.0;\n" \
 
             /*TODO make ambient colour match background*/
-            "uniform vec3 u_ambientColour = vec3 (0.3, 0.3, 0.3);\n" \
+            "uniform vec3 u_ambientColour = vec3 (0.2, 0.2, 0.2);\n" \
 
             "varying vec3 v_eyeDirection;\n" \
             "varying vec3 v_lightDirection;\n" \

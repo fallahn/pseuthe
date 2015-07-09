@@ -59,10 +59,13 @@ public:
 
     void setShader(sf::Shader&);
     void setTexture(const sf::Texture&);
+    void setNormalMap(const sf::Texture&);
+
 private:
 
     sf::CircleShape m_circleShape;
     sf::Shader* m_shader;
+    const sf::Texture* m_normalMap;
 
     void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 };

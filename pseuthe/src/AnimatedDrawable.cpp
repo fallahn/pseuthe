@@ -43,6 +43,7 @@ source distribution.
 AnimatedDrawable::AnimatedDrawable(MessageBus& mb)
     : Component     (mb),
     m_shader        (nullptr),
+    m_normalMap     (nullptr),
     m_frameCount    (0u),
     m_currentFrame  (0u),
     m_firstFrame    (0u),
@@ -56,6 +57,7 @@ AnimatedDrawable::AnimatedDrawable(MessageBus& mb, const sf::Texture& t)
     : Component     (mb),
     m_sprite        (t),
     m_shader        (nullptr),
+    m_normalMap     (nullptr),
     m_textureSize   (t.getSize()),
     m_frameSize     (m_textureSize),
     m_frameCount    (0u),
@@ -132,6 +134,11 @@ const sf::Texture* AnimatedDrawable::getTexture() const
 void AnimatedDrawable::setShader(sf::Shader& shader)
 {
     m_shader = &shader;
+}
+
+void AnimatedDrawable::setNormalMap(const sf::Texture& t)
+{
+    m_normalMap = &t;
 }
 
 void AnimatedDrawable::setFrameSize(const sf::Vector2i& size)
@@ -319,6 +326,7 @@ void AnimatedDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     if (m_shader)
     {
         m_shader->setParameter("u_diffuseMap", *m_sprite.getTexture());
+        m_shader->setParameter("u_normalMap", *m_normalMap);
         m_shader->setParameter("u_inverseWorldViewMatrix", states.transform.getInverse());
     }
     rt.draw(m_sprite, states);

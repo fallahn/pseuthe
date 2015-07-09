@@ -84,6 +84,7 @@ public:
     void setTexture(const sf::Texture& t);
     const sf::Texture* getTexture() const;
     void setShader(sf::Shader& shader);
+    void setNormalMap(const sf::Texture&);
     void setFrameSize(const sf::Vector2i& size);
     const sf::Vector2i& getFrameSize() const;
     void setFrameCount(sf::Uint8 count);
@@ -113,6 +114,7 @@ private:
 
     sf::Sprite m_sprite;
     sf::Shader* m_shader;
+    const sf::Texture* m_normalMap;
     sf::IntRect m_subRect;
     sf::Vector2u m_textureSize;
     sf::Vector2i m_frameSize;

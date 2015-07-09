@@ -79,6 +79,8 @@ public:
 
     sf::View updateView();
 
+    void applyPendingChanges();
+
 private:
 
     struct Pendingchange
@@ -94,7 +96,7 @@ private:
     std::map<States::ID, std::function<State::Ptr()>> m_factories;
 
     State::Ptr createState(States::ID id);
-    void applyPendingChanges();
+
 };
 
 #endif //STATESTACK_HPP_

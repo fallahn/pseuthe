@@ -34,24 +34,24 @@ source distribution.
 
 namespace
 {
-    const sf::Uint8 alpha = 100u;
+    const float alpha = 120u;
     const float baseColour = 210.f;
 }
 
 CircleDrawable::CircleDrawable(float radius, MessageBus& m)
     : Component     (m),
     m_circleShape   (radius),
-    m_shader        (nullptr)
+    m_shader        (nullptr),
+    m_normalMap     (nullptr)
 {
     m_circleShape.setOrigin(radius, radius);
-    m_circleShape.setOutlineThickness(1.6f);
+    m_circleShape.setOutlineThickness(1.4f);
 
     float colour = std::min(radius / 50.f, 1.f);
-    colour *= baseColour;
-    sf::Uint8 colourByte = static_cast<sf::Uint8>(colour);
-    sf::Color finalColour(colourByte, colourByte, colourByte);
+    sf::Uint8 colourByte = static_cast<sf::Uint8>(colour * baseColour);
+    sf::Color finalColour(colourByte, colourByte, colourByte, static_cast<sf::Uint8>(colour * 240.f));
     m_circleShape.setOutlineColor(finalColour);
-    finalColour.a = alpha;
+    finalColour.a = static_cast<sf::Uint8>(colour * alpha);
     m_circleShape.setFillColor(finalColour);
 }
 
@@ -84,7 +84,7 @@ void CircleDrawable::handleMessage(const Message& msg)
 void CircleDrawable::setColour(sf::Color colour)
 {
     m_circleShape.setOutlineColor(colour);
-    colour.a = alpha;
+    colour.a = static_cast<sf::Uint8>(alpha);
     m_circleShape.setFillColor(colour);
 }
 
@@ -114,6 +114,10 @@ void CircleDrawable::setTexture(const sf::Texture& t)
     m_circleShape.setTexture(&t, true);
 }
 
+void CircleDrawable::setNormalMap(const sf::Texture& t)
+{
+    m_normalMap = &t;
+}
 
 //private
 void CircleDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
@@ -126,6 +130,7 @@ void CircleDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     {
         m_shader->setParameter("u_inverseWorldViewMatrix", states.transform.getInverse());
         m_shader->setParameter("u_diffuseMap", sf::Shader::CurrentTexture);
+        m_shader->setParameter("u_normalMap", *m_normalMap);
     }
 
     rt.draw(m_circleShape, states);

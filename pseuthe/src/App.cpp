@@ -121,6 +121,9 @@ void App::run()
 
     saveSettings();
     m_scores.save();
+
+    m_stateStack.clearStates();
+    m_stateStack.applyPendingChanges();
 }
 
 void App::pause()

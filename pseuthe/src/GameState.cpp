@@ -47,7 +47,7 @@ source distribution.
 namespace
 {
     const int nubbinCount = 19;
-    const std::string version("version 0.6.18");
+    const std::string version("version 0.6.19");
 }
 
 GameState::GameState(StateStack& stateStack, Context context)
@@ -58,11 +58,7 @@ GameState::GameState(StateStack& stateStack, Context context)
     m_gameController    (m_scene, m_messageBus, context.appInstance, m_physWorld)
 {
 
-    m_orbShaderTextured.loadFromMemory(Shader::Orb::vertex, Shader::Orb::fragment);
-    m_orbShaderTextured.setParameter("u_normalMap", context.appInstance.getTexture("assets/images/particles/ball_normal_animated.png"));
-
-    m_orbShaderColoured.loadFromMemory(Shader::Orb::vertex, Shader::Orb::fragment);
-    m_orbShaderColoured.setParameter("u_normalMap", context.appInstance.getTexture("assets/images/particles/ball_normal.png"));
+    m_orbShader.loadFromMemory(Shader::Orb::vertex, Shader::Orb::fragment);
 
     for (int i = 0; i < nubbinCount; ++i)
     {
@@ -154,11 +150,8 @@ void GameState::handleMessage(const Message& msg)
     if (msg.type == Message::Type::Drawable)
     {
         sf::Vector3f lightPos(msg.drawable.lightX, msg.drawable.lightY, 30.f);
-        m_orbShaderTextured.setParameter("u_lightPosition", lightPos);
-        m_orbShaderTextured.setParameter("u_lightIntensity", msg.drawable.lightIntensity);
-
-        m_orbShaderColoured.setParameter("u_lightPosition", lightPos);
-        m_orbShaderColoured.setParameter("u_lightIntensity", msg.drawable.lightIntensity);
+        m_orbShader.setParameter("u_lightPosition", lightPos);
+        m_orbShader.setParameter("u_lightIntensity", msg.drawable.lightIntensity);
     }
 
     m_audioManager.handleMessage(msg);
@@ -176,8 +169,9 @@ Entity::Ptr GameState::createEntity()
     Entity::Ptr e = std::make_unique<Entity>(m_messageBus);
     CircleDrawable::Ptr cd = std::make_unique<CircleDrawable>(size, m_messageBus);
     auto colour = cd->getColour();
-    cd->setShader(m_orbShaderColoured);
-    cd->setTexture(getContext().appInstance.getTexture("assets/images/particles/white.png"));
+    //cd->setShader(m_orbShader);
+    //cd->setTexture(getContext().appInstance.getTexture("assets/images/particles/white.png"));
+    //cd->setNormalMap(getContext().appInstance.getTexture("assets/images/particles/ball_normal.png"));
     e->addComponent<CircleDrawable>(cd);
 
     PhysicsComponent::Ptr pc = m_physWorld.addBody(size);
@@ -206,7 +200,8 @@ Entity::Ptr GameState::createEntity()
     float scale = particleSize / static_cast<float>(drawable->getFrameSize().x);
     drawable->setScale(scale, scale);
     drawable->setColour(colour);
-    drawable->setShader(m_orbShaderTextured);
+    drawable->setShader(m_orbShader);
+    drawable->setNormalMap(getContext().appInstance.getTexture("assets/images/particles/ball_normal_animated.png"));
     e->addComponent<AnimatedDrawable>(drawable);
 
     return std::move(e);
