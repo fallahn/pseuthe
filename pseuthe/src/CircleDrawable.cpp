@@ -30,21 +30,24 @@ source distribution.
 #include <MessageBus.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/Shader.hpp>
 
 namespace
 {
     const sf::Uint8 alpha = 100u;
+    const float baseColour = 210.f;
 }
 
 CircleDrawable::CircleDrawable(float radius, MessageBus& m)
     : Component     (m),
-    m_circleShape   (radius)
+    m_circleShape   (radius),
+    m_shader        (nullptr)
 {
     m_circleShape.setOrigin(radius, radius);
     m_circleShape.setOutlineThickness(1.6f);
 
     float colour = std::min(radius / 50.f, 1.f);
-    colour *= 210.f;
+    colour *= baseColour;
     sf::Uint8 colourByte = static_cast<sf::Uint8>(colour);
     sf::Color finalColour(colourByte, colourByte, colourByte);
     m_circleShape.setOutlineColor(finalColour);
@@ -101,9 +104,29 @@ const sf::Color& CircleDrawable::getColour() const
     return m_circleShape.getOutlineColor();
 }
 
+void CircleDrawable::setShader(sf::Shader& shader)
+{
+    m_shader = &shader;
+}
+
+void CircleDrawable::setTexture(const sf::Texture& t)
+{
+    m_circleShape.setTexture(&t, true);
+}
+
+
 //private
 void CircleDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
+    //states.transform *= m_circleShape.getTransform();
     states.blendMode = sf::BlendAdd;
+    states.shader = m_shader;
+
+    if (m_shader)
+    {
+        m_shader->setParameter("u_inverseWorldViewMatrix", states.transform.getInverse());
+        m_shader->setParameter("u_diffuseMap", sf::Shader::CurrentTexture);
+    }
+
     rt.draw(m_circleShape, states);
 }

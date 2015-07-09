@@ -55,7 +55,7 @@ TitleState::TitleState(StateStack& stack, Context context)
     m_noiseShader.setParameter("u_lineCount", m_windowRatio  * scanlineCount);
     m_noiseShader.setParameter("u_sourceTexture", *m_sprite.getTexture());
 
-    m_lineShader.loadFromMemory(Shader::Scanline::frag, sf::Shader::Fragment);
+    m_lineShader.loadFromMemory(Shader::Scanline::fragment, sf::Shader::Fragment);
     m_lineShader.setParameter("u_sourceTexture", *m_sprite.getTexture());
 
     context.renderWindow.setView(context.defaultView);

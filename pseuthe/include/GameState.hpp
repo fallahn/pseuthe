@@ -39,6 +39,7 @@ source distribution.
 
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/Shader.hpp>
 
 #include <vector>
 
@@ -69,6 +70,8 @@ private :
     sf::RectangleShape m_vignette;
     sf::Text m_versionText;
 
+    sf::Shader m_orbShaderTextured;
+    sf::Shader m_orbShaderColoured;
     Entity::Ptr createEntity();
 };
 

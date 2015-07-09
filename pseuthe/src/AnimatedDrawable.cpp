@@ -312,13 +312,15 @@ const std::vector<Animation>& AnimatedDrawable::getAnimations()const
 //private
 void AnimatedDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {    
-    if (m_shader)
-    {
-        m_shader->setParameter("u_diffuseMap", *m_sprite.getTexture());
-    }
     states.transform *= getTransform();
     states.shader = m_shader;
     states.blendMode = m_blendmode;
+
+    if (m_shader)
+    {
+        m_shader->setParameter("u_diffuseMap", *m_sprite.getTexture());
+        m_shader->setParameter("u_inverseWorldViewMatrix", states.transform.getInverse());
+    }
     rt.draw(m_sprite, states);
 }
 

@@ -34,6 +34,11 @@ source distribution.
 
 #include <SFML/Graphics/CircleShape.hpp>
 
+namespace sf
+{
+    class Shader;
+}
+
 class CircleDrawable final : public Component, public sf::Drawable
 {
 public:
@@ -51,9 +56,13 @@ public:
     void setOutlineThickness(float);
 
     const sf::Color& getColour() const;
+
+    void setShader(sf::Shader&);
+    void setTexture(const sf::Texture&);
 private:
 
     sf::CircleShape m_circleShape;
+    sf::Shader* m_shader;
 
     void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 };

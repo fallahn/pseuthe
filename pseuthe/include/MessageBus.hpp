@@ -76,6 +76,7 @@ public:
     {
         float lightX;
         float lightY;
+        float lightIntensity;
     };
 
     struct EntityEvent

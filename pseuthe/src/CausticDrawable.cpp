@@ -28,6 +28,7 @@ source distribution.
 #include <CausticDrawable.hpp>
 #include <Entity.hpp>
 #include <Util.hpp>
+#include <MessageBus.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
@@ -83,6 +84,13 @@ void CausticDrawable::entityUpdate(Entity& entity, float dt)
 
     const float alpha = std::min(currentDistance / distanceToFullBright, 1.f);
     m_shader->setParameter("u_alpha", alpha);
+
+    Message msg;
+    msg.type = Message::Type::Drawable;
+    msg.drawable.lightX = position.x;
+    msg.drawable.lightY = position.y;
+    msg.drawable.lightIntensity = alpha;
+    sendMessage(msg);
 }
 
 void CausticDrawable::handleMessage(const Message&)
