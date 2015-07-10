@@ -49,8 +49,18 @@ if(X11_FOUND)
   include_directories(${X11_INCLUDE_DIRS})
 endif()
 
+#if using mingw on windows compile the icon / resource files
+SET(RES_FILES "")
+if(MINGW)
+	SET(RES_FILES "Resource.rc")
+	SET(CMAKE_RC_COMPILER_INIT windres)
+	ENABLE_LANGUAGE(RC)
+	SET(CMAKE_RC_COMPILE_OBJECT
+	"<CMAKE_RC_COMPILER> <FLAGS> -O coff <DEFINES> -i <SOURCE> -o <OBJECT>")
+endif(MINGW)
+
 add_executable(pseuthe
-  src/main.cpp
+  	src/main.cpp
 	src/Affectors.cpp
 	src/AnimatedDrawable.cpp
 	src/App.cpp
@@ -101,7 +111,8 @@ add_executable(pseuthe
 	src/UIControl.cpp
 	src/UIScoreList.cpp
 	src/UISelection.cpp
-	src/UISlider.cpp)
+	src/UISlider.cpp
+	${RES_FILES})
 
 target_link_libraries(pseuthe
 	${SFML_LIBRARIES}

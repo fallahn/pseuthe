@@ -314,7 +314,8 @@ void App::loadSettings()
     std::fstream file(settingsFile, std::ios::binary | std::ios::in);
     if (!file.good() || !file.is_open() || file.fail())
     {
-        Logger::Log("failed to open settings file for reading", Logger::Type::Error, Logger::Output::All);
+        Logger::Log("failed to open settings file for reading", Logger::Type::Warning, Logger::Output::All);
+        Logger::Log("file probably missing - new file will be created", Logger::Type::Warning, Logger::Output::All);
         file.close();
         return;
     }
