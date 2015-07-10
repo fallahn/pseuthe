@@ -4,12 +4,18 @@ PSEUTHE
 Pseuthe (pronounced 'soothe') is an abstract audio / visual experience,
 with casual game play elements.
 
+
+[![Watch on YouTube](http://djfallen.com/images/pseuthe.gif)](https://youtu.be/EOqYMuoxA50)
+
+
 Pseuthe started when I was experimenting with simulating Newton's laws of
 motion (and, to a lesser extent, Hooke's laws of springs) but has since
 evolved - first into something more graphical, closely followed by the
 addition of game play. You take on the role of a proterozoic plankton with
 the sole aim of survival - absorb and consume the healthy microbes whilst
-avoiding those detrimental to your health.
+avoiding those detrimental to your health. If you don't eat you will slowly
+starve to death, and colliding with obstacles will also reduce your health.
+The game ends once you fade out of existence.
 
 There are four kinds of microbes to look out for. The most common are
 either green or red. Green microbes give you health when eaten, red will
@@ -25,16 +31,16 @@ you a full set of health, so eat it quick!
 The player can be controlled with either the keyboard or a controller.
 Pseuthe is tested mainly with an xbox 360 controller, but others should
 work fine too. There are two sets of controls available; Arcade - which
-are enabled by default, and Classic - which can be enabled via the check
+is enabled by default, and Classic - which can be enabled via the check
 box on the main menu.
 
-In Arcade mode left and right rotates the player's head left and right,
-while forward and backward accelerate and decelerate. This is similar to
-many top down racing games - the main difference being that there is no
-friction applied to the player. Once you accelerate up to speed you no
-longer need to keep accelerating. Light adjustments using the accelerate
-and decelerate keys is the recommended approach. In Arcade mode the 
-controls are mapped like so:
+In Arcade mode left and right rotates the player's head, while forward 
+and backward accelerate and decelerate in the direction the player is 
+looking. This is similar to many top down racing games - the main 
+difference being that there is no friction applied to the player. Once
+you accelerate up to speed you no longer need to keep accelerating. 
+Light adjustments using the accelerate and decelerate keys is the 
+recommended approach. In Arcade mode the controls are mapped like so:
 
 ######Accelerate:
 W or Up Arrow on the keyboard, or Button 0 or z-axis negative on a
@@ -55,15 +61,15 @@ steer.
 Classic mode allows you to control the player in a more realistic, 
 physically based sense, but can be much harder to grasp. It is named 
 Classic mode because it was the initial control scheme when I started the 
-project. Using the WASD or Arrow keys on the keyboard, or the analogue 
-stick on the controller you apply a literal force in the direction of the
+project. Using the WASD or Arrow keys on the keyboard or the analogue 
+stick on the controller, you apply a literal force in the direction of the
 control. Pressing up will push the player toward the top of the screen, 
 down moves towards the bottom, and so on. If you have used RCS systems in 
-games such as Kerbal Space Program then the concept should be more familiar.
+games such as Kerbal Space Program then the concept should be familiar.
 Unfortunately keyboard controls in this mode are limited to eight degrees 
-of movement and so classic mode works much better on an analogue controller.
-The Classic control scheme has been included purely for reference, or for 
-those who are looking for an increased challenge in the game.
+of movement and so classic mode works much better with an analogue controller.
+The Classic control scheme has been included for those who are looking for
+an increased challenge from the game.
 
 
 ####Scoring
@@ -93,4 +99,5 @@ welcome!)
 License
 -------
 
-Pseuthe is released under the permissive zlib license.
+Pseuthe is released under the permissive zlib license, as found in the
+source code.
