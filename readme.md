@@ -19,11 +19,14 @@ The game ends once you fade out of existence.
 
 There are four kinds of microbes to look out for. The most common are
 either green or red. Green microbes give you health when eaten, red will
-take some away. Red microbes are sick and dying, and will fade away quite
-quickly. There are also blue 'viral' microbes which are less common, but
-will give you a significant health boost. Very rarely you will also see
-something akin to a jelly fish. These fade rapidly, but eating one gives
-you a full set of health, so eat it quick!
+take some away. Red microbes are sick and dying, and will fade away slowly.
+There are also blue 'viral' microbes which are less common, but will give
+you a significant health boost. Very rarely you will also see something 
+akin to a jelly fish. These fade rapidly, but eating one gives you full
+health, so eat it quick!
+    Microbes don't like to group. Striking red plankton to help them die
+sooner will promote the arrival of new microbes - but don't accidentally
+swallow anything nasty...
 
 
 ####Controls

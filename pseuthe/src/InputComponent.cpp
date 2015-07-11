@@ -56,6 +56,7 @@ namespace
     const float healthReduction = 4.5f; //reduction per second
     const float planktonHealth = 50.f;
     const float bonusHealth = 100.f;
+    const float uberHealth = 1000.f;
     const sf::Color defaultColour(200u, 200u, 230u, 180u);
 
     const float minTrailRate = 1.f;
@@ -199,7 +200,7 @@ void InputComponent::handleMessage(const Message& msg)
             break;
         case Message::PlayerEvent::PartRemoved:
             m_mass = std::max(0.f, m_mass - msg.player.value);
-            m_invMass = (m_mass > 0.01f) ? (1.f / m_mass) * dragMultiplier : 1.f;
+            m_invMass = (m_mass > 0.01f) ? (1.f / m_mass) * dragMultiplier : 0.5f;
             break;
         default: break;
         }
@@ -228,7 +229,11 @@ void InputComponent::handleMessage(const Message& msg)
             case PlanktonController::Type::Bonus:
                 m_health += bonusHealth;
                 newMessage.player.action = Message::PlayerEvent::HealthAdded;
-                //TODO prevent health counting down for short duration
+                m_sparkleParticles->start(4u, 0.f, 0.6f);
+                break;
+            case PlanktonController::Type::UberLife:
+                m_health += uberHealth;
+                newMessage.player.action = Message::PlayerEvent::HealthAdded;
                 m_sparkleParticles->start(4u, 0.f, 0.6f);
                 break;
             default:break;

@@ -153,8 +153,6 @@ void BodypartController::handleMessage(const Message& msg)
             case PlanktonController::Type::Bonus:
                 m_health += bonusHealth;
                 newMessage.player.action = Message::PlayerEvent::HealthAdded;
-                //TODO prevent health counting down for short duration
-
                 m_sparkles->start(4u, 0.f, 0.6f);
                 break;
             case PlanktonController::Type::UberLife:

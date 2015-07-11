@@ -62,17 +62,17 @@ namespace
     const sf::Uint8 hardPartCount = 2u;
 
     const float easyDecayTime = 4.f;
-    const float mediumDecayTime = 4.5f;
+    const float mediumDecayTime = 4.8f;
     const float hardDecayTime = 5.5f;
 
     const float easySpeed = 1.f;
-    const float mediumSpeed = 1.25f;
+    const float mediumSpeed = 1.3f;
     const float hardSpeed = 1.65f;
 
     sf::Clock spawnClock;
     const float easySpawnTime = 4.f;
-    const float mediumSpawnTime = 5.f;
-    const float hardSpawnTime = 2.5f;
+    const float mediumSpawnTime = 3.f;
+    const float hardSpawnTime = 2.f;
     const float spawnTimeIncrease = 0.2f;
 
     sf::Clock scoreClock;
