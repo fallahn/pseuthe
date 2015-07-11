@@ -49,6 +49,7 @@ public:
         FrontRear,
         FrontMiddle,
         FrontFront,
+        UI,
         Count
     };
 

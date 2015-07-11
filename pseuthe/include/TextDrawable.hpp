@@ -25,49 +25,28 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef AUDIO_MANAGER_HPP_
-#define AUDIO_MANAGER_HPP_
+//makes a Text instance component compatible
 
-#include <SoundPlayer.hpp>
-#include <Music.hpp>
+#ifndef TEXT_DRAWABLE_HPP_
+#define TEXT_DRAWABLE_HPP_
 
-class Message;
-class AudioManager final
+#include <Component.hpp>
+
+#include <SFML/Graphics/Text.hpp>
+
+class TextDrawable final : public Component, public sf::Text
 {
 public:
-    AudioManager();
-    ~AudioManager() = default;
-    AudioManager(const AudioManager&) = delete;
-    const AudioManager& operator = (const AudioManager&) = delete;
+    explicit TextDrawable(MessageBus&);
+    ~TextDrawable() = default;
 
-    void update(float);
-    void handleMessage(const Message&);
-
-    void mute(bool);
+    Component::Type type() const override;
+    void entityUpdate(Entity&, float) override;
+    void handleMessage(const Message&) override;
 
 private:
 
-    float m_fadeInTime;
-    float m_currentFadeTime;
-
-    MusicPlayer m_musicPlayer;
-    SoundPlayer m_soundPlayer;
-
-    enum SoundIds
-    {
-        SwitchFx = 0,
-        HealthLost,
-        HealthGained,
-        Eating,
-        AteJelly,
-        Spawned,
-        Size
-    };
-
-    std::vector<sf::SoundBuffer> m_impactSounds;
-    std::vector<sf::SoundBuffer> m_fxSounds;
-
-    bool m_muted;
 };
 
-#endif //AUDIO_MANAGER_HPP_
+
+#endif //TEXT_DRAWABLE_HPP_

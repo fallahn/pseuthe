@@ -47,7 +47,8 @@ namespace
 AudioManager::AudioManager()
     : m_fadeInTime      (4.f),
     m_currentFadeTime   (0.f),
-    m_muted             (false)
+    m_muted             (false),
+    m_fxSounds          (SoundIds::Size)
 {   
     m_musicPlayer.setVolume(0.f);
     m_musicPlayer.play("assets/sound/background.ogg", true);
@@ -63,10 +64,11 @@ AudioManager::AudioManager()
         }
     }
 
-    m_switchFx.loadFromFile("assets/sound/switch.wav");
-    m_healthLost.loadFromFile("assets/sound/healthlost.wav");
-    m_healthGained.loadFromFile("assets/sound/healthgained.wav");
-    m_eating.loadFromFile("assets/sound/nomnom.wav");
+    m_fxSounds[SwitchFx].loadFromFile("assets/sound/switch.wav");
+    m_fxSounds[HealthLost].loadFromFile("assets/sound/healthlost.wav");
+    m_fxSounds[HealthGained].loadFromFile("assets/sound/healthgained.wav");
+    m_fxSounds[Eating].loadFromFile("assets/sound/nomnom.wav");
+    m_fxSounds[AteJelly].loadFromFile("assets/sound/jelly_eat.wav");
 }
 
 
@@ -107,7 +109,7 @@ void AudioManager::handleMessage(const Message& msg)
         if (!m_muted && msg.entity.maxCollisionsReached)
         {
             //play a swooshy sound :D
-            m_soundPlayer.play(m_switchFx);
+            m_soundPlayer.play(m_fxSounds[SwitchFx]);
         }
         break;
     case Message::Type::UI:
@@ -142,15 +144,16 @@ void AudioManager::handleMessage(const Message& msg)
         switch (msg.player.action)
         {
         case Message::PlayerEvent::HealthAdded:
-            //LOG("play sound health added", Logger::Type::Info);
-            m_soundPlayer.play(m_healthGained);
+            (msg.player.value > 100) ? m_soundPlayer.play(m_fxSounds[AteJelly]) : m_soundPlayer.play(m_fxSounds[HealthGained]);
             break;
         case Message::PlayerEvent::HealthLost:
-            //LOG("play sound health lost", Logger::Type::Info);
-            m_soundPlayer.play(m_healthLost);
+            m_soundPlayer.play(m_fxSounds[HealthLost]);
             break;
         case Message::PlayerEvent::BeganEating:
-            m_soundPlayer.play(m_eating);
+            m_soundPlayer.play(m_fxSounds[Eating]);
+            break;
+        case Message::PlayerEvent::Spawned:
+            m_soundPlayer.play(m_fxSounds[SwitchFx]);
             break;
         default:break;
         }

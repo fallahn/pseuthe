@@ -85,13 +85,13 @@ void BodypartController::entityUpdate(Entity& entity, float dt)
     {
         sf::Vector2f normal(1.f, 0.f);
         m_physComponent->setVelocity(Util::Vector::reflect(m_physComponent->getVelocity(), normal) * impactReduction);
-        m_physComponent->setPosition({ minBounds, currentPosition.y });
+        m_physComponent->setPosition({ minBounds + (currentPosition.x - minBounds), currentPosition.y });
     }
     else if (currentPosition.x > maxBounds)
     {
         sf::Vector2f normal(-1.f, 0.f);
         m_physComponent->setVelocity(Util::Vector::reflect(m_physComponent->getVelocity(), normal) * impactReduction);
-        m_physComponent->setPosition({ maxBounds, currentPosition.y });
+        m_physComponent->setPosition({ maxBounds - (currentPosition.x - maxBounds), currentPosition.y });
     }
 
     //reduce health if this is the tail

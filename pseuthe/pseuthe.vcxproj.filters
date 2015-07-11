@@ -213,6 +213,9 @@
     <ClCompile Include="src\TailDrawablePhysics.cpp">
       <Filter>Source Files\components</Filter>
     </ClCompile>
+    <ClCompile Include="src\TextDrawable.cpp">
+      <Filter>Source Files\components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\BodypartController.hpp">
@@ -382,6 +385,9 @@
     </ClInclude>
     <ClInclude Include="include\Icon.hpp">
       <Filter>Header Files\system</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TextDrawable.hpp">
+      <Filter>Header Files\components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

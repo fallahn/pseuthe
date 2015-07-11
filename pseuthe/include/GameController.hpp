@@ -55,6 +55,7 @@ public:
 
     void update(float);
     void handleMessage(const Message&);
+    float getScore() const;
 
 private:
     Scene& m_scene;
@@ -86,7 +87,6 @@ private:
     void spawnPlankton();
 
     void resetScore();
-    float getScore() const;
     std::string getName() const;
 };
 

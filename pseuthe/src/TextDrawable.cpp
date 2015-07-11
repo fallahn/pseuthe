@@ -25,49 +25,15 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef AUDIO_MANAGER_HPP_
-#define AUDIO_MANAGER_HPP_
+#include <TextDrawable.hpp>
 
-#include <SoundPlayer.hpp>
-#include <Music.hpp>
+TextDrawable::TextDrawable(MessageBus& mb)
+    : Component(mb){}
 
-class Message;
-class AudioManager final
+Component::Type TextDrawable::type() const
 {
-public:
-    AudioManager();
-    ~AudioManager() = default;
-    AudioManager(const AudioManager&) = delete;
-    const AudioManager& operator = (const AudioManager&) = delete;
+    return Component::Type::Drawable;
+}
 
-    void update(float);
-    void handleMessage(const Message&);
-
-    void mute(bool);
-
-private:
-
-    float m_fadeInTime;
-    float m_currentFadeTime;
-
-    MusicPlayer m_musicPlayer;
-    SoundPlayer m_soundPlayer;
-
-    enum SoundIds
-    {
-        SwitchFx = 0,
-        HealthLost,
-        HealthGained,
-        Eating,
-        AteJelly,
-        Spawned,
-        Size
-    };
-
-    std::vector<sf::SoundBuffer> m_impactSounds;
-    std::vector<sf::SoundBuffer> m_fxSounds;
-
-    bool m_muted;
-};
-
-#endif //AUDIO_MANAGER_HPP_
+void TextDrawable::entityUpdate(Entity&, float){}
+void TextDrawable::handleMessage(const Message&){}

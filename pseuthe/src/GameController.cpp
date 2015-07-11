@@ -76,7 +76,7 @@ namespace
     const float spawnTimeIncrease = 0.2f;
 
     sf::Clock scoreClock;
-    std::vector<int> scoreCounts(maxBodyParts + 1);
+    float score = 0;
 
     sf::Clock lifeClock;
 
@@ -124,9 +124,10 @@ void GameController::update(float dt)
         }
     }
 
-    if (scoreClock.getElapsedTime().asSeconds() > 1.f)
+    //if (scoreClock.getElapsedTime().asSeconds() > 1.f)
     {
-        scoreCounts[m_playerPhysicsComponents.size()]++;
+        score += scoreClock.getElapsedTime().asSeconds() * m_playerPhysicsComponents.size();
+        scoreClock.restart();
     }
 }
 
@@ -439,8 +440,8 @@ void GameController::spawnPlankton()
             (badPlankton < goodPlankton) ? PlanktonController::Type::Bad : PlanktonController::Type::Good;
 
     //----test code----//
-    if (Util::Random::value(0, 34) == 0 
-        && (m_playerPhysicsComponents.size() <= (maxBodyHealth / 2)))
+    if (Util::Random::value(0, 29) == 0 
+        && (m_playerPhysicsComponents.size() <= (maxBodyParts / 2)))
         type = PlanktonController::Type::UberLife;
     //-----------------//
 
@@ -538,22 +539,14 @@ void GameController::spawnPlankton()
 
 void GameController::resetScore()
 {
-    for (auto& count : scoreCounts)
-        count = 0;
-
+    score = 0.f;
     scoreClock.restart();
     lifeClock.restart();
 }
 
 float GameController::getScore() const
 {
-    int multiplier = 0;
-    for (auto i = 0u; i < scoreCounts.size(); ++i)
-    {
-        multiplier += i * scoreCounts[i];
-    }
-
-    return scoreClock.getElapsedTime().asSeconds() * multiplier;
+    return score;
 }
 
 std::string GameController::getName() const

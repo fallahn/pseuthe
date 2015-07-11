@@ -50,7 +50,7 @@ namespace
 
     const float maxBounds = 1920.f;
     const float minBounds = 0.f;
-    const float impactReduction = 0.7f; //reduction of velocity when hitting edges
+    const float impactReduction = 0.65f; //reduction of velocity when hitting edges
 
     const float maxHealth = 100.f;
     const float healthReduction = 4.5f; //reduction per second
@@ -129,13 +129,13 @@ void InputComponent::entityUpdate(Entity& entity, float dt)
     {
         sf::Vector2f normal(1.f, 0.f);
         m_physicsComponent->setVelocity(Util::Vector::reflect(m_physicsComponent->getVelocity(), normal) * impactReduction);
-        m_physicsComponent->setPosition({ minBounds, currentPosition.y });
+        m_physicsComponent->setPosition({ minBounds + (currentPosition.x - minBounds), currentPosition.y });
     }
     else if (currentPosition.x > maxBounds)
     {
         sf::Vector2f normal(-1.f, 0.f);
         m_physicsComponent->setVelocity(Util::Vector::reflect(m_physicsComponent->getVelocity(), normal) * impactReduction);
-        m_physicsComponent->setPosition({ maxBounds, currentPosition.y });
+        m_physicsComponent->setPosition({ maxBounds - (currentPosition.x - maxBounds), currentPosition.y });
     }
 
     m_headDrawable->setRotation(Util::Vector::rotation(m_physicsComponent->getVelocity()));

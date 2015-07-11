@@ -35,6 +35,7 @@ source distribution.
 #include <AnimatedDrawable.hpp>
 #include <LightPosition.hpp>
 #include <OrbController.hpp>
+#include <TextDrawable.hpp>
 #include <Shaders.hpp>
 
 #include <App.hpp>
@@ -47,7 +48,8 @@ source distribution.
 namespace
 {
     const int nubbinCount = 19;
-    const std::string version("version 0.6.22");
+    const std::string version("version 0.6.23");
+    TextDrawable* scoreText = nullptr;
 }
 
 GameState::GameState(StateStack& stateStack, Context context)
@@ -87,20 +89,32 @@ GameState::GameState(StateStack& stateStack, Context context)
     m_vignette.setTexture(&context.appInstance.getTexture("assets/images/vignette.png"));
     m_vignette.setOrigin(m_vignette.getSize() / 2.f);
     
-    m_versionText.setFont(context.appInstance.getFont("assets/fonts/VeraMono.ttf"));
-    m_versionText.setString(version);
-    m_versionText.setCharacterSize(14u);
-    m_versionText.setPosition(10.f, 10.f);
+    auto versionText = std::make_unique<TextDrawable>(m_messageBus);
+    versionText->setFont(context.appInstance.getFont("assets/fonts/VeraMono.ttf"));
+    versionText->setString(version);
+    versionText->setCharacterSize(24u);
+    versionText->setPosition(10.f, 10.f);
+    m_scene.getLayer(Scene::Layer::UI).addComponent<TextDrawable>(versionText);
+
+    auto scrText = std::make_unique<TextDrawable>(m_messageBus);
+    scrText->setFont(context.appInstance.getFont("assets/fonts/Ardeco.ttf"));
+    scrText->setString("This Run:");
+    scrText->setCharacterSize(44u);
+    scrText->setPosition(20.f, 1000.f);
+    scrText->setColor(sf::Color::Transparent);
+    scoreText = scrText.get();
+    m_scene.getLayer(Scene::Layer::UI).addComponent<TextDrawable>(scrText);
 
     m_audioManager.mute(context.appInstance.getAudioSettings().muted);
-
 }
 
 bool GameState::update(float dt)
 {
     //probably ok to do here, although we could always raise an event when resizing window
-    m_vignette.setPosition(getContext().renderWindow.getDefaultView().getCenter());    
+    m_vignette.setPosition(getContext().defaultView.getCenter());
     m_scene.setView(getContext().defaultView);
+
+    scoreText->setString("This Run: " + std::to_string(m_gameController.getScore()));
 
     m_audioManager.update(dt);
     m_physWorld.update(dt);
@@ -115,8 +129,9 @@ void GameState::draw()
     auto& rw = getContext().renderWindow;
     rw.setView(getContext().renderWindow.getDefaultView());
     rw.draw(m_scene);
+
+    rw.setView(getContext().defaultView);
     rw.draw(m_vignette, sf::BlendMultiply);
-    rw.draw(m_versionText);
 }
 
 bool GameState::handleEvent(const sf::Event& evt)
@@ -152,6 +167,19 @@ void GameState::handleMessage(const Message& msg)
         sf::Vector3f lightPos(msg.drawable.lightX, msg.drawable.lightY, 0.f);
         m_orbShader.setParameter("u_lightPosition", lightPos);
         m_orbShader.setParameter("u_lightIntensity", msg.drawable.lightIntensity);
+    }
+    else if (msg.type == Message::Type::UI)
+    {
+        if (msg.ui.stateId == States::ID::Menu
+            && msg.ui.type == Message::UIEvent::MenuClosed)
+        {
+            scoreText->setColor(sf::Color::White);
+        }
+        else if (msg.ui.stateId == States::ID::Score
+            && msg.ui.type == Message::UIEvent::MenuOpened)
+        {
+            scoreText->setColor(sf::Color::Transparent);
+        }
     }
 
     m_audioManager.handleMessage(msg);

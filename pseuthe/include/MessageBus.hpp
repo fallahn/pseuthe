@@ -96,7 +96,8 @@ public:
             RequestState,
             RequestDifficultyChange,
             RequestControlsClassic,
-            RequestControlsArcade
+            RequestControlsArcade,
+            ResizedWindow
         }type;
         float value;
         States::ID stateId;
