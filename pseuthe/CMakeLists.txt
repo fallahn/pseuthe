@@ -30,8 +30,11 @@ if(PSEUTHE_STATIC_SFML)
   SET(SFML_STATIC_LIBRARIES TRUE)
 endif()
 
-
-find_package(SFML 2 REQUIRED graphics window audio system )
+if(WIN32)
+  find_package(SFML 2 REQUIRED graphics window audio system main)
+else()
+  find_package(SFML 2 REQUIRED graphics window audio system)
+endif()
 
 if(UNIX)
   find_package(X11 REQUIRED)
@@ -50,16 +53,16 @@ if(X11_FOUND)
 endif()
 
 #if using mingw on windows compile the icon / resource files
-SET(RES_FILES "")
+set(RES_FILES "")
 if(MINGW)
-  SET(RES_FILES "icon.rc")
-  SET(CMAKE_RC_COMPILER_INIT windres)
-  ENABLE_LANGUAGE(RC)
-  SET(CMAKE_RC_COMPILE_OBJECT
+  set(RES_FILES "icon.rc")
+  set(CMAKE_RC_COMPILER_INIT windres)
+  enable_language(RC)
+  set(CMAKE_RC_COMPILE_OBJECT
   "<CMAKE_RC_COMPILER> <FLAGS> -O coff <DEFINES> -i <SOURCE> -o <OBJECT>")
-endif(MINGW)
+endif()
 
-add_executable(pseuthe
+set(SOURCE
   src/main.cpp
   src/Affectors.cpp
   src/AnimatedDrawable.cpp
@@ -113,6 +116,12 @@ add_executable(pseuthe
   src/UISelection.cpp
   src/UISlider.cpp
   ${RES_FILES})
+  
+if(WIN32)
+  add_executable(pseuthe WIN32 ${SOURCE})
+else()
+  add_executable(pseuthe ${SOURCE})
+endif()
 
 target_link_libraries(pseuthe
   ${SFML_LIBRARIES}
