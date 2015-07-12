@@ -44,6 +44,7 @@ class Message;
 class App;
 class PhysicsWorld;
 class PhysicsComponent;
+class TextDrawable;
 class Entity;
 class GameController final
 {
@@ -55,7 +56,7 @@ public:
 
     void update(float);
     void handleMessage(const Message&);
-    float getScore() const;
+
 
 private:
     Scene& m_scene;
@@ -86,6 +87,9 @@ private:
     void addBodyPart(float health = 100.f);
     void spawnPlankton();
 
+    TextDrawable* m_scoreText;
+    TextDrawable* m_highScoreText;
+    bool m_paused;
     void resetScore();
     std::string getName() const;
 };

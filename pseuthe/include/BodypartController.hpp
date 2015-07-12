@@ -57,6 +57,7 @@ private:
 
     float m_health;
     float m_decayRate;
+    bool m_paused;
 };
 
 #endif //BODYPART_COPNTROLLER_HPP_

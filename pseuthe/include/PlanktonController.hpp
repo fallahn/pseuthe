@@ -81,6 +81,8 @@ private:
     sf::Uint64 m_enemyId;
 
     float m_targetRotation;
+
+    bool m_paused;
 };
 
 

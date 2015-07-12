@@ -38,6 +38,7 @@ source distribution.
 #include <AnimatedDrawable.hpp>
 #include <TailDrawable.hpp>
 #include <PlanktonController.hpp>
+#include <TextDrawable.hpp>
 
 #include <memory>
 
@@ -76,9 +77,8 @@ namespace
     const float spawnTimeIncrease = 0.2f;
 
     sf::Clock scoreClock;
-    float score = 0;
-
-    sf::Clock lifeClock;
+    float score = 0.f;
+    float highScore = 0.f;
 
     const char namechars[] = "0123456789ABCDEF";
 }
@@ -98,7 +98,10 @@ GameController::GameController(Scene& scene, MessageBus& mb, App& app, PhysicsWo
     m_partDecayRate         (easyDecayTime),
     m_speedMultiplier       (easySpeed),
     m_controlType           (ControlType::Classic),
-    m_difficulty            (Difficulty::Easy)
+    m_difficulty            (Difficulty::Easy),
+    m_scoreText             (nullptr),
+    m_highScoreText         (nullptr),
+    m_paused                (false)
 {
     //find two off screen areas for spawning teh planktons
     auto& worldBounds = m_physicsWorld.getWorldSize();
@@ -109,6 +112,25 @@ GameController::GameController(Scene& scene, MessageBus& mb, App& app, PhysicsWo
     m_planktonSpawns[1].left = 1920.f;
     m_planktonSpawns[1].width = (worldBounds.width - 1920.f) / 2.f;
     m_planktonSpawns[1].height = worldBounds.height;
+
+    
+    auto scrText = std::make_unique<TextDrawable>(m_messageBus);
+    scrText->setFont(app.getFont("assets/fonts/Ardeco.ttf"));
+    scrText->setString("This Run:");
+    scrText->setCharacterSize(44u);
+    scrText->setPosition(20.f, 1000.f);
+    scrText->setColor(sf::Color::Transparent);
+    m_scoreText = scrText.get();
+    m_scene.getLayer(Scene::Layer::UI).addComponent<TextDrawable>(scrText);
+
+    scrText = std::make_unique<TextDrawable>(m_messageBus);
+    scrText->setFont(app.getFont("assets/fonts/Ardeco.ttf"));
+    scrText->setString("Longest Run:");
+    scrText->setCharacterSize(44u);
+    scrText->setPosition(20.f, 950.f);
+    scrText->setColor(sf::Color::Transparent);
+    m_highScoreText = scrText.get();
+    m_scene.getLayer(Scene::Layer::UI).addComponent<TextDrawable>(scrText);
 }
 
 //public
@@ -120,15 +142,18 @@ void GameController::update(float dt)
         if (m_planktonCount < maxPlankton && m_player)
         {
             spawnPlankton();
-            m_spawnTime += spawnTimeIncrease;
+            if(!m_paused) m_spawnTime += spawnTimeIncrease;
         }
     }
 
-    //if (scoreClock.getElapsedTime().asSeconds() > 1.f)
+    if(!m_paused) score += scoreClock.getElapsedTime().asSeconds() * m_playerPhysicsComponents.size();
+    scoreClock.restart();
+
+    if (score > highScore)
     {
-        score += scoreClock.getElapsedTime().asSeconds() * m_playerPhysicsComponents.size();
-        scoreClock.restart();
+        m_highScoreText->setString("Longest Run: " + std::to_string(score));
     }
+    m_scoreText->setString("This Run: " + std::to_string(score));
 }
 
 void GameController::handleMessage(const Message& msg)
@@ -138,19 +163,32 @@ void GameController::handleMessage(const Message& msg)
         switch (msg.ui.type)
         {
         case Message::UIEvent::MenuClosed:
-            if (msg.ui.stateId == States::ID::Menu && !m_player)
+            if (msg.ui.stateId == States::ID::Menu)
             {
-                spawnPlayer();
-                for (auto i = 0u; i < m_initialPartCount; ++i)
+                m_scoreText->setColor(sf::Color::White);
+                m_highScoreText->setColor(sf::Color::White);
+
+                if (!m_player)
                 {
-                    addBodyPart();
+                    spawnPlayer();
+                    for (auto i = 0u; i < m_initialPartCount; ++i)
+                    {
+                        addBodyPart();
+                    }
                 }
+
+                m_paused = false;
             }
             break;
         case Message::UIEvent::MenuOpened:
-            if (m_player)
+            if (msg.ui.stateId == States::ID::Score)
             {
-                
+                m_scoreText->setColor(sf::Color::Transparent);
+                m_highScoreText->setColor(sf::Color::Transparent);
+            }
+            else if (msg.ui.stateId == States::ID::Menu)
+            {
+                m_paused = true;
             }
             break;
         case Message::UIEvent::RequestDifficultyChange:
@@ -179,7 +217,7 @@ void GameController::handleMessage(const Message& msg)
         {
         case Message::PlayerEvent::Died:
             m_player = nullptr;
-            m_appInstance.addScore(getName(), getScore());
+            m_appInstance.addScore(getName(), score);
             {
                 Message newMessage;
                 newMessage.type = Message::Type::UI;
@@ -187,7 +225,17 @@ void GameController::handleMessage(const Message& msg)
                 newMessage.ui.stateId = States::ID::Score;
                 m_messageBus.send(newMessage);
             }
+            break;
+        case Message::PlayerEvent::Spawned:
+            //difficulty setting not applied until player spawned
+            //so we need to get high score here
+        {
+            const auto& scores = m_appInstance.getScores();
+            if (!scores.empty()) highScore = scores[0].score;
+            else highScore = 0.f;
 
+            m_highScoreText->setString("Longest Run: " + std::to_string(highScore));
+        }
             break;
         case Message::PlayerEvent::PartRemoved:
             m_playerPhysicsComponents.pop_back();
@@ -541,12 +589,6 @@ void GameController::resetScore()
 {
     score = 0.f;
     scoreClock.restart();
-    lifeClock.restart();
-}
-
-float GameController::getScore() const
-{
-    return score;
 }
 
 std::string GameController::getName() const
@@ -559,7 +601,7 @@ std::string GameController::getName() const
 
     for (auto i = 0; i < 6; ++i)
     {
-        name += namechars[Util::Random::value(0, 16)];
+        name += namechars[Util::Random::value(0, 15)];
     }
 
     assert(name.size() == 16);

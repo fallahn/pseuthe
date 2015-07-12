@@ -182,10 +182,15 @@ void InputComponent::handleMessage(const Message& msg)
         switch (msg.ui.type)
         {
         case Message::UIEvent::MenuClosed:
-            m_parseInput = true;
+            if(msg.ui.stateId == States::ID::Menu)
+                m_parseInput = true;
             break;
         case Message::UIEvent::MenuOpened:
-            m_parseInput = false;
+            if (msg.ui.stateId == States::ID::Menu)
+            {
+                m_parseInput = false;
+                m_physicsComponent->setVelocity(m_physicsComponent->getVelocity() * 0.1f);
+            }
             break;
         default:break;
         }
@@ -263,7 +268,6 @@ void InputComponent::handleMessage(const Message& msg)
                     newMessage.player.action = Message::PlayerEvent::BeganEating;
                     sendMessage(newMessage);
                 }
-                //else LOG("already playing" + std::to_string(Util::Random::value(0, 1000)), Logger::Type::Info);
             }
             break;
         }

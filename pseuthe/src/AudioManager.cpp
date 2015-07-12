@@ -69,6 +69,7 @@ AudioManager::AudioManager()
     m_fxSounds[HealthGained].loadFromFile("assets/sound/healthgained.wav");
     m_fxSounds[Eating].loadFromFile("assets/sound/nomnom.wav");
     m_fxSounds[AteJelly].loadFromFile("assets/sound/jelly_eat.wav");
+    m_fxSounds[Spawned].loadFromFile("assets/sound/player_spawn.wav");
 }
 
 
@@ -153,7 +154,7 @@ void AudioManager::handleMessage(const Message& msg)
             m_soundPlayer.play(m_fxSounds[Eating]);
             break;
         case Message::PlayerEvent::Spawned:
-            m_soundPlayer.play(m_fxSounds[SwitchFx]);
+            m_soundPlayer.play(m_fxSounds[Spawned]);
             break;
         default:break;
         }

@@ -66,7 +66,8 @@ PlanktonController::PlanktonController(MessageBus& mb)
     m_tail              (nullptr),
     m_health            (maxHealth),
     m_enemyId           (0u),
-    m_targetRotation    (0.f)
+    m_targetRotation    (0.f),
+    m_paused            (false)
 {
 
 }
@@ -80,7 +81,7 @@ Component::Type PlanktonController::type() const
 void PlanktonController::entityUpdate(Entity& entity, float dt)
 {
     //check flags
-    if (m_flags & Flags::HealthHit)
+    if ((m_flags & Flags::HealthHit) && !m_paused)
     {
         m_health -= healthReduction * dt;
         m_flags &= ~Flags::HealthHit;
@@ -188,6 +189,21 @@ void PlanktonController::handleMessage(const Message& msg)
             m_flags |= Flags::Suicide; //goodbye cruel world!
             break;
         default: break;
+        }
+    }
+    else if (Message::Type::UI)
+    {
+        switch (msg.ui.type)
+        {
+        case Message::UIEvent::MenuClosed:
+            if (msg.ui.stateId == States::ID::Menu)
+                m_paused = false;
+            break;
+        case Message::UIEvent::MenuOpened:
+            if (msg.ui.stateId == States::ID::Menu)
+                m_paused = true;
+            break;
+        default:break;
         }
     }
 }

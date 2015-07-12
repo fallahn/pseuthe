@@ -60,7 +60,8 @@ BodypartController::BodypartController(MessageBus& mb)
     m_sparkles      (nullptr),
     m_echo          (nullptr),
     m_health        (maxHealth),
-    m_decayRate     (decayRate)
+    m_decayRate     (decayRate),
+    m_paused        (false)
 {
 
 }
@@ -95,7 +96,7 @@ void BodypartController::entityUpdate(Entity& entity, float dt)
     }
 
     //reduce health if this is the tail
-    if (m_physComponent->getContraintCount() < 2)
+    if (m_physComponent->getContraintCount() < 2 && !m_paused)
     {
         m_health -= m_decayRate * dt;
         if (m_health <= 0 && m_echo->getParticleCount() == 0)
@@ -123,7 +124,7 @@ void BodypartController::handleMessage(const Message& msg)
         if ((msg.physics.entityId[0] == getParentUID() || msg.physics.entityId[1] == getParentUID())
             && msg.physics.event == Message::PhysicsEvent::Collision)
         {
-            if (m_health > minHealth)
+            if (m_health > minHealth && !m_paused)
             {
                 m_health -= hitPoint;
                 m_echo->start(1u, 0.f, 0.02f);
@@ -168,6 +169,20 @@ void BodypartController::handleMessage(const Message& msg)
             m_health = std::min(m_health, maxHealth);           
             newMessage.player.value = remainder;
             sendMessage(newMessage);
+        }
+        break;
+    case Message::Type::UI:
+        switch (msg.ui.type)
+        {
+        case Message::UIEvent::MenuClosed:
+            if (msg.ui.stateId == States::ID::Menu)
+                m_paused = false;
+            break;
+        case Message::UIEvent::MenuOpened:
+            if (msg.ui.stateId == States::ID::Menu)
+                m_paused = true;
+            break;
+        default:break;
         }
         break;
     default: break;

@@ -48,8 +48,7 @@ source distribution.
 namespace
 {
     const int nubbinCount = 19;
-    const std::string version("version 0.6.23");
-    TextDrawable* scoreText = nullptr;
+    const std::string version("version 0.6.24");
 }
 
 GameState::GameState(StateStack& stateStack, Context context)
@@ -96,25 +95,14 @@ GameState::GameState(StateStack& stateStack, Context context)
     versionText->setPosition(10.f, 10.f);
     m_scene.getLayer(Scene::Layer::UI).addComponent<TextDrawable>(versionText);
 
-    auto scrText = std::make_unique<TextDrawable>(m_messageBus);
-    scrText->setFont(context.appInstance.getFont("assets/fonts/Ardeco.ttf"));
-    scrText->setString("This Run:");
-    scrText->setCharacterSize(44u);
-    scrText->setPosition(20.f, 1000.f);
-    scrText->setColor(sf::Color::Transparent);
-    scoreText = scrText.get();
-    m_scene.getLayer(Scene::Layer::UI).addComponent<TextDrawable>(scrText);
-
     m_audioManager.mute(context.appInstance.getAudioSettings().muted);
 }
 
 bool GameState::update(float dt)
 {
     //probably ok to do here, although we could always raise an event when resizing window
-    m_vignette.setPosition(getContext().defaultView.getCenter());
+    m_vignette.setPosition(getContext().defaultView.getCenter()); //TODO this should be part of the scene
     m_scene.setView(getContext().defaultView);
-
-    scoreText->setString("This Run: " + std::to_string(m_gameController.getScore()));
 
     m_audioManager.update(dt);
     m_physWorld.update(dt);
@@ -167,19 +155,6 @@ void GameState::handleMessage(const Message& msg)
         sf::Vector3f lightPos(msg.drawable.lightX, msg.drawable.lightY, 0.f);
         m_orbShader.setParameter("u_lightPosition", lightPos);
         m_orbShader.setParameter("u_lightIntensity", msg.drawable.lightIntensity);
-    }
-    else if (msg.type == Message::Type::UI)
-    {
-        if (msg.ui.stateId == States::ID::Menu
-            && msg.ui.type == Message::UIEvent::MenuClosed)
-        {
-            scoreText->setColor(sf::Color::White);
-        }
-        else if (msg.ui.stateId == States::ID::Score
-            && msg.ui.type == Message::UIEvent::MenuOpened)
-        {
-            scoreText->setColor(sf::Color::Transparent);
-        }
     }
 
     m_audioManager.handleMessage(msg);
