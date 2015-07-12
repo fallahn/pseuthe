@@ -186,6 +186,7 @@
     <ClCompile Include="src\UIScoreList.cpp" />
     <ClCompile Include="src\UISelection.cpp" />
     <ClCompile Include="src\UISlider.cpp" />
+    <ClCompile Include="src\UITextBox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Affectors.hpp" />
@@ -243,6 +244,7 @@
     <ClInclude Include="include\UIScoreList.hpp" />
     <ClInclude Include="include\UISelection.hpp" />
     <ClInclude Include="include\UISlider.hpp" />
+    <ClInclude Include="include\UITextBox.hpp" />
     <ClInclude Include="include\Util.hpp" />
     <ClInclude Include="resource.h" />
   </ItemGroup>

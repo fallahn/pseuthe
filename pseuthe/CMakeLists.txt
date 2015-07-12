@@ -116,6 +116,7 @@ set(SOURCE
   src/UIScoreList.cpp
   src/UISelection.cpp
   src/UISlider.cpp
+  src/UITextBox.cpp
   ${RES_FILES})
   
 if(WIN32)

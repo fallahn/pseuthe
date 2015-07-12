@@ -216,6 +216,9 @@
     <ClCompile Include="src\TextDrawable.cpp">
       <Filter>Source Files\components</Filter>
     </ClCompile>
+    <ClCompile Include="src\UITextBox.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\BodypartController.hpp">
@@ -388,6 +391,9 @@
     </ClInclude>
     <ClInclude Include="include\TextDrawable.hpp">
       <Filter>Header Files\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UITextBox.hpp">
+      <Filter>Header Files\ui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

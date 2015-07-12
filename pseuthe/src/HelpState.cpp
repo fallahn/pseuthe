@@ -77,7 +77,7 @@ HelpState::HelpState(StateStack& stack, Context context)
     auto& text04 = m_texts.back();
     Util::Position::centreOrigin(text04);
     text04.setPosition(centrePos);
-    text04.move(0.f, 240.f);
+    text04.move(0.f, 210.f);
 }
 
 bool HelpState::update(float dt)

@@ -34,6 +34,7 @@ source distribution.
 #include <UICheckBox.hpp>
 #include <UISelection.hpp>
 #include <UIButton.hpp>
+#include <UITextBox.hpp>
 
 #include <SFML/Window/Event.hpp>
 
@@ -71,6 +72,7 @@ MenuState::MenuState(StateStack& stateStack, Context context)
 //public
 bool MenuState::update(float dt)
 {
+    m_uiContainer.update(dt);
     return true;
 }
 
@@ -101,7 +103,7 @@ bool MenuState::handleEvent(const sf::Event& evt)
             return false;
         case sf::Keyboard::Space:
         //case sf::Keyboard::Escape:
-        case sf::Keyboard::Return:
+        //case sf::Keyboard::Return:
             startGame();
             return false;
         default: break;
@@ -154,7 +156,7 @@ void MenuState::handleMessage(const Message& msg)
 void MenuState::buildMenu(const sf::Font& font)
 {
     auto soundSlider = std::make_shared<ui::Slider>(font, getContext().appInstance.getTexture("assets/images/ui/slider_handle.png"), 375.f);
-    soundSlider->setPosition(600.f, 490.f);
+    soundSlider->setPosition(600.f, 470.f);
     soundSlider->setText("Volume");
     soundSlider->setMaxValue(1.f);
     soundSlider->setCallback([this](const ui::Slider* slider)
@@ -171,7 +173,7 @@ void MenuState::buildMenu(const sf::Font& font)
     m_uiContainer.addControl(soundSlider);
 
     auto muteCheckbox = std::make_shared<ui::CheckBox>(font, getContext().appInstance.getTexture("assets/images/ui/checkbox.png"));
-    muteCheckbox->setPosition(1100.f, 450.f);
+    muteCheckbox->setPosition(1100.f, 430.f);
     muteCheckbox->setText("Mute");
     muteCheckbox->setCallback([this](const ui::CheckBox* checkBox)
     {
@@ -185,7 +187,7 @@ void MenuState::buildMenu(const sf::Font& font)
 
 
     auto resolutionBox = std::make_shared<ui::Selection>(font, getContext().appInstance.getTexture("assets/images/ui/scroll_arrow.png"), 375.f);
-    resolutionBox->setPosition(600.f, 550.f);
+    resolutionBox->setPosition(600.f, 510.f);
 
     const auto& modes = getContext().appInstance.getVideoSettings().AvailableVideoModes;
     auto i = 0u;
@@ -206,7 +208,7 @@ void MenuState::buildMenu(const sf::Font& font)
     m_uiContainer.addControl(resolutionBox);
 
     auto fullscreenCheckbox = std::make_shared<ui::CheckBox>(font, getContext().appInstance.getTexture("assets/images/ui/checkbox.png"));
-    fullscreenCheckbox->setPosition(1100.f, 550.f);
+    fullscreenCheckbox->setPosition(1100.f, 510.f);
     fullscreenCheckbox->setText("Full Screen");
     fullscreenCheckbox->setCallback([this](const ui::CheckBox*)
     {
@@ -216,7 +218,7 @@ void MenuState::buildMenu(const sf::Font& font)
     m_uiContainer.addControl(fullscreenCheckbox);
 
     auto difficultySelection = std::make_shared<ui::Selection>(font, getContext().appInstance.getTexture("assets/images/ui/scroll_arrow.png"), 375.f);
-    difficultySelection->setPosition(600.f, 650.f);
+    difficultySelection->setPosition(600.f, 590.f);
     difficultySelection->addItem("Easy", static_cast<int>(Difficulty::Easy));
     difficultySelection->addItem("Medium", static_cast<int>(Difficulty::Medium));
     difficultySelection->addItem("Hard", static_cast<int>(Difficulty::Hard));
@@ -234,7 +236,7 @@ void MenuState::buildMenu(const sf::Font& font)
     m_uiContainer.addControl(difficultySelection);
 
     auto controlsCheckbox = std::make_shared<ui::CheckBox>(font, getContext().appInstance.getTexture("assets/images/ui/checkbox.png"));
-    controlsCheckbox->setPosition(1100.f, 650.f);
+    controlsCheckbox->setPosition(1100.f, 590.f);
     controlsCheckbox->setText("Classic Mode");
     controlsCheckbox->setCallback([this](const ui::CheckBox* checkBox)
     {
@@ -246,11 +248,17 @@ void MenuState::buildMenu(const sf::Font& font)
     controlsCheckbox->check((getContext().appInstance.getGameSettings().controlType == ControlType::Classic) ? true : false);
     m_uiContainer.addControl(controlsCheckbox);
 
+    auto textBox = std::make_shared<ui::TextBox>(font);
+    textBox->setMaxLength(3u);
+    textBox->setPosition(1035.f, 665.f);
+    textBox->setSize({ 100.f, 40.f });
+    textBox->setLabelText("Participant Initials: ");
+    m_uiContainer.addControl(textBox);
 
     auto applyButton = std::make_shared<ui::Button>(font, getContext().appInstance.getTexture("assets/images/ui/button.png"));
     applyButton->setText("Apply");
     applyButton->setAlignment(ui::Alignment::Centre);
-    applyButton->setPosition(840.f, 755.f);
+    applyButton->setPosition(840.f, 765.f);
     applyButton->setCallback([fullscreenCheckbox, resolutionBox, this]()
     {
         auto res = resolutionBox->getSelectedValue();
@@ -272,7 +280,7 @@ void MenuState::buildMenu(const sf::Font& font)
     auto quitButton = std::make_shared<ui::Button>(font, getContext().appInstance.getTexture("assets/images/ui/button.png"));
     quitButton->setText("Quit");
     quitButton->setAlignment(ui::Alignment::Centre);
-    quitButton->setPosition(1080.f, 755.f);
+    quitButton->setPosition(1080.f, 765.f);
     quitButton->setCallback([this]()
     {
         getContext().renderWindow.close();

@@ -66,7 +66,7 @@ namespace
 
     const float radius = 1300.f;
     bool shrink = true;
-    const float minScale = 0.9f;
+    const float maxScale = 1.2f;
     const float rotationSpeed = 5.f;
 }
 
@@ -119,13 +119,13 @@ void GradientDrawable::entityUpdate(Entity&, float dt)
     {
         scale.x -= amount;
         scale.y -= amount;
-        if (scale.x < minScale) shrink = false;
+        if (scale.x < 1.f) shrink = false;
     }
     else
     {
         scale.x += amount;
         scale.y += amount;
-        if (scale.x > 1.f) shrink = true;
+        if (scale.x > maxScale) shrink = true;
     }
     setScale(scale);
     //rotate(rotationSpeed * dt);

@@ -47,8 +47,8 @@ namespace
 AudioManager::AudioManager()
     : m_fadeInTime      (4.f),
     m_currentFadeTime   (0.f),
-    m_muted             (false),
-    m_fxSounds          (SoundIds::Size)
+    m_fxSounds          (SoundIds::Size),
+    m_muted             (false)
 {   
     m_musicPlayer.setVolume(0.f);
     m_musicPlayer.play("assets/sound/background.ogg", true);

@@ -175,7 +175,7 @@ namespace Shader
             "    vec2 distortOffset = vec2(0.01, 0.01);\n" \
             "    vec2 texCoord = gl_TexCoord[0].xy;\n" \
             "    float distSquared = distanceSquared(0.5 - texCoord);\n" \
-            "    if(distSquared > centreDistanceSquared) texCoord += ((vec2(0.5, 0.5) - texCoord) * (centreDistanceSquared - distSquared)) * 0.18;\n" \
+            "    if(distSquared > centreDistanceSquared) texCoord += ((vec2(0.5, 0.5) - texCoord) * (centreDistanceSquared - distSquared)) * 0.12;\n" \
             "    vec2 offset = vec2((maxOffset / 2.0) - (texCoord.x * maxOffset), (maxOffset / 2.0) - (texCoord.y * maxOffset));\n"
             "    vec3 colour = vec3(0.0);\n" \
             "#if defined(BLUR)\n" \
