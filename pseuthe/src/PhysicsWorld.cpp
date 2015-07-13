@@ -88,7 +88,6 @@ void PhysicsWorld::handleMessage(const Message& msg)
         case Message::PlayerEvent::Spawned:
         {
             //push bodies away from player spawn point
-            float maxDistance = 400.f;
             sf::Vector2f centre(960.f, 540.f);
 
             for (auto& b : m_bodies)

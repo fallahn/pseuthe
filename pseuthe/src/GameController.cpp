@@ -117,7 +117,6 @@ GameController::GameController(Scene& scene, MessageBus& mb, App& app, PhysicsWo
     
     auto scrText = std::make_unique<TextDrawable>(m_messageBus);
     scrText->setFont(app.getFont("assets/fonts/Ardeco.ttf"));
-    scrText->setString("This Run:");
     scrText->setCharacterSize(44u);
     scrText->setPosition(20.f, 1000.f);
     scrText->setColor(sf::Color::Transparent);
@@ -126,7 +125,6 @@ GameController::GameController(Scene& scene, MessageBus& mb, App& app, PhysicsWo
 
     scrText = std::make_unique<TextDrawable>(m_messageBus);
     scrText->setFont(app.getFont("assets/fonts/Ardeco.ttf"));
-    scrText->setString("Longest Run:");
     scrText->setCharacterSize(44u);
     scrText->setPosition(20.f, 950.f);
     scrText->setColor(sf::Color::Transparent);
@@ -135,9 +133,8 @@ GameController::GameController(Scene& scene, MessageBus& mb, App& app, PhysicsWo
 
     scrText = std::make_unique<TextDrawable>(m_messageBus);
     scrText->setFont(app.getFont("assets/fonts/Ardeco.ttf"));
-    scrText->setString("Current Participant: " + std::string(&app.getGameSettings().playerInitials[0]));
     scrText->setCharacterSize(44u);
-    scrText->setPosition(1500.f, 1000.f);
+    scrText->setPosition(1540.f, 1000.f);
     scrText->setColor(sf::Color::Transparent);
     m_initialsText = scrText.get();
     m_scene.getLayer(Scene::Layer::UI).addComponent<TextDrawable>(scrText);
@@ -151,8 +148,11 @@ void GameController::update(float dt)
         spawnClock.restart();
         if (m_planktonCount < maxPlankton && m_player)
         {
-            spawnPlankton();
-            if(!m_paused) m_spawnTime += spawnTimeIncrease;
+            if (!m_paused)
+            {
+                spawnPlankton();
+                m_spawnTime += spawnTimeIncrease;
+            }
         }
     }
 
@@ -163,7 +163,7 @@ void GameController::update(float dt)
     {
         m_highScoreText->setString("Longest Run: " + std::to_string(score));
     }
-    m_scoreText->setString("This Run: " + std::to_string(score));
+    m_scoreText->setString("Current Run: " + std::to_string(score));
 }
 
 void GameController::handleMessage(const Message& msg)
@@ -178,7 +178,7 @@ void GameController::handleMessage(const Message& msg)
                 m_scoreText->setColor(sf::Color::White);
                 m_highScoreText->setColor(sf::Color::White);
                 m_initialsText->setColor(sf::Color::White);
-                m_initialsText->setString("Current Participant: " + std::string(&m_appInstance.getGameSettings().playerInitials[0]));
+                m_initialsText->setString("Participant Initials: " + std::string(&m_appInstance.getGameSettings().playerInitials[0]));
 
                 if (!m_player)
                 {

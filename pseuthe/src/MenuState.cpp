@@ -56,8 +56,8 @@ MenuState::MenuState(StateStack& stateStack, Context context)
 
     auto& font = context.appInstance.getFont("assets/fonts/N_E_B.ttf");
 
-    m_texts.emplace_back("https://github.com/fallahn/pseuthe", context.appInstance.getFont("assets/fonts/VeraMono.ttf"), 18u);
-    m_texts.back().setPosition(1520.f, 1050.f);
+    /*m_texts.emplace_back("https://github.com/fallahn/pseuthe", context.appInstance.getFont("assets/fonts/VeraMono.ttf"), 18u);
+    m_texts.back().setPosition(1520.f, 1050.f);*/
 
     m_texts.emplace_back("Press Tab for Help", context.appInstance.getFont("assets/fonts/VeraMono.ttf"), 18u);
     m_texts.back().setPosition(10.f, 1050.f);
