@@ -86,6 +86,14 @@ namespace ui
 
         sf::Uint16 m_maxLength;
 
+        enum State
+        {
+            Selected = 0,
+            Normal,
+            Size
+        };
+        std::vector<sf::IntRect> m_subRects;
+
         void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
     };
 }

@@ -86,7 +86,7 @@ void BodypartController::entityUpdate(Entity& entity, float dt)
     {
         sf::Vector2f normal(1.f, 0.f);
         m_physComponent->setVelocity(Util::Vector::reflect(m_physComponent->getVelocity(), normal) * impactReduction);
-        m_physComponent->setPosition({ minBounds + (currentPosition.x - minBounds), currentPosition.y });
+        m_physComponent->setPosition({ minBounds + (minBounds - currentPosition.x), currentPosition.y });
     }
     else if (currentPosition.x > maxBounds)
     {

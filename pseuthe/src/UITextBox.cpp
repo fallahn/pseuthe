@@ -43,12 +43,13 @@ namespace
 TextBox::TextBox(const sf::Font& font, const sf::Color& backColour, const sf::Color& borderColour)
     : m_text        ("", font, 16u),
     m_label         ("", font, 32u),
-    m_cursorShape   (sf::Vector2f(12.f, 34.f)),
+    m_cursorShape   (sf::Vector2f(12.f, 30.f)),
     m_showCursor    (false),
     m_lastKey       (sf::Keyboard::Unknown),
     m_borderColour  (borderColour),
-    m_selectedColour(borderColour.r, borderColour.g, borderColour.b, borderColour.a / 3u),
-    m_maxLength     (255u)
+    m_selectedColour(borderColour.r, borderColour.g, borderColour.b, borderColour.a / 2u),
+    m_maxLength     (255u),
+    m_subRects      (Size)
 {
     m_backShape.setFillColor(backColour);
     m_backShape.setOutlineColor(borderColour);
@@ -71,12 +72,14 @@ void TextBox::select()
 {
     Control::select();
     m_backShape.setOutlineColor(m_selectedColour);
+    m_backShape.setTextureRect(m_subRects[Selected]);
 }
 
 void TextBox::deselect()
 {
     Control::deselect();
     m_backShape.setOutlineColor(m_borderColour);
+    m_backShape.setTextureRect(m_subRects[Normal]);
 }
 
 void TextBox::activate()
@@ -182,7 +185,18 @@ const std::string& TextBox::getText() const
 
 void TextBox::setTexture(const sf::Texture& t)
 {
+    sf::IntRect subRect;
+    subRect.width = t.getSize().x;
+    subRect.height = t.getSize().y / 2;
+    m_subRects[Normal] = subRect;
+    subRect.top += subRect.height;
+    m_subRects[Selected] = subRect;
+
     m_backShape.setTexture(&t);
+    m_backShape.setTextureRect(m_subRects[Normal]);
+
+    m_backShape.setFillColor(sf::Color::White);
+    m_backShape.setOutlineThickness(0.f);
 }
 
 void TextBox::showBorder(bool show)

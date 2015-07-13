@@ -75,6 +75,8 @@ public:
     {
         Difficulty difficulty = Difficulty::Easy;
         ControlType controlType = ControlType::Arcade;
+        std::array<char, 3u> playerInitials;
+        GameSettings() : playerInitials({ { '-', '-', '-' } }){}
     };
 
     App();
@@ -100,6 +102,8 @@ public:
     void addScore(const std::string& name, float value);
     const std::vector<Scores::Item>& getScores() const;
     int getLastScoreIndex() const;
+
+    void setPlayerInitials(const std::string&);
 
 private:
 

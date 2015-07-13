@@ -129,7 +129,7 @@ void InputComponent::entityUpdate(Entity& entity, float dt)
     {
         sf::Vector2f normal(1.f, 0.f);
         m_physicsComponent->setVelocity(Util::Vector::reflect(m_physicsComponent->getVelocity(), normal) * impactReduction);
-        m_physicsComponent->setPosition({ minBounds + (currentPosition.x - minBounds), currentPosition.y });
+        m_physicsComponent->setPosition({ minBounds + (minBounds - currentPosition.x), currentPosition.y });
     }
     else if (currentPosition.x > maxBounds)
     {

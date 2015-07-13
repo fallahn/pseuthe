@@ -101,6 +101,7 @@ GameController::GameController(Scene& scene, MessageBus& mb, App& app, PhysicsWo
     m_difficulty            (Difficulty::Easy),
     m_scoreText             (nullptr),
     m_highScoreText         (nullptr),
+    m_initialsText          (nullptr),
     m_paused                (false)
 {
     //find two off screen areas for spawning teh planktons
@@ -130,6 +131,15 @@ GameController::GameController(Scene& scene, MessageBus& mb, App& app, PhysicsWo
     scrText->setPosition(20.f, 950.f);
     scrText->setColor(sf::Color::Transparent);
     m_highScoreText = scrText.get();
+    m_scene.getLayer(Scene::Layer::UI).addComponent<TextDrawable>(scrText);
+
+    scrText = std::make_unique<TextDrawable>(m_messageBus);
+    scrText->setFont(app.getFont("assets/fonts/Ardeco.ttf"));
+    scrText->setString("Current Participant: " + std::string(&app.getGameSettings().playerInitials[0]));
+    scrText->setCharacterSize(44u);
+    scrText->setPosition(1500.f, 1000.f);
+    scrText->setColor(sf::Color::Transparent);
+    m_initialsText = scrText.get();
     m_scene.getLayer(Scene::Layer::UI).addComponent<TextDrawable>(scrText);
 }
 
@@ -167,6 +177,8 @@ void GameController::handleMessage(const Message& msg)
             {
                 m_scoreText->setColor(sf::Color::White);
                 m_highScoreText->setColor(sf::Color::White);
+                m_initialsText->setColor(sf::Color::White);
+                m_initialsText->setString("Current Participant: " + std::string(&m_appInstance.getGameSettings().playerInitials[0]));
 
                 if (!m_player)
                 {
@@ -185,6 +197,7 @@ void GameController::handleMessage(const Message& msg)
             {
                 m_scoreText->setColor(sf::Color::Transparent);
                 m_highScoreText->setColor(sf::Color::Transparent);
+                m_initialsText->setColor(sf::Color::Transparent);
             }
             else if (msg.ui.stateId == States::ID::Menu)
             {
@@ -597,6 +610,8 @@ std::string GameController::getName() const
     name += std::to_string(Util::Random::value(100, 999));
     name += (m_controlType == ControlType::Arcade) ? "A" : "C";
     name += std::to_string(Util::Random::value(19, 89));
+    name += "-";
+    name += std::string(&m_appInstance.getGameSettings().playerInitials[0]);
     name += "-0x";
 
     for (auto i = 0; i < 6; ++i)
@@ -604,6 +619,6 @@ std::string GameController::getName() const
         name += namechars[Util::Random::value(0, 15)];
     }
 
-    assert(name.size() == 16);
+    assert(name.size() == 20);
     return name;
 }

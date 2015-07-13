@@ -38,6 +38,11 @@ source distribution.
 
 #include <SFML/Window/Event.hpp>
 
+namespace
+{
+    ui::TextBox::Ptr initialsBox;
+}
+
 MenuState::MenuState(StateStack& stateStack, Context context)
     : State     (stateStack, context),
     m_messageBus(context.appInstance.getMessageBus())
@@ -250,9 +255,12 @@ void MenuState::buildMenu(const sf::Font& font)
 
     auto textBox = std::make_shared<ui::TextBox>(font);
     textBox->setMaxLength(3u);
-    textBox->setPosition(1035.f, 665.f);
+    textBox->setPosition(1025.f, 665.f);
     textBox->setSize({ 100.f, 40.f });
     textBox->setLabelText("Participant Initials: ");
+    textBox->setText(std::string(&getContext().appInstance.getGameSettings().playerInitials[0]));
+    textBox->setTexture(getContext().appInstance.getTexture("assets/images/ui/textbox.png"));
+    initialsBox = textBox;
     m_uiContainer.addControl(textBox);
 
     auto applyButton = std::make_shared<ui::Button>(font, getContext().appInstance.getTexture("assets/images/ui/button.png"));
@@ -300,6 +308,8 @@ void MenuState::buildMenu(const sf::Font& font)
 
 void MenuState::startGame()
 {
+    getContext().appInstance.setPlayerInitials(initialsBox->getText());
+
     requestStackPop();
 
     Message msg;

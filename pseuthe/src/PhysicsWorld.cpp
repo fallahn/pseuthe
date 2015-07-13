@@ -87,18 +87,17 @@ void PhysicsWorld::handleMessage(const Message& msg)
         {
         case Message::PlayerEvent::Spawned:
         {
-            //float maxDistance = 400.f;
-            //sf::Vector2f centre(960.f, 540.f);
+            //push bodies away from player spawn point
+            float maxDistance = 400.f;
+            sf::Vector2f centre(960.f, 540.f);
 
-            //for (auto& b : m_bodies)
-            //{
-            //    auto vec = centre - b->getPosition();
-            //    auto distance = Util::Vector::length(vec);
-            //    if (distance < 10) break;
-            //    auto force = maxDistance - distance + 0.1f;
-            //    LOG(std::to_string(force), Logger::Type::Info);
-            //    b->applyForce(Util::Vector::normalise(vec) * force);
-            //}
+            for (auto& b : m_bodies)
+            {
+                auto vec = centre - b->getPosition();
+                auto distance = Util::Vector::lengthSquared(vec);
+                if (distance < 100) continue;
+                b->applyForce(Util::Vector::normalise(vec) * -80.f);
+            }
         }
             break;
         default:break;

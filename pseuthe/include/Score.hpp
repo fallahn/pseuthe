@@ -53,7 +53,7 @@ public:
 
     struct Item
     {
-        char name[17];
+        char name[21];
         float score;
         std::size_t hash;
     };

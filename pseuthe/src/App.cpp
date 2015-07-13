@@ -56,7 +56,7 @@ namespace
     int lastScoreIndex = 0;
 
     int settingsIdent = 0xfc41414b;
-    int settingsVersion = 3;
+    int settingsVersion = 4;
 }
 
 App::App()
@@ -198,6 +198,15 @@ int App::getLastScoreIndex() const
 const std::vector<Scores::Item>& App::getScores() const
 {
     return m_scores.getScores(m_gameSettings.difficulty);
+}
+
+void App::setPlayerInitials(const std::string& initials)
+{
+    std::string str(initials);
+    while (str.size() < 3) str.push_back('-');
+    if (str.size() > 3) str = str.substr(0, 3);
+
+    std::strcpy(&m_gameSettings.playerInitials[0], str.c_str());
 }
 
 //private

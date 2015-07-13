@@ -37,7 +37,7 @@ source distribution.
 namespace
 {
     const int ident = 0x534e5542;
-    const int version = 3;
+    const int version = 4;
     const std::string scoreFile = "scores.dat";
     const std::size_t maxScores = 100;
 }

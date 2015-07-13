@@ -89,6 +89,7 @@ private:
 
     TextDrawable* m_scoreText;
     TextDrawable* m_highScoreText;
+    TextDrawable* m_initialsText;
     bool m_paused;
     void resetScore();
     std::string getName() const;
