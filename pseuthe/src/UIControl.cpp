@@ -32,6 +32,7 @@ using namespace ui;
 Control::Control()
     : m_selected    (false),
     m_active        (false),
+    m_visible       (true),
     m_index         (0u)
 {
 
