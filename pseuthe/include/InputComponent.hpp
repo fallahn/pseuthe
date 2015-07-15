@@ -54,6 +54,7 @@ public:
     void onStart(Entity&) override;
 
     void setControlType(ControlType);
+    void setControllerEnabled(bool);
 
 private:
     using ControlFunction = std::function<sf::Vector2f(float)>;
@@ -70,6 +71,7 @@ private:
 
     float m_health;
     bool m_parseInput;
+    bool m_controllerEnabled;
 
     float m_mass;
     float m_invMass;

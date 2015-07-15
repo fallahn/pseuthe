@@ -178,7 +178,7 @@ void MenuState::buildMenu(const sf::Font& font)
     m_uiContainer.addControl(soundSlider);
 
     auto muteCheckbox = std::make_shared<ui::CheckBox>(font, getContext().appInstance.getTexture("assets/images/ui/checkbox.png"));
-    muteCheckbox->setPosition(1100.f, 430.f);
+    muteCheckbox->setPosition(1070.f, 430.f);
     muteCheckbox->setText("Mute");
     muteCheckbox->setCallback([this](const ui::CheckBox* checkBox)
     {
@@ -213,7 +213,7 @@ void MenuState::buildMenu(const sf::Font& font)
     m_uiContainer.addControl(resolutionBox);
 
     auto fullscreenCheckbox = std::make_shared<ui::CheckBox>(font, getContext().appInstance.getTexture("assets/images/ui/checkbox.png"));
-    fullscreenCheckbox->setPosition(1100.f, 510.f);
+    fullscreenCheckbox->setPosition(1070.f, 510.f);
     fullscreenCheckbox->setText("Full Screen");
     fullscreenCheckbox->setCallback([this](const ui::CheckBox*)
     {
@@ -241,7 +241,7 @@ void MenuState::buildMenu(const sf::Font& font)
     m_uiContainer.addControl(difficultySelection);
 
     auto controlsCheckbox = std::make_shared<ui::CheckBox>(font, getContext().appInstance.getTexture("assets/images/ui/checkbox.png"));
-    controlsCheckbox->setPosition(1100.f, 590.f);
+    controlsCheckbox->setPosition(1070.f, 590.f);
     controlsCheckbox->setText("Classic Mode");
     controlsCheckbox->setCallback([this](const ui::CheckBox* checkBox)
     {
@@ -255,7 +255,7 @@ void MenuState::buildMenu(const sf::Font& font)
 
     auto textBox = std::make_shared<ui::TextBox>(font);
     textBox->setMaxLength(3u);
-    textBox->setPosition(1025.f, 665.f);
+    textBox->setPosition(860.f, 665.f);
     textBox->setSize({ 100.f, 40.f });
     textBox->setLabelText("Participant Initials: ");
     textBox->setText(std::string(&getContext().appInstance.getGameSettings().playerInitials[0]));
@@ -263,10 +263,23 @@ void MenuState::buildMenu(const sf::Font& font)
     initialsBox = textBox;
     m_uiContainer.addControl(textBox);
 
+    auto controllerCheckbox = std::make_shared<ui::CheckBox>(font, getContext().appInstance.getTexture("assets/images/ui/checkbox.png"));
+    controllerCheckbox->setPosition(1070.f, 670.f);
+    controllerCheckbox->setText("Enable Controller");
+    controllerCheckbox->setCallback([this](const ui::CheckBox* checkBox)
+    {
+        Message msg;
+        msg.type = Message::Type::UI;
+        msg.ui.type = (checkBox->checked()) ? Message::UIEvent::RequestControllerEnable : Message::UIEvent::RequestControllerDisable;
+        m_messageBus.send(msg);
+    }, ui::CheckBox::Event::CheckChanged);
+    controllerCheckbox->check(getContext().appInstance.getGameSettings().controllerEnabled);
+    m_uiContainer.addControl(controllerCheckbox);
+
     auto applyButton = std::make_shared<ui::Button>(font, getContext().appInstance.getTexture("assets/images/ui/button.png"));
     applyButton->setText("Apply");
     applyButton->setAlignment(ui::Alignment::Centre);
-    applyButton->setPosition(840.f, 765.f);
+    applyButton->setPosition(840.f, 770.f);
     applyButton->setCallback([fullscreenCheckbox, resolutionBox, this]()
     {
         auto res = resolutionBox->getSelectedValue();
@@ -288,7 +301,7 @@ void MenuState::buildMenu(const sf::Font& font)
     auto quitButton = std::make_shared<ui::Button>(font, getContext().appInstance.getTexture("assets/images/ui/button.png"));
     quitButton->setText("Quit");
     quitButton->setAlignment(ui::Alignment::Centre);
-    quitButton->setPosition(1080.f, 765.f);
+    quitButton->setPosition(1080.f, 770.f);
     quitButton->setCallback([this]()
     {
         getContext().renderWindow.close();
@@ -296,7 +309,7 @@ void MenuState::buildMenu(const sf::Font& font)
     m_uiContainer.addControl(quitButton);
 
     auto startButton = std::make_shared<ui::Button>(font, getContext().appInstance.getTexture("assets/images/ui/start_button.png"));
-    startButton->setText("Press Space to Begin");
+    startButton->setText("Press Space to Continue");
     startButton->setAlignment(ui::Alignment::Centre);
     startButton->setPosition(960.f, 875.f);
     startButton->setCallback([this]()

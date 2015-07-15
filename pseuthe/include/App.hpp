@@ -75,6 +75,7 @@ public:
     {
         Difficulty difficulty = Difficulty::Easy;
         ControlType controlType = ControlType::Arcade;
+        bool controllerEnabled = true;
         std::array<char, 3u> playerInitials;
         GameSettings() : playerInitials({ { '-', '-', '-' } }){}
     };

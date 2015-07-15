@@ -87,6 +87,7 @@ InputComponent::InputComponent(MessageBus& mb)
     m_tail              (nullptr),
     m_health            (maxHealth),
     m_parseInput        (true),
+    m_controllerEnabled (true),
     m_mass              (0.f),
     m_invMass           (1.f)
 {
@@ -106,7 +107,8 @@ void InputComponent::entityUpdate(Entity& entity, float dt)
     {
         forceVec = getKeyboard(dt);
 
-        if (Util::Vector::lengthSquared(forceVec) < 0.1f)
+        if (Util::Vector::lengthSquared(forceVec) < 0.1f
+            && m_controllerEnabled)
         {
             forceVec = getController(dt);
         }
@@ -326,6 +328,11 @@ void InputComponent::setControlType(ControlType type)
     }
 }
 
+void InputComponent::setControllerEnabled(bool e)
+{
+    m_controllerEnabled = e;
+}
+
 //private
 sf::Vector2f InputComponent::getKeyboardClassic(float dt)
 {
@@ -418,6 +425,9 @@ sf::Vector2f InputComponent::getKeyboardArcade(float dt)
     {
         forceVec.x += 1.f;
         forceVec = Util::Vector::rotate(forceVec, Util::Vector::rotation(forwardVec));
+
+        if (std::isnan(forceVec.x)) forceVec.x = 0.f;
+        if (std::isnan(forceVec.y)) forceVec.y = 0.f;
     }
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)
@@ -427,6 +437,9 @@ sf::Vector2f InputComponent::getKeyboardArcade(float dt)
         {
             forceVec.x -= 1.f;
             forceVec = Util::Vector::rotate(forceVec, Util::Vector::rotation(forwardVec));
+
+            if (std::isnan(forceVec.x)) forceVec.x = 0.f;
+            if (std::isnan(forceVec.y)) forceVec.y = 0.f;
         }
     }
 

@@ -180,6 +180,8 @@ void GameController::handleMessage(const Message& msg)
                 m_initialsText->setColor(sf::Color::White);
                 m_initialsText->setString("Participant Initials: " + std::string(&m_appInstance.getGameSettings().playerInitials[0]));
 
+                m_scene.getLayer(Scene::Layer::UI).getComponent<TextDrawable>("paused_text")->setColor(sf::Color::Transparent);
+
                 if (!m_player)
                 {
                     spawnPlayer();
@@ -219,6 +221,18 @@ void GameController::handleMessage(const Message& msg)
             if (m_player)
             {
                 m_player->getComponent<InputComponent>("controller")->setControlType(ControlType::Classic);
+            }
+            break;
+        case Message::UIEvent::RequestControllerEnable:
+            if (m_player)
+            {
+                m_player->getComponent<InputComponent>("controller")->setControllerEnabled(true);
+            }
+            break;
+        case Message::UIEvent::RequestControllerDisable:
+            if (m_player)
+            {
+                m_player->getComponent<InputComponent>("controller")->setControllerEnabled(false);
             }
             break;
         default:break;
@@ -395,6 +409,7 @@ void GameController::spawnPlayer()
     auto controlComponent = std::make_unique<InputComponent>(m_messageBus);
     controlComponent->setName("controller");
     controlComponent->setControlType(m_controlType);
+    controlComponent->setControllerEnabled(m_appInstance.getGameSettings().controllerEnabled);
     entity->addComponent<InputComponent>(controlComponent);
 
     m_constraintLength = playerSize + partSize + partPadding;
@@ -492,7 +507,7 @@ void GameController::spawnPlankton()
     physComponent->setVelocity(physComponent->getVelocity() * m_speedMultiplier);
     entity->addComponent<PhysicsComponent>(physComponent);
 
-    AnimatedDrawable::Ptr ad;
+
     //1 in 5 chance a bonus plankton, else other type
     PlanktonController::Type type = (Util::Random::value(0, 4) == 0) ?
         PlanktonController::Type::Bonus :
@@ -506,32 +521,37 @@ void GameController::spawnPlankton()
         type = PlanktonController::Type::UberLife;
     //-----------------//
 
-
-    if (type == PlanktonController::Type::Bad || type == PlanktonController::Type::Good)
+    AnimatedDrawable::Ptr ad;
+    auto ident = ParticleSystem::create(Particle::Type::Ident, m_messageBus);
+    ident->setTexture(m_appInstance.getTexture("assets/images/particles/ident.png"));
+    switch (type)
     {
-        switch (Util::Random::value(0, 1)) //random graphic
-        {
-        case 0:
-            ad = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/food01.png"));
-            ad->loadAnimationData("assets/images/player/food01.cra");
-            break;
-        case 1:
-            ad = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/food02.png"));
-            ad->loadAnimationData("assets/images/player/food02.cra");
-            break;
-        default: break;
-        }
-    }
-    else if (type == PlanktonController::Type::Bonus)
-    {
+    case PlanktonController::Type::Good:
+        ident->setColour({ 84u, 150u, 75u });
+        ad = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/food01.png"));
+        ad->loadAnimationData("assets/images/player/food01.cra");
+        goodPlankton++;
+        break;
+    case PlanktonController::Type::Bad:
+        ident->setColour({ 184u, 67u, 51u });
+        ad = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/food02.png"));
+        ad->loadAnimationData("assets/images/player/food02.cra");
+        badPlankton++;
+        break;
+    case PlanktonController::Type::Bonus:
         ad = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/food03.png"));
         ad->loadAnimationData("assets/images/player/food03.cra");
-    }
-    else
-    {
+        ident->setColour({ 158u, 148u, 224u });
+        break;
+    case PlanktonController::Type::UberLife:
         ad = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/bonus.png"));
         ad->loadAnimationData("assets/images/player/bonus.cra");
+        ident->setColour({ 158u, 148u, 224u });
+        break;
+    default:break;
     }
+    ident->setName("ident");
+    entity->addComponent<ParticleSystem>(ident);
 
     ad->setBlendMode(sf::BlendAdd);
     ad->setOrigin(sf::Vector2f(ad->getFrameSize()) / 2.f);
@@ -548,27 +568,6 @@ void GameController::spawnPlankton()
     trail->setEmitRate(10.f);
     entity->addComponent<ParticleSystem>(trail);
 
-    auto ident = ParticleSystem::create(Particle::Type::Ident, m_messageBus);
-    ident->setTexture(m_appInstance.getTexture("assets/images/particles/ident.png"));
-    switch (type)
-    {
-    case PlanktonController::Type::Good:
-        ident->setColour({ 84u, 150u, 75u });
-        goodPlankton++;
-        break;
-    case PlanktonController::Type::Bad:
-        ident->setColour({ 184u, 67u, 51u });
-        badPlankton++;
-        break;
-    case PlanktonController::Type::Bonus:
-    case PlanktonController::Type::UberLife:
-        ident->setColour({ 158u, 148u, 224u });
-        break;
-    default:break;
-    }
-    ident->setName("ident");
-    entity->addComponent<ParticleSystem>(ident);
-
     if (type == PlanktonController::Type::UberLife)
     {
         auto tails = std::make_unique<TailDrawable>(m_messageBus);
@@ -580,7 +579,6 @@ void GameController::spawnPlankton()
         tails->setName("tail");
         entity->addComponent<TailDrawable>(tails);
     }
-
 
     auto controller = std::make_unique<PlanktonController>(m_messageBus);
     assert(m_player);

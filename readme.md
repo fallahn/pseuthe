@@ -39,7 +39,7 @@ box on the main menu.
 
 In Arcade mode left and right rotates the player's head, while forward 
 and backward accelerate and decelerate in the direction the player is 
-looking. This is similar to many top down racing games - the main 
+facing. This is similar to many top down racing games - the main 
 difference being that there is no friction applied to the player. Once
 you accelerate up to speed you no longer need to keep accelerating. 
 Light adjustments using the accelerate and decelerate keys is the 

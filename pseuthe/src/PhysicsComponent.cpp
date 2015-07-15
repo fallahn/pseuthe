@@ -126,7 +126,7 @@ void PhysicsComponent::physicsUpdate(float dt, const sf::FloatRect& bounds)
             && m_position.y < bounds.top + bounds.height)
         {
             //off the edge so reposition somewhere
-            (m_velocity.x > 0) ? m_position.x -= bounds.width : m_position.x += bounds.width;
+            (m_position.x < bounds.left) ? m_position.x += bounds.width : m_position.x -= bounds.width;
             
             Message msg;
             msg.type = Message::Type::Physics;

@@ -47,7 +47,7 @@ CircleDrawable::CircleDrawable(float radius, MessageBus& m)
     m_circleShape.setOrigin(radius, radius);
     m_circleShape.setOutlineThickness(1.4f);
 
-    float colour = std::min(radius / 50.f, 1.f);
+    float colour = std::min(radius / 46.f, 1.f);
     sf::Uint8 colourByte = static_cast<sf::Uint8>(colour * baseColour);
     sf::Color finalColour(colourByte, colourByte, colourByte, static_cast<sf::Uint8>(colour * 240.f));
     m_circleShape.setOutlineColor(finalColour);

@@ -56,7 +56,7 @@ namespace
     int lastScoreIndex = 0;
 
     int settingsIdent = 0xfc41414b;
-    int settingsVersion = 4;
+    int settingsVersion = 5;
 }
 
 App::App()
@@ -281,6 +281,12 @@ void App::handleMessages()
                 break;
             case Message::UIEvent::RequestControlsClassic:
                 m_gameSettings.controlType = ControlType::Classic;
+                break;
+            case Message::UIEvent::RequestControllerEnable:
+                m_gameSettings.controllerEnabled = true;
+                break;
+            case Message::UIEvent::RequestControllerDisable:
+                m_gameSettings.controllerEnabled = false;
                 break;
             default: break;
             }

@@ -48,7 +48,7 @@ source distribution.
 namespace
 {
     const int nubbinCount = 19;
-    const std::string version("version 1.0.0");
+    const std::string version("version 1.0.1");
 }
 
 GameState::GameState(StateStack& stateStack, Context context)
@@ -58,7 +58,6 @@ GameState::GameState(StateStack& stateStack, Context context)
     m_physWorld         (m_messageBus),
     m_gameController    (m_scene, m_messageBus, context.appInstance, m_physWorld)
 {
-
     m_orbShader.loadFromMemory(Shader::Orb::vertex, Shader::Orb::fragment);
 
     for (int i = 0; i < nubbinCount; ++i)
@@ -94,6 +93,16 @@ GameState::GameState(StateStack& stateStack, Context context)
     versionText->setCharacterSize(24u);
     versionText->setPosition(10.f, 10.f);
     m_scene.getLayer(Scene::Layer::UI).addComponent<TextDrawable>(versionText);
+
+    auto pausedText = std::make_unique<TextDrawable>(m_messageBus);
+    pausedText->setFont(context.appInstance.getFont("assets/fonts/ardeco.ttf"));
+    pausedText->setString("PAUSED");
+    pausedText->setCharacterSize(80u);
+    Util::Position::centreOrigin(*pausedText);
+    pausedText->setPosition(960.f, 960.f);
+    pausedText->setColor(sf::Color::Transparent);
+    pausedText->setName("paused_text");
+    m_scene.getLayer(Scene::Layer::UI).addComponent<TextDrawable>(pausedText);
 
     m_audioManager.mute(context.appInstance.getAudioSettings().muted);
 }
@@ -131,6 +140,7 @@ bool GameState::handleEvent(const sf::Event& evt)
         //case sf::Keyboard::Space:
         case sf::Keyboard::Escape:
             requestStackPush(States::ID::Menu);
+            m_scene.getLayer(Scene::Layer::UI).getComponent<TextDrawable>("paused_text")->setColor(sf::Color::White);
             break;
         default: break;
         }
@@ -167,7 +177,7 @@ void GameState::handleMessage(const Message& msg)
 Entity::Ptr GameState::createEntity()
 {
     const int maxSize = 46;
-    float size = static_cast<float>(Util::Random::value(16, maxSize));
+    float size = static_cast<float>(Util::Random::value(20, maxSize));
 
     Entity::Ptr e = std::make_unique<Entity>(m_messageBus);
     CircleDrawable::Ptr cd = std::make_unique<CircleDrawable>(size, m_messageBus);

@@ -97,6 +97,8 @@ public:
             RequestDifficultyChange,
             RequestControlsClassic,
             RequestControlsArcade,
+            RequestControllerEnable,
+            RequestControllerDisable,
             ResizedWindow
         }type;
         float value;
