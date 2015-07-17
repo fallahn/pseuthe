@@ -58,7 +58,7 @@ public:
     void setType(Type);
 
     void setEnemyId(sf::Uint64);
-
+    void setDecayRate(float);
 private:
 
     enum Flags
@@ -79,6 +79,7 @@ private:
 
     float m_health;
     sf::Uint64 m_enemyId;
+    float m_decayRate;
 
     float m_targetRotation;
 

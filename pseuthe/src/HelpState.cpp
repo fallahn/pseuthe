@@ -28,6 +28,10 @@ source distribution.
 #include <HelpState.hpp>
 #include <App.hpp>
 #include <Util.hpp>
+#include <AnimatedDrawable.hpp>
+#include <TailDrawable.hpp>
+#include <ParticleSystem.hpp>
+#include <TextDrawable.hpp>
 
 #include <SFML/Window/Event.hpp>
 
@@ -35,19 +39,136 @@ namespace
 {
     const sf::Uint32 charSize = 48u;
     const float fadeTime = 0.25f;
+
+    const float planktonSize = 32.f;
 }
 
 HelpState::HelpState(StateStack& stack, Context context)
     : State     (stack, context),
     m_mode      (Mode::FadeIn),
     m_messageBus(context.appInstance.getMessageBus()),
+    m_physWorld (m_messageBus),
+    m_rootNode  (m_messageBus),
     m_fadeTime  (0.f)
 {
     m_menuSprite.setTexture(context.appInstance.getTexture("assets/images/help_menu.png"));
+    Util::Position::centreOrigin(m_menuSprite);
+    m_menuSprite.setPosition(context.defaultView.getCenter().x, 500.f);
 
-    auto& font = context.appInstance.getFont("assets/fonts//N_E_B.ttf");
+    m_rectangleShape.setSize({ 1920.f, 1080.f });
 
-    sf::Vector2f centrePos = context.defaultView.getCenter();
+    addText();
+
+    addPlankton(PlanktonController::Type::Bad);
+    addPlankton(PlanktonController::Type::Good);
+    addPlankton(PlanktonController::Type::Bonus);
+    addPlankton(PlanktonController::Type::UberLife);
+}
+
+bool HelpState::update(float dt)
+{
+    sf::Color frontColour = sf::Color::White;
+    sf::Color backColour = sf::Color::Black;
+
+    m_fadeTime += dt;
+    switch (m_mode)
+    {
+    case Mode::FadeIn:
+        if (m_fadeTime < fadeTime)
+        {
+            frontColour.a = static_cast<sf::Uint8>((m_fadeTime / fadeTime) * 255.f);
+        }
+        else
+        {
+            m_mode = Mode::Static;
+        }
+        break;
+    case Mode::FadeOut:
+        if (m_fadeTime < fadeTime)
+        {
+            frontColour.a = static_cast<sf::Uint8>(1.f - ((m_fadeTime / fadeTime) * 255.f));
+        }
+        else
+        {
+            Message msg;
+            msg.type = Message::Type::UI;
+            msg.ui.type = Message::UIEvent::MenuClosed;
+            msg.ui.stateId = States::ID::Help;
+            m_messageBus.send(msg);
+            requestStackPop();
+        }
+        break;
+    case Mode::Static:
+        m_physWorld.update(dt);
+        m_rootNode.update(dt);
+    default: return true;
+    }
+
+    backColour.a = frontColour.a / 2;
+    m_rectangleShape.setFillColor(backColour);
+
+    m_menuSprite.setColor(frontColour);
+    for (auto& t : m_texts)
+        t.setColor(frontColour);
+
+    auto& children = m_rootNode.getChildren();
+    for (auto& c : children)
+    {
+        c->getComponent<AnimatedDrawable>("drawable")->setColour(frontColour);
+        c->getComponent<TextDrawable>("text")->setColor(frontColour);
+
+        auto tail = c->getComponent<TailDrawable>("tail");
+        if (tail) tail->setColour(frontColour);
+    }
+
+    return true;
+}
+
+bool HelpState::handleEvent(const sf::Event& evt)
+{
+    switch (evt.type)
+    {
+    case sf::Event::KeyReleased:
+    case sf::Event::MouseButtonReleased:
+    case sf::Event::JoystickButtonReleased:
+        m_fadeTime = 0.f;
+        m_mode = Mode::FadeOut;
+        break;
+    default: break;
+    }
+
+    return false;
+}
+
+void HelpState::handleMessage(const Message& msg)
+{
+    if (msg.type == Message::Type::Plankton && 
+        msg.plankton.action == Message::PlanktonEvent::Died)
+    {
+        addPlankton(msg.plankton.type);
+    }
+
+    //m_physWorld.handleMessage(msg);
+    m_rootNode.handleMessage(msg);
+}
+
+void HelpState::draw()
+{
+    auto& rw = getContext().renderWindow;
+    rw.draw(m_rectangleShape);
+    rw.draw(m_rootNode);
+    rw.draw(m_menuSprite);
+
+    for (const auto& t : m_texts)
+        rw.draw(t);
+}
+
+//private
+void HelpState::addText()
+{
+    auto& font = getContext().appInstance.getFont("assets/fonts/N_E_B.ttf");
+
+    sf::Vector2f centrePos = getContext().defaultView.getCenter();
 
     m_texts.emplace_back("How To Play", font, 80u);
     auto& titleText = m_texts.back();
@@ -80,75 +201,89 @@ HelpState::HelpState(StateStack& stack, Context context)
     text04.move(0.f, 210.f);
 }
 
-bool HelpState::update(float dt)
+void HelpState::addPlankton(PlanktonController::Type type)
 {
-    sf::Color colour = sf::Color::White;
-    m_fadeTime += dt;
-    switch (m_mode)
+    auto entity = std::make_unique<Entity>(m_messageBus);
+    entity->setWorldPosition({ static_cast<float>(Util::Random::value(0, 1920)), static_cast<float>(Util::Random::value(0, 1080)) });
+
+    auto physComponent = m_physWorld.addBody(planktonSize);
+    physComponent->setPosition(entity->getWorldPosition());
+    physComponent->setTriggerOnly(true);
+    physComponent->setName("control");
+    entity->addComponent<PhysicsComponent>(physComponent);
+
+    auto& appInstance = getContext().appInstance;
+    AnimatedDrawable::Ptr ad;
+    auto ident = ParticleSystem::create(Particle::Type::Ident, m_messageBus);
+    ident->setTexture(appInstance.getTexture("assets/images/particles/ident.png"));
+    auto text = std::make_unique<TextDrawable>(m_messageBus);
+    text->setFont(appInstance.getFont("assets/fonts/ardeco.ttf"));
+    switch (type)
     {
-    case Mode::FadeIn:
-        if (m_fadeTime < fadeTime)
-        {
-            colour.a = static_cast<sf::Uint8>((m_fadeTime / fadeTime) * 255.f);
-        }
-        else
-        {
-            m_mode = Mode::Static;
-        }
+    case PlanktonController::Type::Good:
+        ad = std::make_unique<AnimatedDrawable>(m_messageBus, appInstance.getTexture("assets/images/player/food01.png"));
+        ad->loadAnimationData("assets/images/player/food01.cra");
+        ident->setColour({ 84u, 150u, 75u });
+        text->setString("+50 HP");
         break;
-    case Mode::FadeOut:
-        if (m_fadeTime < fadeTime)
-        {
-            colour.a = static_cast<sf::Uint8>(1.f - ((m_fadeTime / fadeTime) * 255.f));
-        }
-        else
-        {
-            Message msg;
-            msg.type = Message::Type::UI;
-            msg.ui.type = Message::UIEvent::MenuClosed;
-            msg.ui.stateId = States::ID::Help;
-            m_messageBus.send(msg);
-            requestStackPop();
-        }
+    case PlanktonController::Type::Bad:
+        ad = std::make_unique<AnimatedDrawable>(m_messageBus, appInstance.getTexture("assets/images/player/food02.png"));
+        ad->loadAnimationData("assets/images/player/food02.cra");
+        ident->setColour({ 184u, 67u, 51u });
+        text->setString("-35 HP");
         break;
-    case Mode::Static:
-    default: return true;
+    case PlanktonController::Type::Bonus:
+        ad = std::make_unique<AnimatedDrawable>(m_messageBus, appInstance.getTexture("assets/images/player/food03.png"));
+        ad->loadAnimationData("assets/images/player/food03.cra");
+        ident->setColour({ 158u, 148u, 224u });
+        text->setString("+100 HP");
+        break;
+    case PlanktonController::Type::UberLife:
+        ad = std::make_unique<AnimatedDrawable>(m_messageBus, appInstance.getTexture("assets/images/player/bonus.png"));
+        ad->loadAnimationData("assets/images/player/bonus.cra");
+        ident->setColour({ 158u, 148u, 224u });
+        text->setString("FULL HEALTH");
+        break;
+    default:break;
+    }
+    ident->setName("ident");
+    entity->addComponent<ParticleSystem>(ident);
+
+    text->setCharacterSize(40u);
+    Util::Position::centreOrigin(*text);
+    text->setPosition(0.f, 40.f);
+    text->setName("text");
+    entity->addComponent<TextDrawable>(text);
+
+    ad->setBlendMode(sf::BlendAdd);
+    ad->setOrigin(sf::Vector2f(ad->getFrameSize()) / 2.f);
+    if (!ad->getAnimations().empty()) ad->play(ad->getAnimations()[0]);
+    ad->setName("drawable");
+    entity->addComponent<AnimatedDrawable>(ad);
+
+    auto trail = ParticleSystem::create(Particle::Type::Trail, m_messageBus);
+    trail->setTexture(appInstance.getTexture("assets/images/particles/circle.png"));
+    float particleSize = planktonSize / 12.f;
+    trail->setParticleSize({ particleSize, particleSize });
+    trail->setName("trail");
+    trail->setEmitRate(10.f);
+    entity->addComponent<ParticleSystem>(trail);
+
+    if (type == PlanktonController::Type::UberLife)
+    {
+        auto tails = std::make_unique<TailDrawable>(m_messageBus);
+        tails->addTail(sf::Vector2f(-18.f, -15.f));
+        tails->addTail(sf::Vector2f(-8.f, -5.f));
+        tails->addTail(sf::Vector2f(-8.f, 5.f));
+        tails->addTail(sf::Vector2f(-18.f, 15.f));
+        tails->setName("tail");
+        entity->addComponent<TailDrawable>(tails);
     }
 
-    m_menuSprite.setColor(colour);
-    for (auto& t : m_texts)
-        t.setColor(colour);
+    auto controller = std::make_unique<PlanktonController>(m_messageBus);
+    controller->setType(type);
+    controller->setDecayRate(0.f);
+    entity->addComponent<PlanktonController>(controller);
 
-    return true;
-}
-
-bool HelpState::handleEvent(const sf::Event& evt)
-{
-    switch (evt.type)
-    {
-    case sf::Event::KeyReleased:
-    case sf::Event::MouseButtonReleased:
-    case sf::Event::JoystickButtonReleased:
-        m_fadeTime = 0.f;
-        m_mode = Mode::FadeOut;
-        break;
-    default: break;
-    }
-
-    return false;
-}
-
-void HelpState::handleMessage(const Message&)
-{
-
-}
-
-void HelpState::draw()
-{
-    auto& rw = getContext().renderWindow;
-
-    rw.draw(m_menuSprite);
-
-    for (const auto& t : m_texts)
-        rw.draw(t);
+    m_rootNode.addChild(entity);
 }

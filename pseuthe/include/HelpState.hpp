@@ -31,9 +31,13 @@ source distribution.
 #define HELP_STATE_HPP_
 
 #include <State.hpp>
+#include <PhysicsWorld.hpp>
+#include <Entity.hpp>
+#include <PlanktonController.hpp>
 
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 
 class MessageBus;
 class HelpState final : public State
@@ -57,10 +61,17 @@ private:
     } m_mode;
 
     MessageBus& m_messageBus;
+    PhysicsWorld m_physWorld;
+    Entity m_rootNode;
+
     sf::Sprite m_menuSprite;
+    sf::RectangleShape m_rectangleShape;
     std::vector<sf::Text> m_texts;
 
     float m_fadeTime;
+
+    void addText();
+    void addPlankton(PlanktonController::Type);
 };
 
 #endif //HELP_STATE_HPP_

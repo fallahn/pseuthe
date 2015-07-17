@@ -55,6 +55,7 @@ public:
 
     void addChild(Ptr&);
     Ptr removeChild(Entity&);
+    const std::vector<Ptr>& getChildren() const;
 
     sf::Vector2f getWorldPosition() const;
     sf::Transform getWorldTransform() const;

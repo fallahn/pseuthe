@@ -66,6 +66,7 @@ PlanktonController::PlanktonController(MessageBus& mb)
     m_tail              (nullptr),
     m_health            (maxHealth),
     m_enemyId           (0u),
+    m_decayRate         (0.f),
     m_targetRotation    (0.f),
     m_paused            (false)
 {
@@ -136,7 +137,7 @@ void PlanktonController::entityUpdate(Entity& entity, float dt)
         break;
     case Type::Bad:
         colour = badColour;
-        m_health -= badTypeHealthReduction * dt;
+        m_health -= m_decayRate * dt;
         break;
     case Type::Bonus:
         colour = bonusColour;
@@ -144,7 +145,7 @@ void PlanktonController::entityUpdate(Entity& entity, float dt)
         break;
     case Type::UberLife:
         colour = bonusColour;
-        m_health -= uberTypeHealthReduction * dt;
+        m_health -= m_decayRate * dt;
         break;
     }
     colour.a = static_cast<sf::Uint8>(std::max((m_health / maxHealth) * static_cast<float>(colour.a), 0.f));
@@ -159,7 +160,7 @@ void PlanktonController::handleMessage(const Message& msg)
         switch (msg.physics.event)
         {
         case Message::PhysicsEvent::Trigger:
-            assert(m_enemyId > 0);
+            //assert(m_enemyId > 0);
             if ((msg.physics.entityId[0] == m_enemyId || msg.physics.entityId[1] == m_enemyId)
                 && (msg.physics.entityId[0] == getParentUID() || msg.physics.entityId[1] == getParentUID()))
             {
@@ -237,11 +238,20 @@ void PlanktonController::onStart(Entity& entity)
 void PlanktonController::setType(Type t)
 {
     m_type = t;
+
+    if (t == Type::Bad) m_decayRate = badTypeHealthReduction;
+    else if (t == Type::UberLife) m_decayRate = uberTypeHealthReduction;
 }
 
 void PlanktonController::setEnemyId(sf::Uint64 id)
 {
     m_enemyId = id;
+}
+
+void PlanktonController::setDecayRate(float rate)
+{
+    assert(rate >= 0);
+    m_decayRate = rate;
 }
 
 //private

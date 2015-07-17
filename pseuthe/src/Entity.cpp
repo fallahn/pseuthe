@@ -75,6 +75,11 @@ Entity::Ptr Entity::removeChild(Entity& child)
     return nullptr;
 }
 
+const std::vector<Entity::Ptr>& Entity::getChildren() const
+{
+    return m_children;
+}
+
 sf::Vector2f Entity::getWorldPosition() const
 {
     return getWorldTransform() * sf::Vector2f();
