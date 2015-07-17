@@ -217,7 +217,7 @@ void HelpState::addPlankton(PlanktonController::Type type)
     auto ident = ParticleSystem::create(Particle::Type::Ident, m_messageBus);
     ident->setTexture(appInstance.getTexture("assets/images/particles/ident.png"));
     auto text = std::make_unique<TextDrawable>(m_messageBus);
-    text->setFont(appInstance.getFont("assets/fonts/ardeco.ttf"));
+    text->setFont(appInstance.getFont("assets/fonts/Ardeco.ttf"));
     switch (type)
     {
     case PlanktonController::Type::Good:
