@@ -91,7 +91,8 @@ void Scene::handleMessage(const Message& msg)
             m_countCollisions = false;
             break;
         case Message::UIEvent::MenuOpened:
-            m_countCollisions = true;
+            if(msg.ui.stateId == States::ID::Menu)m_countCollisions = true;
+            else if (msg.ui.stateId == States::ID::Help) m_countCollisions = false;
             break;
         default:break;
         }

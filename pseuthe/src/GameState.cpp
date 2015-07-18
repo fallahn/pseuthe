@@ -151,6 +151,7 @@ bool GameState::handleEvent(const sf::Event& evt)
         {
         case 7:
             requestStackPush(States::ID::Menu);
+            m_scene.getLayer(Scene::Layer::UI).getComponent<TextDrawable>("paused_text")->setColor(sf::Color::White);
             break;
         default: break;
         }

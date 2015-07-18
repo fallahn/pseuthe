@@ -516,7 +516,7 @@ void GameController::spawnPlankton()
             (badPlankton < goodPlankton) ? PlanktonController::Type::Bad : PlanktonController::Type::Good;
 
     //----test code----//
-    if (Util::Random::value(0, 29) == 0 
+    if (Util::Random::value(0, 22) == 0 
         && (m_playerPhysicsComponents.size() <= (maxBodyParts / 2)))
         type = PlanktonController::Type::UberLife;
     //-----------------//
