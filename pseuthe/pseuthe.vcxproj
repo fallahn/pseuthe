@@ -177,6 +177,7 @@
     <ClCompile Include="src\TailDrawable.cpp" />
     <ClCompile Include="src\TailDrawablePhysics.cpp" />
     <ClCompile Include="src\TextDrawable.cpp" />
+    <ClCompile Include="src\Ticker.cpp" />
     <ClCompile Include="src\TitleState.cpp" />
     <ClCompile Include="src\UIButton.cpp" />
     <ClCompile Include="src\UICheckBox.cpp" />
@@ -235,6 +236,7 @@
     <ClInclude Include="include\StateStack.hpp" />
     <ClInclude Include="include\TailDrawable.hpp" />
     <ClInclude Include="include\TextDrawable.hpp" />
+    <ClInclude Include="include\Ticker.hpp" />
     <ClInclude Include="include\TitleState.hpp" />
     <ClInclude Include="include\UIButton.hpp" />
     <ClInclude Include="include\UICheckBox.hpp" />

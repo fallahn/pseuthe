@@ -49,6 +49,7 @@ HelpState::HelpState(StateStack& stack, Context context)
     m_messageBus(context.appInstance.getMessageBus()),
     m_physWorld (m_messageBus),
     m_rootNode  (m_messageBus),
+    m_ticker    (context.appInstance.getFont("assets/fonts/N_E_B.ttf")),
     m_fadeTime  (0.f)
 {
     m_menuSprite.setTexture(context.appInstance.getTexture("assets/images/help_menu.png"));
@@ -63,10 +64,24 @@ HelpState::HelpState(StateStack& stack, Context context)
     addPlankton(PlanktonController::Type::Good);
     addPlankton(PlanktonController::Type::Bonus);
     addPlankton(PlanktonController::Type::UberLife);
+
+    m_ticker.setSize({ 0.f, 0.f, 1930.f, 60.f });
+    m_ticker.setPosition(0.f, 50.f);
+    m_ticker.addItem("Acknowledgements (in no particular order): ");
+    m_ticker.addItem("eXpl0it3r, ");
+    m_ticker.addItem("Tank, ");
+    m_ticker.addItem("select_this, ");
+    m_ticker.addItem("malone, ");
+    m_ticker.addItem("jamz, ");
+    m_ticker.addItem("Nim, ");
+    m_ticker.addItem("the denizens of #SFML on irc.boxbox.org... ");
+    m_ticker.addItem("everyone who donated on itch.io   Thanks! ");
 }
 
 bool HelpState::update(float dt)
 {
+    m_ticker.update(dt);
+    
     sf::Color frontColour = sf::Color::White;
     sf::Color backColour = sf::Color::Black;
 
@@ -121,6 +136,8 @@ bool HelpState::update(float dt)
         if (tail) tail->setColour(frontColour);
     }
 
+    m_ticker.setColour(frontColour);
+
     return true;
 }
 
@@ -161,6 +178,8 @@ void HelpState::draw()
 
     for (const auto& t : m_texts)
         rw.draw(t);
+
+    rw.draw(m_ticker);
 }
 
 //private

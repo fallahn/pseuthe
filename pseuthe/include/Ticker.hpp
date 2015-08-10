@@ -25,56 +25,39 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//displays the help menu
+#ifndef TICKER_HPP_
+#define TICKER_HPP_
 
-#ifndef HELP_STATE_HPP_
-#define HELP_STATE_HPP_
-
-#include <State.hpp>
-#include <PhysicsWorld.hpp>
-#include <Entity.hpp>
-#include <PlanktonController.hpp>
-#include <Ticker.hpp>
-
-#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/System/NonCopyable.hpp>
 #include <SFML/Graphics/Text.hpp>
-#include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Transformable.hpp>
 
-class MessageBus;
-class HelpState final : public State
+#include <vector>
+
+class Ticker final : private sf::NonCopyable, public sf::Drawable, public sf::Transformable
 {
 public:
-    HelpState(StateStack&, Context);
-    ~HelpState() = default;
+    explicit Ticker(sf::Font& font);
+    ~Ticker() = default;
 
-    bool update(float) override;
-    void draw() override;
-    bool handleEvent(const sf::Event&) override;
-    void handleMessage(const Message&) override;
+    void update(float dt);
+    void addItem(const std::string& text);
+    void setSpeed(float speed);
+    void setSize(sf::FloatRect size);
+    sf::Uint16 getMessageCount() const;
+    void setColour(const sf::Color&);
 
 private:
+    sf::Font& m_font;
+    std::vector<sf::Text> m_messages;
+    sf::FloatRect m_size;
+    float m_speed;
+    float m_totalWidth;
 
-    enum class Mode
-    {
-        FadeIn,
-        Static,
-        FadeOut
-    } m_mode;
-
-    MessageBus& m_messageBus;
-    PhysicsWorld m_physWorld;
-    Entity m_rootNode;
-
-    sf::Sprite m_menuSprite;
-    sf::RectangleShape m_rectangleShape;
-    std::vector<sf::Text> m_texts;
-
-    Ticker m_ticker;
-
-    float m_fadeTime;
-
-    void addText();
-    void addPlankton(PlanktonController::Type);
+    void draw(sf::RenderTarget& rt, sf::RenderStates states)const override;
 };
 
-#endif //HELP_STATE_HPP_
+
+#endif //TICKER_H_
