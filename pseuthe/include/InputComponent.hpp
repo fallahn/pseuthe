@@ -72,6 +72,8 @@ private:
     float m_health;
     bool m_parseInput;
     bool m_controllerEnabled;
+    bool m_mouseClickPending;
+    sf::Vector2f m_mouseClick;
 
     float m_mass;
     float m_invMass;
@@ -84,6 +86,8 @@ private:
 
     sf::Vector2f getKeyboardArcade(float);
     sf::Vector2f getControllerArcade(float);
+
+    sf::Vector2f getMouse(float, const sf::Vector2f&);
 };
 
 #endif //INPUT_COMPONENT_HPP_

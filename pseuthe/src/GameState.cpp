@@ -109,6 +109,19 @@ GameState::GameState(StateStack& stateStack, Context context)
 
 bool GameState::update(float dt)
 {
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+    {
+        auto& rw = getContext().renderWindow;
+        auto pos = rw.mapPixelToCoords(sf::Mouse::getPosition(rw));
+        Message msg;
+        msg.type = Message::Type::UI;
+        msg.ui.mouseX = pos.x;
+        msg.ui.mouseY = pos.y;
+        msg.ui.type = Message::UIEvent::MouseClicked;
+        m_messageBus.send(msg);
+    }
+    
+    
     //probably ok to do here, although we could always raise an event when resizing window
     m_vignette.setPosition(getContext().defaultView.getCenter()); //TODO this should be part of the scene
     m_scene.setView(getContext().defaultView);
@@ -156,6 +169,17 @@ bool GameState::handleEvent(const sf::Event& evt)
         default: break;
         }
     }
+    //else if (evt.type == sf::Event::MouseButtonPressed)
+    //{
+    //    auto& rw = getContext().renderWindow;
+    //    auto pos = rw.mapPixelToCoords(sf::Mouse::getPosition(rw));
+    //    Message msg;
+    //    msg.type = Message::Type::UI;
+    //    msg.ui.mouseX = pos.x;
+    //    msg.ui.mouseY = pos.y;
+    //    msg.ui.type = Message::UIEvent::MouseClicked;
+    //    m_messageBus.send(msg);
+    //}
     return true;
 }
 

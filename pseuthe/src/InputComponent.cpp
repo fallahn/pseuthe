@@ -88,6 +88,7 @@ InputComponent::InputComponent(MessageBus& mb)
     m_health            (maxHealth),
     m_parseInput        (true),
     m_controllerEnabled (true),
+    m_mouseClickPending (false),
     m_mass              (0.f),
     m_invMass           (1.f)
 {
@@ -111,6 +112,12 @@ void InputComponent::entityUpdate(Entity& entity, float dt)
             && m_controllerEnabled)
         {
             forceVec = getController(dt);
+        }
+
+        if (Util::Vector::lengthSquared(forceVec) < 0.1f
+            && m_mouseClickPending)
+        {
+            forceVec = getMouse(dt, entity.getPosition());
         }
     }
 
@@ -193,6 +200,11 @@ void InputComponent::handleMessage(const Message& msg)
                 m_parseInput = false;
                 m_physicsComponent->setVelocity(m_physicsComponent->getVelocity() * 0.1f);
             }
+            break;
+        case Message::UIEvent::MouseClicked:
+            m_mouseClickPending = true;
+            m_mouseClick.x = msg.ui.mouseX;
+            m_mouseClick.y = msg.ui.mouseY;
             break;
         default:break;
         }
@@ -495,4 +507,10 @@ sf::Vector2f InputComponent::getControllerArcade(float dt)
     }
 
     return forceVec;
+}
+
+sf::Vector2f InputComponent::getMouse(float dt, const sf::Vector2f& position)
+{
+    m_mouseClickPending = false;
+    return (force * 0.05f) * Util::Vector::normalise(m_mouseClick - position) * m_invMass;
 }

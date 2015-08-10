@@ -99,11 +99,13 @@ public:
             RequestControlsArcade,
             RequestControllerEnable,
             RequestControllerDisable,
-            ResizedWindow
+            ResizedWindow,
+            MouseClicked
         }type;
         float value;
         States::ID stateId;
         Difficulty difficulty;
+        float mouseX, mouseY;
     };
 
     struct PlayerEvent
