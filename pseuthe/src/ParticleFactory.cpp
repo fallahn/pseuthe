@@ -27,6 +27,7 @@ source distribution.
 
 //convenience function for creating particle system presets
 
+#include <MakeUnique.hpp>
 #include <ParticleSystem.hpp>
 #include <Util.hpp>
 

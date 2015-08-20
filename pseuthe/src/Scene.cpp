@@ -25,6 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
+#include <MakeUnique.hpp>
 #include <Scene.hpp>
 #include <MessageBus.hpp>
 

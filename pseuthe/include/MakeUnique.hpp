@@ -25,32 +25,50 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <MakeUnique.hpp>
-#include <ShaderResource.hpp>
+//an implementation of c++14's std::make_unique
 
-#include <SFML/Graphics/Shader.hpp>
+#ifndef MAKEUNIQUE_HPP_
+#define MAKEUNIQUE_HPP_
 
-#include <cassert>
+#include <cstddef>
+#include <memory>
+#include <type_traits>
+#include <utility>
 
-ShaderResource::ShaderResource(){}
+#if __cplusplus == 201103L
 
-//public
-sf::Shader& ShaderResource::get(Shader::Type type)
-{
-    auto result = m_shaders.find(type);
-    assert(result != m_shaders.end()); //did you forget to preload this shader?
+namespace std {
 
-    return *result->second;
+template<class T> struct _Unique_if {
+    typedef unique_ptr<T> _Single_object;
+};
+
+template<class T> struct _Unique_if<T[]> {
+    typedef unique_ptr<T[]> _Unknown_bound;
+};
+
+template<class T, size_t N> struct _Unique_if<T[N]> {
+    typedef void _Known_bound;
+};
+
+template<class T, class... Args>
+    typename _Unique_if<T>::_Single_object
+    make_unique(Args&&... args) {
+        return unique_ptr<T>(new T(std::forward<Args>(args)...));
+    }
+
+template<class T>
+    typename _Unique_if<T>::_Unknown_bound
+    make_unique(size_t n) {
+        typedef typename remove_extent<T>::type U;
+        return unique_ptr<T>(new U[n]());
+    }
+
+template<class T, class... Args>
+    typename _Unique_if<T>::_Known_bound
+    make_unique(Args&&...) = delete;
 }
 
-void ShaderResource::preload(Shader::Type type, const std::string& vertShader, const std::string& fragShader)
-{
-    auto shader = std::make_unique<sf::Shader>();
-#ifndef _DEBUG_
-    shader->loadFromMemory(vertShader, fragShader);
-#else
-    assert(shader->loadFromMemory(vertShader, fragShader));
-#endif //_DEBUG_
+#endif
 
-    m_shaders.insert(std::make_pair(type, std::move(shader)));
-}
+#endif
