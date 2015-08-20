@@ -77,7 +77,6 @@ namespace
     const float hardSpawnTime = 2.f;
     const float spawnTimeIncrease = 0.2f;
 
-    sf::Clock scoreClock;
     float score = 0.f;
     float highScore = 0.f;
 
@@ -157,9 +156,8 @@ void GameController::update(float dt)
         }
     }
 
-    if(!m_paused) score += scoreClock.getElapsedTime().asSeconds() * m_playerPhysicsComponents.size();
-    scoreClock.restart();
-
+    if(!m_paused) score += dt * m_playerPhysicsComponents.size();
+    
     if (score > highScore)
     {
         m_highScoreText->setString("Longest Run: " + std::to_string(score));
@@ -600,7 +598,6 @@ void GameController::spawnPlankton()
 void GameController::resetScore()
 {
     score = 0.f;
-    scoreClock.restart();
 }
 
 std::string GameController::getName() const
