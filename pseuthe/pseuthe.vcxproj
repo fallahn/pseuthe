@@ -211,6 +211,7 @@
     <ClInclude Include="include\JsonUtil.hpp" />
     <ClInclude Include="include\LightPosition.hpp" />
     <ClInclude Include="include\Log.hpp" />
+    <ClInclude Include="include\MakeUnique.hpp" />
     <ClInclude Include="include\MenuState.hpp" />
     <ClInclude Include="include\MessageBus.hpp" />
     <ClInclude Include="include\Music.hpp" />

@@ -40,7 +40,7 @@ source distribution.
 
 namespace
 {
-    const sf::Color goodColour(200u, 230u, 200u, 180u);
+    const sf::Color goodColour(200u, 230u, 250u, 180u);
     const sf::Color badColour(230u, 200u, 200u, 180u);
     const sf::Color bonusColour(170u, 170u, 200u, 180u);
 
