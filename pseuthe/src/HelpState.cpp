@@ -49,7 +49,7 @@ HelpState::HelpState(StateStack& stack, Context context)
     m_messageBus(context.appInstance.getMessageBus()),
     m_physWorld (m_messageBus),
     m_rootNode  (m_messageBus),
-    m_ticker    (context.appInstance.getFont("assets/fonts/N_E_B.ttf")),
+    m_ticker    (context.appInstance.getFont("assets/fonts/Ardeco.ttf")),
     m_fadeTime  (0.f)
 {
     m_menuSprite.setTexture(context.appInstance.getTexture("assets/images/help_menu.png"));
@@ -66,11 +66,13 @@ HelpState::HelpState(StateStack& stack, Context context)
     addPlankton(PlanktonController::Type::UberLife);
 
     m_ticker.setSize({ 0.f, 0.f, 1930.f, 60.f });
-    m_ticker.setPosition(0.f, 50.f);
+    m_ticker.setPosition(0.f, 980.f);
     m_ticker.addItem("Acknowledgements (in no particular order): ");
     m_ticker.addItem("eXpl0it3r, ");
     m_ticker.addItem("Tank, ");
     m_ticker.addItem("select_this, ");
+    m_ticker.addItem("jagoly, ");
+    m_ticker.addItem("jonny, ");
     m_ticker.addItem("malone, ");
     m_ticker.addItem("jamz, ");
     m_ticker.addItem("Nim, ");

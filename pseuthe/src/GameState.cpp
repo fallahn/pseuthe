@@ -95,7 +95,7 @@ GameState::GameState(StateStack& stateStack, Context context)
     m_scene.getLayer(Scene::Layer::UI).addComponent<TextDrawable>(versionText);
 
     auto pausedText = std::make_unique<TextDrawable>(m_messageBus);
-    pausedText->setFont(context.appInstance.getFont("assets/fonts/ardeco.ttf"));
+    pausedText->setFont(context.appInstance.getFont("assets/fonts/Ardeco.ttf"));
     pausedText->setString("PAUSED");
     pausedText->setCharacterSize(80u);
     Util::Position::centreOrigin(*pausedText);
@@ -109,7 +109,7 @@ GameState::GameState(StateStack& stateStack, Context context)
 
 bool GameState::update(float dt)
 {
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+    /*if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
     {
         auto& rw = getContext().renderWindow;
         auto pos = rw.mapPixelToCoords(sf::Mouse::getPosition(rw));
@@ -119,7 +119,7 @@ bool GameState::update(float dt)
         msg.ui.mouseY = pos.y;
         msg.ui.type = Message::UIEvent::MouseClicked;
         m_messageBus.send(msg);
-    }
+    }*/
     
     
     //probably ok to do here, although we could always raise an event when resizing window
