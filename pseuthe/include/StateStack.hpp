@@ -31,6 +31,7 @@ source distribution.
 #define STATESTACK_HPP_
 
 #include <State.hpp>
+#include <MakeUnique.hpp>
 
 #include <map>
 #include <functional>
