@@ -35,7 +35,7 @@ source distribution.
 #include <type_traits>
 #include <utility>
 
-#if __cplusplus == 201103L
+#if __cplusplus < 201402L
 
 namespace std {
 
