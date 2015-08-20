@@ -153,6 +153,7 @@ bool GameState::handleEvent(const sf::Event& evt)
         {
         //case sf::Keyboard::Space:
         case sf::Keyboard::Escape:
+        case sf::Keyboard::P:
             requestStackPush(States::ID::Menu);
             m_scene.getLayer(Scene::Layer::UI).getComponent<TextDrawable>("paused_text")->setColor(sf::Color::White);
             break;

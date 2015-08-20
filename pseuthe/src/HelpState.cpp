@@ -235,6 +235,7 @@ void HelpState::addPlankton(PlanktonController::Type type)
     entity->addComponent<PhysicsComponent>(physComponent);
 
     auto& appInstance = getContext().appInstance;
+    bool colourblind = appInstance.getGameSettings().colourblindMode;
     AnimatedDrawable::Ptr ad;
     auto ident = ParticleSystem::create(Particle::Type::Ident, m_messageBus);
     ident->setTexture(appInstance.getTexture("assets/images/particles/ident.png"));
@@ -245,13 +246,13 @@ void HelpState::addPlankton(PlanktonController::Type type)
     case PlanktonController::Type::Good:
         ad = std::make_unique<AnimatedDrawable>(m_messageBus, appInstance.getTexture("assets/images/player/food01.png"));
         ad->loadAnimationData("assets/images/player/food01.cra");
-        ident->setColour({ 84u, 150u, 75u });
+        (colourblind) ? ident->setColour({ 14u, 160u, 225u }) : ident->setColour({ 84u, 150u, 75u });
         text->setString("+50 HP");
         break;
     case PlanktonController::Type::Bad:
         ad = std::make_unique<AnimatedDrawable>(m_messageBus, appInstance.getTexture("assets/images/player/food02.png"));
         ad->loadAnimationData("assets/images/player/food02.cra");
-        ident->setColour({ 184u, 67u, 51u });
+        (colourblind) ? ident->setColour({ 214u, 190u, 25u }) : ident->setColour({ 184u, 67u, 51u });
         text->setString("-35 HP");
         break;
     case PlanktonController::Type::Bonus:
@@ -305,6 +306,7 @@ void HelpState::addPlankton(PlanktonController::Type type)
     auto controller = std::make_unique<PlanktonController>(m_messageBus);
     controller->setType(type);
     controller->setDecayRate(0.f);
+    controller->setColourblind(colourblind);
     entity->addComponent<PlanktonController>(controller);
 
     m_rootNode.addChild(entity);

@@ -56,7 +56,7 @@ namespace
     int lastScoreIndex = 0;
 
     int settingsIdent = 0xfc41414b;
-    int settingsVersion = 5;
+    int settingsVersion = 6;
 }
 
 App::App()
@@ -287,6 +287,12 @@ void App::handleMessages()
                 break;
             case Message::UIEvent::RequestControllerDisable:
                 m_gameSettings.controllerEnabled = false;
+                break;
+            case Message::UIEvent::RequestColourblindEnable:
+                m_gameSettings.colourblindMode = true;
+                break;
+            case Message::UIEvent::RequestColourblindDisable:
+                m_gameSettings.colourblindMode = false;
                 break;
             default: break;
             }

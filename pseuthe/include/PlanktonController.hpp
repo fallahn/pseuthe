@@ -59,6 +59,8 @@ public:
 
     void setEnemyId(sf::Uint64);
     void setDecayRate(float);
+
+    void setColourblind(bool);
 private:
 
     enum Flags
@@ -84,6 +86,7 @@ private:
     float m_targetRotation;
 
     bool m_paused;
+    bool m_colourblind;
 };
 
 

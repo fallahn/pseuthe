@@ -213,7 +213,7 @@ void MenuState::buildMenu(const sf::Font& font)
     m_uiContainer.addControl(resolutionBox);
 
     auto fullscreenCheckbox = std::make_shared<ui::CheckBox>(font, getContext().appInstance.getTexture("assets/images/ui/checkbox.png"));
-    fullscreenCheckbox->setPosition(1070.f, 510.f);
+    fullscreenCheckbox->setPosition(1070.f, 490.f);
     fullscreenCheckbox->setText("Full Screen");
     fullscreenCheckbox->setCallback([this](const ui::CheckBox*)
     {
@@ -241,7 +241,7 @@ void MenuState::buildMenu(const sf::Font& font)
     m_uiContainer.addControl(difficultySelection);
 
     auto controlsCheckbox = std::make_shared<ui::CheckBox>(font, getContext().appInstance.getTexture("assets/images/ui/checkbox.png"));
-    controlsCheckbox->setPosition(1070.f, 590.f);
+    controlsCheckbox->setPosition(1070.f, 550.f);
     controlsCheckbox->setText("Classic Mode");
     controlsCheckbox->setCallback([this](const ui::CheckBox* checkBox)
     {
@@ -264,7 +264,7 @@ void MenuState::buildMenu(const sf::Font& font)
     m_uiContainer.addControl(textBox);
 
     auto controllerCheckbox = std::make_shared<ui::CheckBox>(font, getContext().appInstance.getTexture("assets/images/ui/checkbox.png"));
-    controllerCheckbox->setPosition(1070.f, 670.f);
+    controllerCheckbox->setPosition(1070.f, 610.f);
     controllerCheckbox->setText("Enable Controller");
     controllerCheckbox->setCallback([this](const ui::CheckBox* checkBox)
     {
@@ -275,6 +275,21 @@ void MenuState::buildMenu(const sf::Font& font)
     }, ui::CheckBox::Event::CheckChanged);
     controllerCheckbox->check(getContext().appInstance.getGameSettings().controllerEnabled);
     m_uiContainer.addControl(controllerCheckbox);
+
+
+    auto colourblindCheckbox = std::make_shared<ui::CheckBox>(font, getContext().appInstance.getTexture("assets/images/ui/checkbox.png"));
+    colourblindCheckbox->setPosition(1070.f, 670.f);
+    colourblindCheckbox->setText("Colour Blind Mode");
+    colourblindCheckbox->setCallback([this](const ui::CheckBox* checkBox)
+    {
+        Message msg;
+        msg.type = Message::Type::UI;
+        msg.ui.type = (checkBox->checked()) ? Message::UIEvent::RequestColourblindEnable : Message::UIEvent::RequestColourblindDisable;
+        m_messageBus.send(msg);
+    }, ui::CheckBox::Event::CheckChanged);
+    colourblindCheckbox->check(getContext().appInstance.getGameSettings().colourblindMode);
+    m_uiContainer.addControl(colourblindCheckbox);
+
 
     auto applyButton = std::make_shared<ui::Button>(font, getContext().appInstance.getTexture("assets/images/ui/button.png"));
     applyButton->setText("Apply");

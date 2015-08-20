@@ -523,18 +523,19 @@ void GameController::spawnPlankton()
     AnimatedDrawable::Ptr ad;
     auto ident = ParticleSystem::create(Particle::Type::Ident, m_messageBus);
     ident->setTexture(m_appInstance.getTexture("assets/images/particles/ident.png"));
+    bool colourblind = m_appInstance.getGameSettings().colourblindMode;
     switch (type)
     {
     case PlanktonController::Type::Good:
         ad = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/food01.png"));
         ad->loadAnimationData("assets/images/player/food01.cra");
-        ident->setColour({ 84u, 150u, 75u });
+        (colourblind) ? ident->setColour({ 14u, 160u, 225u }) : ident->setColour({ 84u, 150u, 75u }); //no majick pl0x!
         goodPlankton++;
         break;
     case PlanktonController::Type::Bad:
         ad = std::make_unique<AnimatedDrawable>(m_messageBus, m_appInstance.getTexture("assets/images/player/food02.png"));
         ad->loadAnimationData("assets/images/player/food02.cra");
-        ident->setColour({ 184u, 67u, 51u });
+        (colourblind) ? ident->setColour({ 214u, 190u, 25u }) : ident->setColour({ 184u, 67u, 51u });
         badPlankton++;
         break;
     case PlanktonController::Type::Bonus:
@@ -583,6 +584,7 @@ void GameController::spawnPlankton()
     assert(m_player);
     controller->setEnemyId(m_player->getUID());
     controller->setType(type);
+    controller->setColourblind(colourblind);
     entity->addComponent<PlanktonController>(controller);
 
     //send a spawn message

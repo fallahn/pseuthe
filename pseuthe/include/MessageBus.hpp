@@ -99,6 +99,8 @@ public:
             RequestControlsArcade,
             RequestControllerEnable,
             RequestControllerDisable,
+            RequestColourblindEnable,
+            RequestColourblindDisable,
             ResizedWindow,
             MouseClicked
         }type;

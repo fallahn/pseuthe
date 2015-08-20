@@ -40,9 +40,16 @@ source distribution.
 
 namespace
 {
-    const sf::Color goodColour(200u, 230u, 250u, 180u);
+    const sf::Color goodColour(200u, 230u, 180u, 180u);
+    const sf::Color goodColourblind(25u, 210u, 250u, 200u);
     const sf::Color badColour(230u, 200u, 200u, 180u);
+    const sf::Color badColourblind(230u, 200u, 20u, 200u);
     const sf::Color bonusColour(170u, 170u, 200u, 180u);
+
+    const sf::Color identColourblindGood(14u, 160u, 225u);
+    const sf::Color identColourGood(84u, 150u, 75u);
+    const sf::Color identColourblindBad(214u, 190u, 25u);
+    const sf::Color identColourBad(184u, 67u, 51u);
 
     const float maxHealth = 100.f;
     const float healthReduction = 45.f; //reduction per second
@@ -68,7 +75,8 @@ PlanktonController::PlanktonController(MessageBus& mb)
     m_enemyId           (0u),
     m_decayRate         (0.f),
     m_targetRotation    (0.f),
-    m_paused            (false)
+    m_paused            (false),
+    m_colourblind       (false)
 {
 
 }
@@ -133,10 +141,10 @@ void PlanktonController::entityUpdate(Entity& entity, float dt)
     {
     case Type::Good:
     default:
-        colour = goodColour;
+        colour = (m_colourblind) ? goodColourblind : goodColour;
         break;
     case Type::Bad:
-        colour = badColour;
+        colour = (m_colourblind) ? badColourblind : badColour;
         m_health -= m_decayRate * dt;
         break;
     case Type::Bonus:
@@ -204,6 +212,20 @@ void PlanktonController::handleMessage(const Message& msg)
             if (msg.ui.stateId == States::ID::Menu)
                 m_paused = true;
             break;
+        case Message::UIEvent::RequestColourblindDisable:
+            m_colourblind = false;
+            if (m_type == PlanktonController::Type::Good)
+                m_ident->setColour(identColourGood);
+            else if (m_type == PlanktonController::Type::Bad)
+                m_ident->setColour(identColourBad);
+            break;
+        case Message::UIEvent::RequestColourblindEnable:
+            m_colourblind = true;
+            if (m_type == PlanktonController::Type::Good)
+                m_ident->setColour(identColourblindGood);
+            else if (m_type == PlanktonController::Type::Bad)
+                m_ident->setColour(identColourblindBad);
+            break;
         default:break;
         }
     }
@@ -252,6 +274,11 @@ void PlanktonController::setDecayRate(float rate)
 {
     assert(rate >= 0);
     m_decayRate = rate;
+}
+
+void PlanktonController::setColourblind(bool blind)
+{
+    m_colourblind = blind;
 }
 
 //private
