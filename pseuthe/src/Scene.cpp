@@ -122,8 +122,11 @@ void Scene::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     for (const auto& e : m_layers)
         m_sceneBufferA.draw(*e, states);
     m_sceneBufferA.display();
-
+    
+    m_sceneBufferB.clear();
     m_bloomEffect.apply(m_sceneBufferA, m_sceneBufferB);
+    m_sceneBufferB.display();
+    
     m_chromeAbEffect.apply(m_sceneBufferB, rt);
 
 }
