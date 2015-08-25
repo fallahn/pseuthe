@@ -40,6 +40,11 @@ source distribution.
 #include <cassert>
 #include <fstream>
 
+//Needed to access resources on OS X
+#ifdef __APPLE__
+#include <ResourcePath.hpp>
+#endif
+
 AnimatedDrawable::AnimatedDrawable(MessageBus& mb)
     : Component     (mb),
     m_shader        (nullptr),
@@ -246,7 +251,13 @@ sf::Vector2f AnimatedDrawable::getRightVector() const
 
 void AnimatedDrawable::loadAnimationData(const std::string& path)
 {
-    std::ifstream file(path);
+    std::string resPath("");
+    //if it's OS X, prepend the resourcePath
+    #ifdef __APPLE__
+    resPath = resourcePath();
+    #endif
+    
+    std::ifstream file(resPath + path);
     if (!file.good() || !Util::File::validLength(file))
     {
         LOG("failed to open " + path + ", or file empty", Logger::Type::Error);
