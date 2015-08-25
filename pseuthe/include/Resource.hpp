@@ -37,6 +37,11 @@ source distribution.
 #include <memory>
 #include <array>
 
+//Needed to access resources on OS X
+#ifdef __APPLE__
+#include <ResourcePath.hpp>
+#endif
+
 template <class T>
 class BaseResource
 {
@@ -61,7 +66,14 @@ public:
         }
         //else attempt to load from file
         std::unique_ptr<T> r = std::unique_ptr<T>(new T());
-        if (path.empty() || !r->loadFromFile(path))
+        
+        std::string resPath("");
+        //if it's OS X, prepend the resourcePath
+        #ifdef __APPLE__
+        resPath = resourcePath();
+        #endif
+        
+        if (path.empty() || !r->loadFromFile(resPath + path))
         {
             m_resources[path] = errorHandle(); //error handle should return message endl
         }
