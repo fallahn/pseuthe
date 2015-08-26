@@ -38,7 +38,7 @@ source distribution.
 
 namespace
 {
-    const sf::Uint32 charSize = 48u;
+    const sf::Uint32 charSize = 46u;
     const float fadeTime = 0.25f;
 
     const float planktonSize = 32.f;
@@ -50,7 +50,7 @@ HelpState::HelpState(StateStack& stack, Context context)
     m_messageBus(context.appInstance.getMessageBus()),
     m_physWorld (m_messageBus),
     m_rootNode  (m_messageBus),
-    m_ticker    (context.appInstance.getFont("assets/fonts/Ardeco.ttf")),
+    m_ticker    (context.appInstance.getFont("")),
     m_fadeTime  (0.f)
 {
     m_menuSprite.setTexture(context.appInstance.getTexture("assets/images/help_menu.png"));
@@ -66,8 +66,8 @@ HelpState::HelpState(StateStack& stack, Context context)
     addPlankton(PlanktonController::Type::Bonus);
     addPlankton(PlanktonController::Type::UberLife);
 
-    m_ticker.setSize({ 0.f, 0.f, 1930.f, 60.f });
-    m_ticker.setPosition(0.f, 980.f);
+    m_ticker.setSize({ 0.f, 0.f, 1930.f, 40.f });
+    m_ticker.setPosition(0.f, 950.f);
     m_ticker.addItem("Acknowledgements (in no particular order): ");
     m_ticker.addItem("eXpl0it3r, ");
     m_ticker.addItem("Tank, ");
@@ -198,7 +198,7 @@ void HelpState::addText()
     titleText.setPosition(centrePos);
     titleText.move(0.f, -100.f);
 
-    m_texts.emplace_back("Absorb green plankton to prevent starvation", font, charSize);
+    m_texts.emplace_back("Absorb green plankton by hovering over them", font, charSize);
     auto& text01 = m_texts.back();
     Util::Position::centreOrigin(text01);
     text01.setPosition(centrePos);
@@ -216,7 +216,7 @@ void HelpState::addText()
     text03.setPosition(centrePos);
     text03.move(0.f, 140.f);
 
-    m_texts.emplace_back("Avoid collisions and live as long as you can.", font, charSize);
+    m_texts.emplace_back("Use WASD or Arrow keys or a controller.", font, charSize);
     auto& text04 = m_texts.back();
     Util::Position::centreOrigin(text04);
     text04.setPosition(centrePos);

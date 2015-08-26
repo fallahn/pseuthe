@@ -56,11 +56,11 @@ MenuState::MenuState(StateStack& stateStack, Context context)
 
     auto& font = context.appInstance.getFont("assets/fonts/N_E_B.ttf");
 
-    m_texts.emplace_back("http://fallahn.itch.io/pseuthe", context.appInstance.getFont("assets/fonts/VeraMono.ttf"), 18u);
-    m_texts.back().setPosition(1580.f, 1050.f);
+    m_texts.emplace_back("http://fallahn.itch.io/pseuthe", context.appInstance.getFont("assets/fonts/VeraMono.ttf"), 26u);
+    m_texts.back().setPosition(1420.f, 1020.f);
 
-    m_texts.emplace_back("Press Tab for Help", context.appInstance.getFont("assets/fonts/VeraMono.ttf"), 18u);
-    m_texts.back().setPosition(10.f, 1050.f);
+    m_texts.emplace_back("Press Tab for Help", context.appInstance.getFont("assets/fonts/VeraMono.ttf"), 26u);
+    m_texts.back().setPosition(20.f, 1020.f);
 
     buildMenu(font);
 
