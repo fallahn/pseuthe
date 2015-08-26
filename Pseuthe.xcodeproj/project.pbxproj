@@ -73,6 +73,7 @@
 		A63CF5D51B8CE729006821A2 /* UISlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A63CF5951B8CE729006821A2 /* UISlider.cpp */; };
 		A63CF5D61B8CE729006821A2 /* UITextBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A63CF5961B8CE729006821A2 /* UITextBox.cpp */; };
 		A63CF5D81B8CE8E8006821A2 /* ResourcePath.mm in Sources */ = {isa = PBXBuildFile; fileRef = A63CF5D71B8CE8E8006821A2 /* ResourcePath.mm */; };
+		A65D8C9E1B8E398400B2BAF8 /* Pseuthe_OSX_Icon.iconset in Resources */ = {isa = PBXBuildFile; fileRef = A65D8C9D1B8E398400B2BAF8 /* Pseuthe_OSX_Icon.iconset */; };
 		A6AE73E01B8CE57A0049066F /* assets in Resources */ = {isa = PBXBuildFile; fileRef = A6AE73DF1B8CE57A0049066F /* assets */; };
 /* End PBXBuildFile section */
 
@@ -297,6 +298,7 @@
 		A63CF5951B8CE729006821A2 /* UISlider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UISlider.cpp; sourceTree = "<group>"; };
 		A63CF5961B8CE729006821A2 /* UITextBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UITextBox.cpp; sourceTree = "<group>"; };
 		A63CF5D71B8CE8E8006821A2 /* ResourcePath.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ResourcePath.mm; path = pseuthe/ResourcePath.mm; sourceTree = SOURCE_ROOT; };
+		A65D8C9D1B8E398400B2BAF8 /* Pseuthe_OSX_Icon.iconset */ = {isa = PBXFileReference; lastKnownFileType = folder.iconset; name = Pseuthe_OSX_Icon.iconset; path = ../../Pseuthe/pseuthe/Pseuthe_OSX_Icon.iconset; sourceTree = "<group>"; };
 		A6AE73DF1B8CE57A0049066F /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = pseuthe/assets; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -344,6 +346,7 @@
 			isa = PBXGroup;
 			children = (
 				A61235391B878EF000FA4830 /* Pseuthe-Info.plist */,
+				A65D8C9D1B8E398400B2BAF8 /* Pseuthe_OSX_Icon.iconset */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -695,6 +698,7 @@
 			files = (
 				A63CF59F1B8CE729006821A2 /* Vector3.inl in Resources */,
 				A63CF59C1B8CE729006821A2 /* ThreadLocalPtr.inl in Resources */,
+				A65D8C9E1B8E398400B2BAF8 /* Pseuthe_OSX_Icon.iconset in Resources */,
 				A63CF5981B8CE729006821A2 /* SoundFileFactory.inl in Resources */,
 				A63CF59B1B8CE729006821A2 /* Thread.inl in Resources */,
 				A63CF5971B8CE729006821A2 /* picojson.LICENSE in Resources */,
