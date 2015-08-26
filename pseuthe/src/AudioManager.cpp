@@ -33,6 +33,11 @@ source distribution.
 
 #include <SFML/Audio/Listener.hpp>
 
+//Needed to access resources on OS X
+#ifdef __APPLE__
+#include <ResourcePath.hpp>
+#endif
+
 namespace
 {
     const float maxMusicVolume = 100.f;
@@ -49,27 +54,33 @@ AudioManager::AudioManager()
     m_currentFadeTime   (0.f),
     m_fxSounds          (SoundIds::Size),
     m_muted             (false)
-{   
+{
+    std::string resPath("");
+    //if it's OS X, prepend the resourcePath
+    #ifdef __APPLE__
+    resPath = resourcePath();
+    #endif
+    
     m_musicPlayer.setVolume(0.f);
-    m_musicPlayer.play("assets/sound/background.ogg", true);
+    m_musicPlayer.play(resPath + "assets/sound/background.ogg", true);
 
     m_soundPlayer.setVolume(0.f);
-    auto files = FileSystem::listFiles(impactSoundPath);
+    auto files = FileSystem::listFiles(resPath + impactSoundPath);
     for (const auto& file : files)
     {
         if (FileSystem::getFileExtension(file) == ".wav")
         {
             m_impactSounds.emplace_back(sf::SoundBuffer());
-            m_impactSounds.back().loadFromFile(impactSoundPath + file);
+            m_impactSounds.back().loadFromFile(resPath + impactSoundPath + file);
         }
     }
-
-    m_fxSounds[SwitchFx].loadFromFile("assets/sound/switch.wav");
-    m_fxSounds[HealthLost].loadFromFile("assets/sound/healthlost.wav");
-    m_fxSounds[HealthGained].loadFromFile("assets/sound/healthgained.wav");
-    m_fxSounds[Eating].loadFromFile("assets/sound/nomnom.wav");
-    m_fxSounds[AteJelly].loadFromFile("assets/sound/jelly_eat.wav");
-    m_fxSounds[Spawned].loadFromFile("assets/sound/player_spawn.wav");
+    
+    m_fxSounds[SwitchFx].loadFromFile(resPath + "assets/sound/switch.wav");
+    m_fxSounds[HealthLost].loadFromFile(resPath + "assets/sound/healthlost.wav");
+    m_fxSounds[HealthGained].loadFromFile(resPath + "assets/sound/healthgained.wav");
+    m_fxSounds[Eating].loadFromFile(resPath + "assets/sound/nomnom.wav");
+    m_fxSounds[AteJelly].loadFromFile(resPath + "assets/sound/jelly_eat.wav");
+    m_fxSounds[Spawned].loadFromFile(resPath + "assets/sound/player_spawn.wav");
 }
 
 

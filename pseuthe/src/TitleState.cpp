@@ -32,6 +32,11 @@ source distribution.
 
 #include <SFML/Window/Event.hpp>
 
+//Needed to access resources on OS X
+#ifdef __APPLE__
+#include <ResourcePath.hpp>
+#endif
+
 namespace
 {
     const float fadeTime = 1.f;
@@ -48,7 +53,13 @@ TitleState::TitleState(StateStack& stack, Context context)
     m_fadeTime      (0.f),
     m_fade          (Fade::In)
 {
-    m_sprite.setTexture(context.appInstance.getTexture("assets/images/startup.png"));
+    std::string resPath("");
+    //if it's OS X, prepend the resourcePath
+    #ifdef __APPLE__
+    resPath = resourcePath();
+    #endif
+    
+    m_sprite.setTexture(context.appInstance.getTexture("assets/images/startup.png"));   //resPath not needed here as it does it inside Resource.hpp
     m_rectangleShape.setSize({ 1920.f, 1080.f });
 
     m_noiseShader.loadFromMemory(Shader::PostChromeAb::fragment, sf::Shader::Fragment);
@@ -60,7 +71,7 @@ TitleState::TitleState(StateStack& stack, Context context)
 
     context.renderWindow.setView(context.defaultView);
 
-    m_startupSound.loadFromFile("assets/sound/startup.wav");
+    m_startupSound.loadFromFile(resPath + "assets/sound/startup.wav");
     m_soundPlayer.play(m_startupSound);
 }
 
