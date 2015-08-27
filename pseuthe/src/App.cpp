@@ -431,9 +431,10 @@ void App::saveScreenshot()
     
     //get the "Pictures" folder if we are on OS X
     //as we can't save to working directory (which would be "Applications")
+    std::string picturesPath("");
     #ifdef __APPLE__
     std::string user = getenv("USER");
-    std::string picturesPath = "/Users/" + user + "/Pictures/";
+    picturesPath = "/Users/" + user + "/Pictures/";
     #endif
 
     sf::Image screenCap = m_renderWindow.capture();
