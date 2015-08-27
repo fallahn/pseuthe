@@ -41,6 +41,11 @@ source distribution.
 #include <fstream>
 #include <cstring>
 
+//Needed to access resources on OS X
+#ifdef __APPLE__
+#include <ResourcePath.hpp>
+#endif
+
 using namespace std::placeholders;
 
 namespace
@@ -332,7 +337,13 @@ void App::registerStates()
 
 void App::loadSettings()
 {
-    std::fstream file(settingsFile, std::ios::binary | std::ios::in);
+    //OS X Resource Path
+    std::string resPath("");
+    #ifdef __APPLE__
+    resPath = resourcePath();
+    #endif
+    
+    std::fstream file(resPath + settingsFile, std::ios::binary | std::ios::in);
     if (!file.good() || !file.is_open() || file.fail())
     {
         Logger::Log("failed to open settings file for reading", Logger::Type::Warning, Logger::Output::All);
@@ -377,7 +388,13 @@ void App::loadSettings()
 
 void App::saveSettings()
 {
-    std::fstream file(settingsFile, std::ios::binary | std::ios::out);
+    //OS X Resource Path
+    std::string resPath("");
+    #ifdef __APPLE__
+    resPath = resourcePath();
+    #endif
+    
+    std::fstream file(resPath + settingsFile, std::ios::binary | std::ios::out);
     if (!file.good() || !file.is_open() || file.fail())
     {
         Logger::Log("failed to open settings file for writing", Logger::Type::Error, Logger::Output::All);
@@ -411,7 +428,14 @@ void App::saveScreenshot()
     strftime(buffer, 40, "screenshot%d_%m_%y_%H_%M_%S.png", timeInfo);
 
     fileName.assign(buffer);
+    
+    //get the "Pictures" folder if we are on OS X
+    //as we can't save to working directory (which would be "Applications")
+    #ifdef __APPLE__
+    std::string user = getenv("USER");
+    std::string picturesPath = "/Users/" + user + "/Pictures/";
+    #endif
 
     sf::Image screenCap = m_renderWindow.capture();
-    if (!screenCap.saveToFile(fileName)) Logger::Log("failed to save " + fileName, Logger::Type::Error, Logger::Output::File);
+    if (!screenCap.saveToFile(picturesPath + fileName)) Logger::Log("failed to save " + fileName, Logger::Type::Error, Logger::Output::File);
 }
