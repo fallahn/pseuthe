@@ -34,6 +34,11 @@ source distribution.
 #include <algorithm>
 #include <functional>
 
+//Needed to access resources on OS X
+#ifdef __APPLE__
+#include <ResourcePath.hpp>
+#endif
+
 namespace
 {
     const int ident = 0x534e5542;
@@ -44,7 +49,13 @@ namespace
 
 void Scores::load()
 {
-    std::fstream file(scoreFile, std::ios::binary | std::ios::in);
+    //OS X Resource Path
+    std::string resPath("");
+    #ifdef __APPLE__
+    resPath = resourcePath();
+    #endif
+    
+    std::fstream file(resPath + scoreFile, std::ios::binary | std::ios::in);
     if (!file.good() || !file.is_open() || file.fail())
     {
         Logger::Log("failed to open score data for reading", Logger::Type::Warning, Logger::Output::All);
@@ -88,7 +99,13 @@ void Scores::load()
 
 void Scores::save()
 {
-    std::fstream file(scoreFile, std::ios::binary | std::ios::out);
+    //OS X Resource Path
+    std::string resPath("");
+    #ifdef __APPLE__
+    resPath = resourcePath();
+    #endif
+    
+    std::fstream file(resPath + scoreFile, std::ios::binary | std::ios::out);
     if (!file.good() || !file.is_open() || file.fail())
     {
         Logger::Log("failed to open score data for writing", Logger::Type::Error, Logger::Output::All);

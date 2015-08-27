@@ -45,6 +45,10 @@ source distribution.
 #include <Windows.h>
 #endif //_MSC_VER
 
+//Needed to access resources on OS X
+#ifdef __APPLE__
+#include <ResourcePath.hpp>
+#endif
 
 class Logger final
 {
@@ -97,8 +101,14 @@ public:
         }
         if (output == Output::File || output == Output::All)
         {
+            std::string resPath("");
+            //if it's OS X, prepend the resourcePath
+            #ifdef __APPLE__
+            resPath = resourcePath();
+            #endif
+            
             //output to a log file
-            std::ofstream file("output.log", std::ios::app);
+            std::ofstream file(resPath + "output.log", std::ios::app);
             if (file.good())
             { 
                 file << outstring << std::endl;
