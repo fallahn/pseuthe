@@ -89,14 +89,16 @@ control scheme.
 Building
 --------
 
-Pseuthe depends on SFML, specifically the Window, Graphics, System and 
-Audio libraries (and sfml-main on Windows.) The repository contains a 
-Visual Studio solution and a set of pre-built binaries for compiling on 
-Windows. Linux users will have to install SFML manually, but there is a 
-CMake file included which can be used to create a makefile compatible with
-GCC 4.9+ and the latest versions of clang/llvm. Pseuthe should also build 
-on OSX in theory, but is untested (pull requests for OSX support are 
-welcome!)
+Pseuthe depends on SFML 2.2 or higher, specifically the Window, Graphics,
+System and Audio libraries (and sfml-main on Windows.) The repository 
+contains a Visual Studio solution and a set of pre-built binaries for 
+compiling on Windows. Linux users will have to install SFML manually, but
+there is a CMake file included which can be used to create a makefile 
+compatible with GCC 4.9+ and the latest versions of clang/llvm. There is
+also an xcode project for those looking to build Pseuthe on OS X.
+
+Binaries for Windows / Mac / Linux can be found on itch.io:
+http://fallahn.itch.io/pseuthe
 
 
 License
