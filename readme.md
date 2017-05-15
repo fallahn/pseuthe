@@ -29,7 +29,7 @@ sooner will promote the arrival of new microbes - but don't accidentally
 swallow anything nasty...
 
 
-####Controls
+#### Controls
 
 The player can be controlled with either the keyboard or a controller.
 Pseuthe is tested mainly with an xbox 360 controller, but others should
@@ -45,17 +45,17 @@ you accelerate up to speed you no longer need to keep accelerating.
 Light adjustments using the accelerate and decelerate keys is the 
 recommended approach. In Arcade mode the controls are mapped like so:
 
-######Accelerate:
+###### Accelerate:
 W or Up Arrow on the keyboard, or Button 0 or z-axis negative on a
 controller. This is the equivalent to the A button and right trigger on an
 xbox 360 controller.
 
-######Decelerate:
+###### Decelerate:
 S or Down Arrow on the keyboard, or Button 1 or z-axis positive on a
 controller. This is equivalent to the B button or left trigger on an xbox
 360 controller.
 
-######Turning:
+###### Turning:
 Steering is mapped to the A and D keys or Left Arrow and Right Arrow on the
 keyboard. On a controller you can use the analogue stick or the D-Pad to
 steer.
@@ -75,7 +75,7 @@ The Classic control scheme has been included for those who are looking for
 an increased challenge from the game.
 
 
-####Scoring
+#### Scoring
 
 Points are awarded based on how long you survive. The more body parts you 
 have for a longer duration of time, the more points you will score. This
@@ -97,8 +97,7 @@ there is a CMake file included which can be used to create a makefile
 compatible with GCC 4.9+ and the latest versions of clang/llvm. There is
 also an xcode project for those looking to build Pseuthe on OS X.
 
-Binaries for Windows / Mac / Linux can be found on itch.io:
-http://fallahn.itch.io/pseuthe
+Binaries for Windows / Mac / Linux can be found on [gamejolt](http://gamejolt.com/games/pseuthe/256275)
 
 
 License
