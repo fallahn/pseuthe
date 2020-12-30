@@ -246,5 +246,5 @@ Entity::Ptr GameState::createEntity()
     auto oc = std::make_unique<OrbController>(m_messageBus);
     e->addComponent<OrbController>(oc);
 
-    return std::move(e);
+    return e;
 }

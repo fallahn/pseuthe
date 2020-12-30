@@ -48,7 +48,7 @@ PhysicsComponent::Ptr PhysicsWorld::addBody(float radius)
     assert(radius > 0);
     auto body = std::make_unique<PhysicsComponent>(radius, m_messageBus);
     m_bodies.push_back(body.get());
-    return std::move(body);
+    return body;
 }
 
 PhysicsComponent::Ptr PhysicsWorld::attachBody(float radius, float distance, PhysicsComponent* attachee)
@@ -58,7 +58,7 @@ PhysicsComponent::Ptr PhysicsWorld::attachBody(float radius, float distance, Phy
 
     auto newBody = addBody(radius);
     m_constraints.emplace_back(std::make_unique<PhysicsComponent::Constraint>(newBody.get(), attachee, distance));
-    return std::move(newBody);
+    return newBody;
 }
 
 const sf::FloatRect& PhysicsWorld::getWorldSize() const

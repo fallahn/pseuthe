@@ -74,5 +74,5 @@ FontResource::FontResource()
 std::unique_ptr<sf::Font> FontResource::errorHandle()
 {
 	//Console::lout << " returning default font..." << std::endl;
-	return std::move(std::unique_ptr<sf::Font>(new sf::Font(m_font)));
+	return std::unique_ptr<sf::Font>(new sf::Font(m_font));
 }

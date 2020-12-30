@@ -149,5 +149,5 @@ ParticleSystem::Ptr ParticleSystem::create(Particle::Type type, MessageBus& mb)
     }
 
 
-    return std::move(ps);
+    return ps;
 }
