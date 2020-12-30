@@ -200,7 +200,7 @@ void PlanktonController::handleMessage(const Message& msg)
         default: break;
         }
     }
-    else if (Message::Type::UI)
+    else if (msg.type == Message::Type::UI)
     {
         switch (msg.ui.type)
         {
