@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -269,14 +269,14 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Vector2f          m_center;              ///< Center of the view, in scene coordinates
-    Vector2f          m_size;                ///< Size of the view, in scene coordinates
-    float             m_rotation;            ///< Angle of rotation of the view rectangle, in degrees
-    FloatRect         m_viewport;            ///< Viewport rectangle, expressed as a factor of the render-target's size
-    mutable Transform m_transform;           ///< Precomputed projection transform corresponding to the view
-    mutable Transform m_inverseTransform;    ///< Precomputed inverse projection transform corresponding to the view
-    mutable bool      m_transformUpdated;    ///< Internal state telling if the transform needs to be updated
-    mutable bool      m_invTransformUpdated; ///< Internal state telling if the inverse transform needs to be updated
+    Vector2f          m_center;              //!< Center of the view, in scene coordinates
+    Vector2f          m_size;                //!< Size of the view, in scene coordinates
+    float             m_rotation;            //!< Angle of rotation of the view rectangle, in degrees
+    FloatRect         m_viewport;            //!< Viewport rectangle, expressed as a factor of the render-target's size
+    mutable Transform m_transform;           //!< Precomputed projection transform corresponding to the view
+    mutable Transform m_inverseTransform;    //!< Precomputed inverse projection transform corresponding to the view
+    mutable bool      m_transformUpdated;    //!< Internal state telling if the transform needs to be updated
+    mutable bool      m_invTransformUpdated; //!< Internal state telling if the inverse transform needs to be updated
 };
 
 } // namespace sf
@@ -302,11 +302,11 @@ private:
 /// The viewport allows to map the scene to a custom part
 /// of the render target, and can be used for split-screen
 /// or for displaying a minimap, for example. If the source
-/// rectangle has not the same size as the viewport, its
+/// rectangle doesn't have the same size as the viewport, its
 /// contents will be stretched to fit in.
 ///
 /// To apply a view, you have to assign it to the render target.
-/// Then, every objects drawn in this render target will be
+/// Then, objects drawn in this render target will be
 /// affected by the view until you use another view.
 ///
 /// Usage example:

@@ -131,7 +131,7 @@ private:
     float m_fadeTime;
 
     std::vector<float> m_wavetable;
-    int m_currentIndex;
+    std::size_t m_currentIndex;
 
     void draw(sf::RenderTarget&, sf::RenderStates) const override;
 };

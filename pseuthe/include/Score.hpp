@@ -40,8 +40,8 @@ class Scores final
 public:
     struct Chunk
     {
-        unsigned int offset;
-        unsigned int size;
+        std::size_t offset;
+        std::size_t size;
     };
 
     struct Header

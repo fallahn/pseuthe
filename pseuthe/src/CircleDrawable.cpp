@@ -128,9 +128,9 @@ void CircleDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 
     if (m_shader)
     {
-        m_shader->setParameter("u_inverseWorldViewMatrix", states.transform.getInverse());
-        m_shader->setParameter("u_diffuseMap", sf::Shader::CurrentTexture);
-        m_shader->setParameter("u_normalMap", *m_normalMap);
+        m_shader->setUniform("u_inverseWorldViewMatrix", sf::Glsl::Mat4(states.transform.getInverse()));
+        m_shader->setUniform("u_diffuseMap", sf::Shader::CurrentTexture);
+        m_shader->setUniform("u_normalMap", *m_normalMap);
     }
 
     rt.draw(m_circleShape, states);

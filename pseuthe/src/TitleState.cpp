@@ -63,11 +63,11 @@ TitleState::TitleState(StateStack& stack, Context context)
     m_rectangleShape.setSize({ 1920.f, 1080.f });
 
     m_noiseShader.loadFromMemory(Shader::PostChromeAb::fragment, sf::Shader::Fragment);
-    m_noiseShader.setParameter("u_lineCount", m_windowRatio  * scanlineCount);
-    m_noiseShader.setParameter("u_sourceTexture", *m_sprite.getTexture());
+    m_noiseShader.setUniform("u_lineCount", m_windowRatio  * scanlineCount);
+    m_noiseShader.setUniform("u_sourceTexture", *m_sprite.getTexture());
 
     m_lineShader.loadFromMemory(Shader::Scanline::fragment, sf::Shader::Fragment);
-    m_lineShader.setParameter("u_sourceTexture", *m_sprite.getTexture());
+    m_lineShader.setUniform("u_sourceTexture", *m_sprite.getTexture());
 
     context.renderWindow.setView(context.defaultView);
 
@@ -92,7 +92,7 @@ void TitleState::handleMessage(const Message&){}
 bool TitleState::update(float dt)
 {
     accumulatedTime += dt;
-    m_noiseShader.setParameter("u_time", accumulatedTime * (10.f * m_windowRatio));
+    m_noiseShader.setUniform("u_time", accumulatedTime * (10.f * m_windowRatio));
 
     sf::Color colour = sf::Color::Black;
     m_fadeTime += dt;

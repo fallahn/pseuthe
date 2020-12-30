@@ -71,14 +71,14 @@ App::App()
     m_pendingDifficulty (Difficulty::Easy)
 {
     registerStates();
-#ifndef _DEBUG_
+#ifndef P_DEBUG_
     m_stateStack.pushState(States::ID::Title);
 #else
     m_stateStack.pushState(States::ID::Main);
     m_stateStack.pushState(States::ID::Menu);
-#endif //_DEBUG_
+#endif //P_DEBUG_
 
-    loadSettings();
+    //loadSettings();
     m_scores.load();
 
     m_renderWindow.setVerticalSyncEnabled(m_videoSettings.VSync);
@@ -234,13 +234,13 @@ void App::handleEvents()
         default: break;
         }
 
-#ifdef _DEBUG_
+#ifdef P_DEBUG_
         if (evt.type == sf::Event::KeyPressed
             && evt.key.code == sf::Keyboard::Escape)
         {
             m_renderWindow.close();
         }
-#endif //_DEBUG_
+#endif //P_DEBUG_
 
         if (evt.type == sf::Event::KeyPressed
             && evt.key.code == sf::Keyboard::F5)
@@ -437,6 +437,10 @@ void App::saveScreenshot()
     picturesPath = "/Users/" + user + "/Pictures/";
     #endif
 
-    sf::Image screenCap = m_renderWindow.capture();
-    if (!screenCap.saveToFile(picturesPath + fileName)) Logger::Log("failed to save " + fileName, Logger::Type::Error, Logger::Output::File);
+    sf::Texture t;
+    t.create(m_renderWindow.getSize().x, m_renderWindow.getSize().y);
+    t.update(m_renderWindow);
+
+    sf::Image screenCap = t.copyToImage();
+    if (!screenCap.saveToFile(fileName)) Logger::Log("failed to save " + fileName, Logger::Type::Error, Logger::Output::File);
 }

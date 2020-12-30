@@ -46,7 +46,7 @@ public:
     void addItem(const std::string& text);
     void setSpeed(float speed);
     void setSize(sf::FloatRect size);
-    sf::Uint16 getMessageCount() const;
+    std::size_t getMessageCount() const;
     void setColour(const sf::Color&);
 
 private:

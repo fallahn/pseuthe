@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -97,7 +97,8 @@ public:
     /// In blocking mode, this function may take a while, especially
     /// if the remote peer is not reachable. The last parameter allows
     /// you to stop trying to connect after a given timeout.
-    /// If the socket was previously connected, it is first disconnected.
+    /// If the socket is already connected, the connection is
+    /// forcibly disconnected before attempting to connect again.
     ///
     /// \param remoteAddress Address of the remote peer
     /// \param remotePort    Port of the remote peer
@@ -219,15 +220,15 @@ private:
     {
         PendingPacket();
 
-        Uint32            Size;         ///< Data of packet size
-        std::size_t       SizeReceived; ///< Number of size bytes received so far
-        std::vector<char> Data;         ///< Data of the packet
+        Uint32            Size;         //!< Data of packet size
+        std::size_t       SizeReceived; //!< Number of size bytes received so far
+        std::vector<char> Data;         //!< Data of the packet
     };
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    PendingPacket m_pendingPacket; ///< Temporary data of the packet currently being received
+    PendingPacket m_pendingPacket; //!< Temporary data of the packet currently being received
 };
 
 } // namespace sf

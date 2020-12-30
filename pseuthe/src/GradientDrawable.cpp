@@ -73,7 +73,7 @@ namespace
 GradientDrawable::GradientDrawable(MessageBus& mb)
     :Component      (mb),
     m_vertexArray   (sf::PrimitiveType::TrianglesFan),
-    m_colour        (colours[Util::Random::value(0, colours.size() - 1)]),
+    m_colour        (colours[Util::Random::value(0, static_cast<std::int32_t>(colours.size() - 1))]),
     m_currentTime   (0.f),
     m_colourIndexA  (0),
     m_colourIndexB  (1)

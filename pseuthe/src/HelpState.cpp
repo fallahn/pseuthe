@@ -127,13 +127,15 @@ bool HelpState::update(float dt)
 
     m_menuSprite.setColor(frontColour);
     for (auto& t : m_texts)
-        t.setColor(frontColour);
+    {
+        t.setFillColor(frontColour);
+    }
 
     auto& children = m_rootNode.getChildren();
     for (auto& c : children)
     {
         c->getComponent<AnimatedDrawable>("drawable")->setColour(frontColour);
-        c->getComponent<TextDrawable>("text")->setColor(frontColour);
+        c->getComponent<TextDrawable>("text")->setFillColor(frontColour);
 
         auto tail = c->getComponent<TailDrawable>("tail");
         if (tail) tail->setColour(frontColour);

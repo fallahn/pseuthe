@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -31,6 +31,7 @@
 #include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Window/ContextSettings.hpp>
 
 
 namespace sf
@@ -82,8 +83,38 @@ public:
     ///
     /// \return True if creation has been successful
     ///
+    /// \deprecated Use create(unsigned int, unsigned int, const ContextSettings&) instead.
+    ///
     ////////////////////////////////////////////////////////////
-    bool create(unsigned int width, unsigned int height, bool depthBuffer = false);
+    SFML_DEPRECATED bool create(unsigned int width, unsigned int height, bool depthBuffer);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create the render-texture
+    ///
+    /// Before calling this function, the render-texture is in
+    /// an invalid state, thus it is mandatory to call it before
+    /// doing anything with the render-texture.
+    /// The last parameter, \a settings, is useful if you want to enable
+    /// multi-sampling or use the render-texture for OpenGL rendering that
+    /// requires a depth or stencil buffer. Otherwise it is unnecessary, and
+    /// you should leave this parameter at its default value.
+    ///
+    /// \param width    Width of the render-texture
+    /// \param height   Height of the render-texture
+    /// \param settings Additional settings for the underlying OpenGL texture and context
+    ///
+    /// \return True if creation has been successful
+    ///
+    ////////////////////////////////////////////////////////////
+    bool create(unsigned int width, unsigned int height, const ContextSettings& settings = ContextSettings());
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the maximum anti-aliasing level supported by the system
+    ///
+    /// \return The maximum anti-aliasing level supported by the system
+    ///
+    ////////////////////////////////////////////////////////////
+    static unsigned int getMaximumAntialiasingLevel();
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable texture smoothing
@@ -132,7 +163,23 @@ public:
     bool isRepeated() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Activate of deactivate the render-texture for rendering
+    /// \brief Generate a mipmap using the current texture data
+    ///
+    /// This function is similar to Texture::generateMipmap and operates
+    /// on the texture used as the target for drawing.
+    /// Be aware that any draw operation may modify the base level image data.
+    /// For this reason, calling this function only makes sense after all
+    /// drawing is completed and display has been called. Not calling display
+    /// after subsequent drawing will lead to undefined behavior if a mipmap
+    /// had been previously generated.
+    ///
+    /// \return True if mipmap generation was successful, false if unsuccessful
+    ///
+    ////////////////////////////////////////////////////////////
+    bool generateMipmap();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Activate or deactivate the render-texture for rendering
     ///
     /// This function makes the render-texture's context current for
     /// future OpenGL rendering operations (so you shouldn't care
@@ -189,23 +236,10 @@ public:
 private:
 
     ////////////////////////////////////////////////////////////
-    /// \brief Activate the target for rendering
-    ///
-    /// This function is called by the base class
-    /// everytime it's going to use OpenGL calls.
-    ///
-    /// \param active True to make the target active, false to deactivate it
-    ///
-    /// \return True if the function succeeded
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual bool activate(bool active);
-
-    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    priv::RenderTextureImpl* m_impl;    ///< Platform/hardware specific implementation
-    Texture                  m_texture; ///< Target texture to draw on
+    priv::RenderTextureImpl* m_impl;    //!< Platform/hardware specific implementation
+    Texture                  m_texture; //!< Target texture to draw on
 };
 
 } // namespace sf

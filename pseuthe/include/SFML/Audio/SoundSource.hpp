@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -49,9 +49,9 @@ public:
     ////////////////////////////////////////////////////////////
     enum Status
     {
-        Stopped, ///< Sound is not playing
-        Paused,  ///< Sound is paused
-        Playing  ///< Sound is playing
+        Stopped, //!< Sound is not playing
+        Paused,  //!< Sound is paused
+        Playing  //!< Sound is playing
     };
 
     ////////////////////////////////////////////////////////////
@@ -240,6 +240,59 @@ public:
     ////////////////////////////////////////////////////////////
     float getAttenuation() const;
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Overload of assignment operator
+    ///
+    /// \param right Instance to assign
+    ///
+    /// \return Reference to self
+    ///
+    ////////////////////////////////////////////////////////////
+    SoundSource& operator =(const SoundSource& right);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Start or resume playing the sound source
+    ///
+    /// This function starts the source if it was stopped, resumes
+    /// it if it was paused, and restarts it from the beginning if
+    /// it was already playing.
+    ///
+    /// \see pause, stop
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void play() = 0;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Pause the sound source
+    ///
+    /// This function pauses the source if it was playing,
+    /// otherwise (source already paused or stopped) it has no effect.
+    ///
+    /// \see play, stop
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void pause() = 0;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Stop playing the sound source
+    ///
+    /// This function stops the source if it was playing or paused,
+    /// and does nothing if it was already stopped.
+    /// It also resets the playing position (unlike pause()).
+    ///
+    /// \see play, pause
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void stop() = 0;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the current status of the sound (stopped, paused, playing)
+    ///
+    /// \return Current status of the sound
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual Status getStatus() const;
+
 protected:
 
     ////////////////////////////////////////////////////////////
@@ -251,17 +304,9 @@ protected:
     SoundSource();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the current status of the sound (stopped, paused, playing)
-    ///
-    /// \return Current status of the sound
-    ///
-    ////////////////////////////////////////////////////////////
-    Status getStatus() const;
-
-    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int m_source; ///< OpenAL source identifier
+    unsigned int m_source; //!< OpenAL source identifier
 };
 
 } // namespace sf

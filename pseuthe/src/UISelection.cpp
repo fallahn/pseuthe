@@ -190,7 +190,7 @@ sf::Int32 Selection::getSelectedValue() const
     return m_items[m_selectedIndex]->value;
 }
 
-void Selection::setSelectedIndex(sf::Uint16 index)
+void Selection::setSelectedIndex(std::size_t index)
 {
     assert(index < m_items.size());
     m_selectedIndex = index;
@@ -199,7 +199,7 @@ void Selection::setSelectedIndex(sf::Uint16 index)
     if (m_selectionChanged) m_selectionChanged(this);
 }
 
-sf::Uint32 Selection::itemCount() const
+std::size_t Selection::itemCount() const
 {
     return m_items.size();
 }
@@ -218,7 +218,7 @@ void Selection::selectItem(const std::string& name)
     }
 }
 
-void Selection::selectItem(sf::Uint16 val)
+void Selection::selectItem(std::size_t val)
 {
     auto result = std::find_if(m_items.begin(), m_items.end(),
         [val](const Item::Ptr& p)

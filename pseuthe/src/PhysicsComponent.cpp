@@ -218,7 +218,7 @@ void PhysicsComponent::removeConstraint(Constraint* constraint)
     }
 }
 
-sf::Uint32 PhysicsComponent::getContraintCount() const
+std::size_t PhysicsComponent::getContraintCount() const
 {
     return m_constraints.size();
 }

@@ -63,10 +63,10 @@ namespace ui
         const std::string& getSelectedText() const;
         sf::Int32 getSelectedValue() const;
 
-        void setSelectedIndex(sf::Uint16);
-        sf::Uint32 itemCount() const;
+        void setSelectedIndex(std::size_t);
+        std::size_t itemCount() const;
         void selectItem(const std::string&);
-        void selectItem(sf::Uint16);
+        void selectItem(std::size_t);
 
         void setCallback(Callback);
 
@@ -94,7 +94,7 @@ namespace ui
         float m_length;
         sf::FloatRect m_bounds;
 
-        sf::Uint16 m_selectedIndex;
+        std::size_t m_selectedIndex;
         sf::Text m_selectedText;
 
         sf::Sprite m_prevArrow;

@@ -37,6 +37,7 @@ source distribution.
 
 #include <vector>
 #include <array>
+#include <string>
 
 class Scene;
 class MessageBus;

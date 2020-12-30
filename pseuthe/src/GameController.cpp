@@ -119,7 +119,7 @@ GameController::GameController(Scene& scene, MessageBus& mb, App& app, PhysicsWo
     scrText->setFont(app.getFont("assets/fonts/Ardeco.ttf"));
     scrText->setCharacterSize(44u);
     scrText->setPosition(20.f, 1000.f);
-    scrText->setColor(sf::Color::Transparent);
+    scrText->setFillColor(sf::Color::Transparent);
     m_scoreText = scrText.get();
     m_scene.getLayer(Scene::Layer::UI).addComponent<TextDrawable>(scrText);
 
@@ -127,7 +127,7 @@ GameController::GameController(Scene& scene, MessageBus& mb, App& app, PhysicsWo
     scrText->setFont(app.getFont("assets/fonts/Ardeco.ttf"));
     scrText->setCharacterSize(44u);
     scrText->setPosition(20.f, 950.f);
-    scrText->setColor(sf::Color::Transparent);
+    scrText->setFillColor(sf::Color::Transparent);
     m_highScoreText = scrText.get();
     m_scene.getLayer(Scene::Layer::UI).addComponent<TextDrawable>(scrText);
 
@@ -135,7 +135,7 @@ GameController::GameController(Scene& scene, MessageBus& mb, App& app, PhysicsWo
     scrText->setFont(app.getFont("assets/fonts/Ardeco.ttf"));
     scrText->setCharacterSize(44u);
     scrText->setPosition(1540.f, 1000.f);
-    scrText->setColor(sf::Color::Transparent);
+    scrText->setFillColor(sf::Color::Transparent);
     m_initialsText = scrText.get();
     m_scene.getLayer(Scene::Layer::UI).addComponent<TextDrawable>(scrText);
 }
@@ -174,12 +174,12 @@ void GameController::handleMessage(const Message& msg)
         case Message::UIEvent::MenuClosed:
             if (msg.ui.stateId == States::ID::Menu)
             {
-                m_scoreText->setColor(sf::Color::White);
-                m_highScoreText->setColor(sf::Color::White);
-                m_initialsText->setColor(sf::Color::White);
+                m_scoreText->setFillColor(sf::Color::White);
+                m_highScoreText->setFillColor(sf::Color::White);
+                m_initialsText->setFillColor(sf::Color::White);
                 m_initialsText->setString("Participant Initials: " + std::string(&m_appInstance.getGameSettings().playerInitials[0]));
 
-                m_scene.getLayer(Scene::Layer::UI).getComponent<TextDrawable>("paused_text")->setColor(sf::Color::Transparent);
+                m_scene.getLayer(Scene::Layer::UI).getComponent<TextDrawable>("paused_text")->setFillColor(sf::Color::Transparent);
 
                 if (!m_player)
                 {
@@ -196,9 +196,9 @@ void GameController::handleMessage(const Message& msg)
         case Message::UIEvent::MenuOpened:
             if (msg.ui.stateId == States::ID::Score)
             {
-                m_scoreText->setColor(sf::Color::Transparent);
-                m_highScoreText->setColor(sf::Color::Transparent);
-                m_initialsText->setColor(sf::Color::Transparent);
+                m_scoreText->setFillColor(sf::Color::Transparent);
+                m_highScoreText->setFillColor(sf::Color::Transparent);
+                m_initialsText->setFillColor(sf::Color::Transparent);
             }
             else if (msg.ui.stateId == States::ID::Menu)
             {
@@ -449,7 +449,7 @@ void GameController::addBodyPart(float health)
     const auto& anims = drawable->getAnimations();
     if (!anims.empty())
     {
-        drawable->play(anims[0], drawable->getFrameCount() / maxBodyParts * m_playerPhysicsComponents.size());
+        drawable->play(anims[0], static_cast<std::int16_t>(drawable->getFrameCount() / maxBodyParts * m_playerPhysicsComponents.size()));
     }
     drawable->setScale(m_nextPartScale, m_nextPartScale);
     drawable->setName("drawable");
@@ -489,7 +489,7 @@ void GameController::addBodyPart(float health)
 
 void GameController::spawnPlankton()
 {
-    auto& spawnArea = m_planktonSpawns[Util::Random::value(0, m_planktonSpawns.size() - 1)];
+    auto& spawnArea = m_planktonSpawns[Util::Random::value(0, static_cast<std::int32_t>(m_planktonSpawns.size() - 1))];
     const float posX = spawnArea.left + (spawnArea.width / 2.f);
     const float posY = static_cast<float>(Util::Random::value(0, 1080));
 

@@ -93,7 +93,7 @@ public:
 
     void addConstraint(Constraint*);
     void removeConstraint(Constraint* constraint);
-    sf::Uint32 getContraintCount() const;
+    std::size_t getContraintCount() const;
 
     void setTriggerOnly(bool);
     bool isTrigger() const;

@@ -62,12 +62,12 @@ namespace ui
         void setBackgroundTexture(const sf::Texture&);
     private:
         std::vector<Control::Ptr> m_controls;
-        sf::Int16 m_selectedIndex;
+        std::size_t m_selectedIndex;
 
         sf::RectangleShape m_background;
 
         bool hasSelection() const;
-        void select(sf::Int16 index);
+        void select(std::size_t index);
         void selectNext();
         void selectPrevious();
 

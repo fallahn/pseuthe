@@ -230,14 +230,14 @@ void ComboBox::setHighlightColour(const sf::Color& c)
     m_highlightShape.setFillColor(c);
 }
 
-void ComboBox::setSelectedIndex(sf::Uint16 index)
+void ComboBox::setSelectedIndex(std::size_t index)
 {
     assert(index < m_items.size());
     m_selectedIndex = index;
     m_selectedText.setString(m_items[index]->name);
 }
 
-sf::Uint32 ComboBox::size() const
+std::size_t ComboBox::size() const
 {
     return m_items.size();
 }
@@ -256,7 +256,7 @@ void ComboBox::selectItem(const std::string& name)
     }
 }
 
-void ComboBox::selectItem(sf::Uint16 val)
+void ComboBox::selectItem(std::size_t val)
 {
     auto result = std::find_if(m_items.begin(), m_items.end(),
         [val](const Item::Ptr& p)

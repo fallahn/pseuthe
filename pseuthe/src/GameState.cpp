@@ -49,7 +49,7 @@ source distribution.
 namespace
 {
     const int nubbinCount = 19;
-    const std::string version("version 1.0.3");
+    const std::string version("version 1.0.4");
 }
 
 GameState::GameState(StateStack& stateStack, Context context)
@@ -101,7 +101,7 @@ GameState::GameState(StateStack& stateStack, Context context)
     pausedText->setCharacterSize(80u);
     Util::Position::centreOrigin(*pausedText);
     pausedText->setPosition(960.f, 960.f);
-    pausedText->setColor(sf::Color::Transparent);
+    pausedText->setFillColor(sf::Color::Transparent);
     pausedText->setName("paused_text");
     m_scene.getLayer(Scene::Layer::UI).addComponent<TextDrawable>(pausedText);
 
@@ -155,7 +155,7 @@ bool GameState::handleEvent(const sf::Event& evt)
         case sf::Keyboard::Escape:
         case sf::Keyboard::P:
             requestStackPush(States::ID::Menu);
-            m_scene.getLayer(Scene::Layer::UI).getComponent<TextDrawable>("paused_text")->setColor(sf::Color::White);
+            m_scene.getLayer(Scene::Layer::UI).getComponent<TextDrawable>("paused_text")->setFillColor(sf::Color::White);
             break;
         default: break;
         }
@@ -166,7 +166,7 @@ bool GameState::handleEvent(const sf::Event& evt)
         {
         case 7:
             requestStackPush(States::ID::Menu);
-            m_scene.getLayer(Scene::Layer::UI).getComponent<TextDrawable>("paused_text")->setColor(sf::Color::White);
+            m_scene.getLayer(Scene::Layer::UI).getComponent<TextDrawable>("paused_text")->setFillColor(sf::Color::White);
             break;
         default: break;
         }
@@ -190,8 +190,8 @@ void GameState::handleMessage(const Message& msg)
     if (msg.type == Message::Type::Drawable)
     {
         sf::Vector3f lightPos(msg.drawable.lightX, msg.drawable.lightY, 0.f);
-        m_orbShader.setParameter("u_lightPosition", lightPos);
-        m_orbShader.setParameter("u_lightIntensity", msg.drawable.lightIntensity);
+        m_orbShader.setUniform("u_lightPosition", lightPos);
+        m_orbShader.setUniform("u_lightIntensity", msg.drawable.lightIntensity);
     }
 
     m_audioManager.handleMessage(msg);

@@ -80,7 +80,7 @@ void PostBloom::filterBright(const sf::RenderTexture& src, sf::RenderTexture& ds
 {
     auto& shader = m_shaderResource.get(Shader::Type::PostBrightnessExtract);
 
-    shader.setParameter("u_sourceTexture", src.getTexture());
+    shader.setUniform("u_sourceTexture", src.getTexture());
     applyShader(shader, dst);
     dst.display();
 }
@@ -99,8 +99,8 @@ void PostBloom::blur(const sf::RenderTexture& src, sf::RenderTexture& dst, const
 {
     auto& shader = m_shaderResource.get(Shader::Type::PostGaussianBlur);
 
-    shader.setParameter("u_sourceTexture", src.getTexture());
-    shader.setParameter("u_offset", offset);
+    shader.setUniform("u_sourceTexture", src.getTexture());
+    shader.setUniform("u_offset", offset);
 
     applyShader(shader, dst);
     dst.display();
@@ -110,8 +110,8 @@ void PostBloom::downSample(const sf::RenderTexture& src, sf::RenderTexture& dst)
 {
     auto& shader = m_shaderResource.get(Shader::Type::PostDownSample);
 
-    shader.setParameter("u_sourceTexture", src.getTexture());
-    shader.setParameter("u_sourceSize", sf::Vector2f(src.getSize()));
+    shader.setUniform("u_sourceTexture", src.getTexture());
+    shader.setUniform("u_sourceSize", sf::Vector2f(src.getSize()));
 
     applyShader(shader, dst);
     dst.display();
@@ -121,7 +121,7 @@ void PostBloom::add(const sf::RenderTexture& src, const sf::RenderTexture& bloom
 {
     auto& shader = m_shaderResource.get(Shader::Type::PostAdditiveBlend);
 
-    shader.setParameter("u_sourceTexture", src.getTexture());
-    shader.setParameter("u_bloomTexture", bloom.getTexture());
+    shader.setUniform("u_sourceTexture", src.getTexture());
+    shader.setUniform("u_bloomTexture", bloom.getTexture());
     applyShader(shader, dst);
 }

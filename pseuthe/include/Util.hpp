@@ -55,8 +55,8 @@ namespace Util
         static inline std::vector<float> toFloatArray(const std::string& str)
         {
             std::vector<float> values;
-            auto start = 0u;
-            auto next = str.find_first_of(',');
+            std::size_t start = 0u;
+            std::size_t next = str.find_first_of(',');
             while (next != std::string::npos && start < str.length())
             {
                 try

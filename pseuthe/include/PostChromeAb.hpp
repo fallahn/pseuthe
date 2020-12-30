@@ -33,6 +33,8 @@ source distribution.
 #include <PostProcess.hpp>
 #include <ShaderResource.hpp>
 
+#include <SFML/Graphics/Shader.hpp>
+
 class PostChromeAb final : public PostProcess
 {
 public:
@@ -42,7 +44,8 @@ public:
     void update(float);
 
 private:
-    ShaderResource m_shaderResource;
+    //ShaderResource m_shaderResource;
+    sf::Shader m_shader;
 };
 
 #endif //POST_CHROMEAB_HPP_

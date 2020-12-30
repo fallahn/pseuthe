@@ -85,7 +85,7 @@ namespace ui
         bool m_selected;
         bool m_active;
         bool m_visible;
-        sf::Uint16 m_index;
+        std::size_t m_index;
     };
 }
 

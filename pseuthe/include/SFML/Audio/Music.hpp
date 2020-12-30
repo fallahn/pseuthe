@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -50,6 +50,43 @@ class SFML_AUDIO_API Music : public SoundStream
 public:
 
     ////////////////////////////////////////////////////////////
+    /// \brief Structure defining a time range using the template type
+    ///
+    ////////////////////////////////////////////////////////////
+    template <typename T>
+    struct Span
+    {
+        ////////////////////////////////////////////////////////////
+        /// \brief Default constructor
+        ///
+        ////////////////////////////////////////////////////////////
+        Span()
+        {
+
+        }
+
+        ////////////////////////////////////////////////////////////
+        /// \brief Initialization constructor
+        ///
+        /// \param off Initial Offset
+        /// \param len Initial Length
+        ///
+        ////////////////////////////////////////////////////////////
+        Span(T off, T len):
+        offset(off),
+        length(len)
+        {
+
+        }
+
+        T offset; //!< The beginning offset of the time range
+        T length; //!< The length of the time range
+    };
+
+    // Define the relevant Span types
+    typedef Span<Time> TimeSpan;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
     ////////////////////////////////////////////////////////////
@@ -69,6 +106,10 @@ public:
     /// See the documentation of sf::InputSoundFile for the list
     /// of supported formats.
     ///
+    /// \warning Since the music is not loaded at once but rather
+    /// streamed continuously, the file must remain accessible until
+    /// the sf::Music object loads a new music or is destroyed.
+    ///
     /// \param filename Path of the music file to open
     ///
     /// \return True if loading succeeded, false if it failed
@@ -85,10 +126,11 @@ public:
     /// to do so).
     /// See the documentation of sf::InputSoundFile for the list
     /// of supported formats.
-    /// Since the music is not loaded completely but rather streamed
-    /// continuously, the \a data must remain available as long as the
-    /// music is playing (i.e. you can't deallocate it right after calling
-    /// this function).
+    ///
+    /// \warning Since the music is not loaded at once but rather streamed
+    /// continuously, the \a data buffer must remain accessible until
+    /// the sf::Music object loads a new music or is destroyed. That is,
+    /// you can't deallocate the buffer right after calling this function.
     ///
     /// \param data        Pointer to the file data in memory
     /// \param sizeInBytes Size of the data to load, in bytes
@@ -107,10 +149,10 @@ public:
     /// to do so).
     /// See the documentation of sf::InputSoundFile for the list
     /// of supported formats.
-    /// Since the music is not loaded completely but rather streamed
-    /// continuously, the \a stream must remain alive as long as the
-    /// music is playing (i.e. you can't destroy it right after calling
-    /// this function).
+    ///
+    /// \warning Since the music is not loaded at once but rather
+    /// streamed continuously, the \a stream must remain accessible
+    /// until the sf::Music object loads a new music or is destroyed.
     ///
     /// \param stream Source stream to read from
     ///
@@ -128,6 +170,45 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     Time getDuration() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the positions of the of the sound's looping sequence
+    ///
+    /// \return Loop Time position class.
+    ///
+    /// \warning Since setLoopPoints() performs some adjustments on the
+    /// provided values and rounds them to internal samples, a call to
+    /// getLoopPoints() is not guaranteed to return the same times passed
+    /// into a previous call to setLoopPoints(). However, it is guaranteed
+    /// to return times that will map to the valid internal samples of
+    /// this Music if they are later passed to setLoopPoints().
+    ///
+    /// \see setLoopPoints
+    ///
+    ////////////////////////////////////////////////////////////
+    TimeSpan getLoopPoints() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Sets the beginning and end of the sound's looping sequence using sf::Time
+    ///
+    /// Loop points allow one to specify a pair of positions such that, when the music
+    /// is enabled for looping, it will seamlessly seek to the beginning whenever it
+    /// encounters the end. Valid ranges for timePoints.offset and timePoints.length are
+    /// [0, Dur) and (0, Dur-offset] respectively, where Dur is the value returned by getDuration().
+    /// Note that the EOF "loop point" from the end to the beginning of the stream is still honored,
+    /// in case the caller seeks to a point after the end of the loop range. This function can be
+    /// safely called at any point after a stream is opened, and will be applied to a playing sound
+    /// without affecting the current playing offset.
+    ///
+    /// \warning Setting the loop points while the stream's status is Paused
+    /// will set its status to Stopped. The playing offset will be unaffected.
+    ///
+    /// \param timePoints The definition of the loop. Can be any time points within the sound's length
+    ///
+    /// \see getLoopPoints
+    ///
+    ////////////////////////////////////////////////////////////
+    void setLoopPoints(TimeSpan timePoints);
 
 protected:
 
@@ -152,6 +233,18 @@ protected:
     ////////////////////////////////////////////////////////////
     virtual void onSeek(Time timeOffset);
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Change the current playing position in the stream source to the loop offset
+    ///
+    /// This is called by the underlying SoundStream whenever it needs us to reset
+    /// the seek position for a loop. We then determine whether we are looping on a
+    /// loop point or the end-of-file, perform the seek, and return the new position.
+    ///
+    /// \return The seek position after looping (or -1 if there's no loop)
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual Int64 onLoop();
+
 private:
 
     ////////////////////////////////////////////////////////////
@@ -161,12 +254,32 @@ private:
     void initialize();
 
     ////////////////////////////////////////////////////////////
+    /// \brief Helper to convert an sf::Time to a sample position
+    ///
+    /// \param position Time to convert to samples
+    ///
+    /// \return The number of samples elapsed at the given time
+    ///
+    ////////////////////////////////////////////////////////////
+    Uint64 timeToSamples(Time position) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Helper to convert a sample position to an sf::Time
+    ///
+    /// \param samples Sample count to convert to Time
+    ///
+    /// \return The Time position of the given sample
+    ///
+    ////////////////////////////////////////////////////////////
+    Time samplesToTime(Uint64 samples) const;
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    InputSoundFile     m_file;     ///< The streamed music file
-    Time               m_duration; ///< Music duration
-    std::vector<Int16> m_samples;  ///< Temporary buffer of samples
-    Mutex              m_mutex;    ///< Mutex protecting the data
+    InputSoundFile     m_file;     //!< The streamed music file
+    std::vector<Int16> m_samples;  //!< Temporary buffer of samples
+    Mutex              m_mutex;    //!< Mutex protecting the data
+    Span<Uint64>       m_loopSpan; //!< Loop Range Specifier
 };
 
 } // namespace sf
@@ -184,6 +297,9 @@ private:
 /// musics that usually take hundreds of MB when they are
 /// uncompressed: by streaming it instead of loading it entirely,
 /// you avoid saturating the memory and have almost no loading delay.
+/// This implies that the underlying resource (file, stream or
+/// memory buffer) must remain valid for the lifetime of the
+/// sf::Music object.
 ///
 /// Apart from that, a sf::Music has almost the same features as
 /// the sf::SoundBuffer / sf::Sound pair: you can play/pause/stop

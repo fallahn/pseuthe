@@ -34,11 +34,11 @@ source distribution.
 #include <iostream>
 #include <fstream>
 
-#ifndef _DEBUG_
+#ifndef P_DEBUG_
     #define LOG(message, type)
 #else
     #define LOG(message, type) Logger::Log(message, type);
-#endif //_DEBUG_
+#endif //P_DEBUG_
 
 #ifdef _MSC_VER
 #define NOMINMAX

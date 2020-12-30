@@ -218,7 +218,7 @@ void ParticleSystem::update(float dt)
     }
 }
 
-sf::Uint32 ParticleSystem::getParticleCount() const
+std::size_t ParticleSystem::getParticleCount() const
 {
     return m_particles.size();
 }
@@ -235,7 +235,7 @@ void ParticleSystem::emit(float dt)
         for (auto i = 0u; i < m_releaseCount; ++i)
         {
             m_randPosition ? 
-                addParticle(m_position + m_randPositions[Util::Random::value(0, m_randPositions.size() - 1)]) :
+                addParticle(m_position + m_randPositions[Util::Random::value(0, static_cast<std::int32_t>(m_randPositions.size() - 1))]) :
                 addParticle(m_position);
         }
     }
@@ -248,7 +248,7 @@ void ParticleSystem::addParticle(const sf::Vector2f& position)
     p.colour = m_colour;
     p.lifetime = m_particleLifetime;
     p.velocity = (m_randVelocity) ? 
-        m_randVelocities[Util::Random::value(0, m_randVelocities.size() - 1)] :
+        m_randVelocities[Util::Random::value(0, static_cast<std::int32_t>(m_randVelocities.size() - 1))] :
         m_initialVelocity;
 
     m_particles.push_back(p);
@@ -295,7 +295,7 @@ void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 
     if (m_shader)
     {
-        m_shader->setParameter("u_diffuseMap", sf::Shader::CurrentTexture);
+        m_shader->setUniform("u_diffuseMap", sf::Shader::CurrentTexture);
     }
 
     states.texture = m_texture;

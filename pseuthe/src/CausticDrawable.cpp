@@ -83,7 +83,7 @@ void CausticDrawable::entityUpdate(Entity& entity, float dt)
         max - position.x;
 
     const float alpha = std::min(currentDistance / distanceToFullBright, 1.f);
-    m_shader->setParameter("u_alpha", alpha);
+    m_shader->setUniform("u_alpha", alpha);
 
     Message msg;
     msg.type = Message::Type::Drawable;

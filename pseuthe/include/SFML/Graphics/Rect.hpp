@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -95,6 +95,9 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Check if a point is inside the rectangle's area
     ///
+    /// This check is non-inclusive. If the point lies on the
+    /// edge of the rectangle, this function will return false.
+    ///
     /// \param x X coordinate of the point to test
     /// \param y Y coordinate of the point to test
     ///
@@ -107,6 +110,9 @@ public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Check if a point is inside the rectangle's area
+    ///
+    /// This check is non-inclusive. If the point lies on the
+    /// edge of the rectangle, this function will return false.
     ///
     /// \param point Point to test
     ///
@@ -146,12 +152,32 @@ public:
     bool intersects(const Rect<T>& rectangle, Rect<T>& intersection) const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the position of the rectangle's top-left corner
+    ///
+    /// \return Position of rectangle
+    ///
+    /// \see getSize
+    ///
+    ////////////////////////////////////////////////////////////
+    sf::Vector2<T> getPosition() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the size of the rectangle
+    ///
+    /// \return Size of rectangle
+    ///
+    /// \see getPosition
+    ///
+    ////////////////////////////////////////////////////////////
+    sf::Vector2<T> getSize() const;
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    T left;   ///< Left coordinate of the rectangle
-    T top;    ///< Top coordinate of the rectangle
-    T width;  ///< Width of the rectangle
-    T height; ///< Height of the rectangle
+    T left;   //!< Left coordinate of the rectangle
+    T top;    //!< Top coordinate of the rectangle
+    T width;  //!< Width of the rectangle
+    T height; //!< Height of the rectangle
 };
 
 ////////////////////////////////////////////////////////////

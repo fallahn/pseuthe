@@ -61,10 +61,10 @@ namespace ui
 
         void setBackgroundColour(const sf::Color&);
         void setHighlightColour(const sf::Color&);
-        void setSelectedIndex(sf::Uint16 index);
-        sf::Uint32 size() const;
+        void setSelectedIndex(std::size_t index);
+        std::size_t size() const;
         void selectItem(const std::string&);
-        void selectItem(sf::Uint16);
+        void selectItem(std::size_t);
 
     private:
         struct Item
@@ -86,8 +86,8 @@ namespace ui
         sf::RectangleShape m_dropDownShape;
         mutable sf::RectangleShape m_highlightShape;
 
-        sf::Uint16 m_selectedIndex;
-        sf::Uint16 m_nextIndex;
+        std::size_t m_selectedIndex;
+        std::size_t m_nextIndex;
         sf::Text m_selectedText;
 
         const sf::Font& m_font;

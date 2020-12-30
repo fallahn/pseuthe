@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -55,11 +55,11 @@ public:
     ////////////////////////////////////////////////////////////
     enum Style
     {
-        Regular       = 0,      ///< Regular characters, no style
-        Bold          = 1 << 0, ///< Bold characters
-        Italic        = 1 << 1, ///< Italic characters
-        Underlined    = 1 << 2, ///< Underlined characters
-        StrikeThrough = 1 << 3  ///< Strike through characters
+        Regular       = 0,      //!< Regular characters, no style
+        Bold          = 1 << 0, //!< Bold characters
+        Italic        = 1 << 1, //!< Italic characters
+        Underlined    = 1 << 2, //!< Underlined characters
+        StrikeThrough = 1 << 3  //!< Strike through characters
     };
 
     ////////////////////////////////////////////////////////////
@@ -145,6 +145,39 @@ public:
     void setCharacterSize(unsigned int size);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Set the line spacing factor
+    ///
+    /// The default spacing between lines is defined by the font.
+    /// This method enables you to set a factor for the spacing
+    /// between lines. By default the line spacing factor is 1.
+    ///
+    /// \param spacingFactor New line spacing factor
+    ///
+    /// \see getLineSpacing
+    ///
+    ////////////////////////////////////////////////////////////
+    void setLineSpacing(float spacingFactor);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the letter spacing factor
+    ///
+    /// The default spacing between letters is defined by the font.
+    /// This factor doesn't directly apply to the existing
+    /// spacing between each character, it rather adds a fixed
+    /// space between them which is calculated from the font
+    /// metrics and the character size.
+    /// Note that factors below 1 (including negative numbers) bring
+    /// characters closer to each other.
+    /// By default the letter spacing factor is 1.
+    ///
+    /// \param spacingFactor New letter spacing factor
+    ///
+    /// \see getLetterSpacing
+    ///
+    ////////////////////////////////////////////////////////////
+    void setLetterSpacing(float spacingFactor);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Set the text's style
     ///
     /// You can pass a combination of one or more styles, for
@@ -159,16 +192,63 @@ public:
     void setStyle(Uint32 style);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Set the global color of the text
+    /// \brief Set the fill color of the text
     ///
-    /// By default, the text's color is opaque white.
+    /// By default, the text's fill color is opaque white.
+    /// Setting the fill color to a transparent color with an outline
+    /// will cause the outline to be displayed in the fill area of the text.
     ///
-    /// \param color New color of the text
+    /// \param color New fill color of the text
     ///
-    /// \see getColor
+    /// \see getFillColor
+    ///
+    /// \deprecated There is now fill and outline colors instead
+    /// of a single global color.
+    /// Use setFillColor() or setOutlineColor() instead.
     ///
     ////////////////////////////////////////////////////////////
-    void setColor(const Color& color);
+    SFML_DEPRECATED void setColor(const Color& color);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the fill color of the text
+    ///
+    /// By default, the text's fill color is opaque white.
+    /// Setting the fill color to a transparent color with an outline
+    /// will cause the outline to be displayed in the fill area of the text.
+    ///
+    /// \param color New fill color of the text
+    ///
+    /// \see getFillColor
+    ///
+    ////////////////////////////////////////////////////////////
+    void setFillColor(const Color& color);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the outline color of the text
+    ///
+    /// By default, the text's outline color is opaque black.
+    ///
+    /// \param color New outline color of the text
+    ///
+    /// \see getOutlineColor
+    ///
+    ////////////////////////////////////////////////////////////
+    void setOutlineColor(const Color& color);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the thickness of the text's outline
+    ///
+    /// By default, the outline thickness is 0.
+    ///
+    /// Be aware that using a negative value for the outline
+    /// thickness will cause distorted rendering.
+    ///
+    /// \param thickness New outline thickness, in pixels
+    ///
+    /// \see getOutlineThickness
+    ///
+    ////////////////////////////////////////////////////////////
+    void setOutlineThickness(float thickness);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the text's string
@@ -214,6 +294,26 @@ public:
     unsigned int getCharacterSize() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the size of the letter spacing factor
+    ///
+    /// \return Size of the letter spacing factor
+    ///
+    /// \see setLetterSpacing
+    ///
+    ////////////////////////////////////////////////////////////
+    float getLetterSpacing() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the size of the line spacing factor
+    ///
+    /// \return Size of the line spacing factor
+    ///
+    /// \see setLineSpacing
+    ///
+    ////////////////////////////////////////////////////////////
+    float getLineSpacing() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Get the text's style
     ///
     /// \return Text's style
@@ -224,14 +324,48 @@ public:
     Uint32 getStyle() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the global color of the text
+    /// \brief Get the fill color of the text
     ///
-    /// \return Global color of the text
+    /// \return Fill color of the text
     ///
-    /// \see setColor
+    /// \see setFillColor
+    ///
+    /// \deprecated There is now fill and outline colors instead
+    /// of a single global color.
+    /// Use getFillColor() or getOutlineColor() instead.
     ///
     ////////////////////////////////////////////////////////////
-    const Color& getColor() const;
+    SFML_DEPRECATED const Color& getColor() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the fill color of the text
+    ///
+    /// \return Fill color of the text
+    ///
+    /// \see setFillColor
+    ///
+    ////////////////////////////////////////////////////////////
+    const Color& getFillColor() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the outline color of the text
+    ///
+    /// \return Outline color of the text
+    ///
+    /// \see setOutlineColor
+    ///
+    ////////////////////////////////////////////////////////////
+    const Color& getOutlineColor() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the outline thickness of the text
+    ///
+    /// \return Outline thickness of the text, in pixels
+    ///
+    /// \see setOutlineThickness
+    ///
+    ////////////////////////////////////////////////////////////
+    float getOutlineThickness() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the position of the \a index-th character
@@ -301,14 +435,20 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    String              m_string;             ///< String to display
-    const Font*         m_font;               ///< Font used to display the string
-    unsigned int        m_characterSize;      ///< Base size of characters, in pixels
-    Uint32              m_style;              ///< Text style (see Style enum)
-    Color               m_color;              ///< Text color
-    mutable VertexArray m_vertices;           ///< Vertex array containing the text's geometry
-    mutable FloatRect   m_bounds;             ///< Bounding rectangle of the text (in local coordinates)
-    mutable bool        m_geometryNeedUpdate; ///< Does the geometry need to be recomputed?
+    String              m_string;              //!< String to display
+    const Font*         m_font;                //!< Font used to display the string
+    unsigned int        m_characterSize;       //!< Base size of characters, in pixels
+    float               m_letterSpacingFactor; //!< Spacing factor between letters
+    float               m_lineSpacingFactor;   //!< Spacing factor between lines
+    Uint32              m_style;               //!< Text style (see Style enum)
+    Color               m_fillColor;           //!< Text fill color
+    Color               m_outlineColor;        //!< Text outline color
+    float               m_outlineThickness;    //!< Thickness of the text's outline
+    mutable VertexArray m_vertices;            //!< Vertex array containing the fill geometry
+    mutable VertexArray m_outlineVertices;     //!< Vertex array containing the outline geometry
+    mutable FloatRect   m_bounds;              //!< Bounding rectangle of the text (in local coordinates)
+    mutable bool        m_geometryNeedUpdate;  //!< Does the geometry need to be recomputed?
+    mutable Uint64      m_fontTextureId;       //!< The font texture id
 };
 
 } // namespace sf
@@ -327,8 +467,9 @@ private:
 /// It inherits all the functions from sf::Transformable:
 /// position, rotation, scale, origin. It also adds text-specific
 /// properties such as the font to use, the character size,
-/// the font style (bold, italic, underlined, strike through), the
-/// global color and the text to display of course.
+/// the font style (bold, italic, underlined and strike through), the
+/// text color, the outline thickness, the outline color, the character
+/// spacing, the line spacing and the text to display of course.
 /// It also provides convenience functions to calculate the
 /// graphical size of the text, or to get the global position
 /// of a given character.
@@ -361,7 +502,7 @@ private:
 /// sf::Text text("hello", font);
 /// text.setCharacterSize(30);
 /// text.setStyle(sf::Text::Bold);
-/// text.setColor(sf::Color::Red);
+/// text.setFillColor(sf::Color::Red);
 ///
 /// // Draw it
 /// window.draw(text);

@@ -80,7 +80,7 @@ public:
     void stop();
     void update(float dt);
     
-    sf::Uint32 getParticleCount() const;
+    std::size_t getParticleCount() const;
 
 private:
     std::deque<Particle> m_particles;

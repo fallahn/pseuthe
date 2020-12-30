@@ -46,13 +46,16 @@ namespace Shader
 
     namespace FullPass
     {
-        static const std::string vertex =
-            "#version 120\n" \
-            "void main()\n" \
-            "{\n" \
-            "    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\n" \
-            "    gl_TexCoord[0] = gl_MultiTexCoord0;\n" \
-            "}";
+        static const std::string vertex = R"(
+            #version 120
+            void main()
+            {
+                gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+
+                gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;
+
+                gl_FrontColor = gl_Color;
+            })";
     }
 
     namespace PostBrightness

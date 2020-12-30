@@ -173,7 +173,7 @@ int Scores::add(const std::string& name, float value, Difficulty difficulty)
         return (sv.hash == hash);
     });
 
-    return (result == scores->end()) ? 0 : result - scores->begin();
+    return (result == scores->end()) ? 0 : static_cast<std::int32_t>(result - scores->begin());
 }
 
 const std::vector<Scores::Item>& Scores::getScores(Difficulty difficulty) const

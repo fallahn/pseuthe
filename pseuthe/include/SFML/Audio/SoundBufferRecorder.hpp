@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -44,6 +44,12 @@ namespace sf
 class SFML_AUDIO_API SoundBufferRecorder : public SoundRecorder
 {
 public:
+
+    ////////////////////////////////////////////////////////////
+    /// \brief destructor
+    ///
+    ////////////////////////////////////////////////////////////
+    ~SoundBufferRecorder();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the sound buffer containing the captured audio data
@@ -90,8 +96,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::vector<Int16> m_samples; ///< Temporary sample buffer to hold the recorded data
-    SoundBuffer        m_buffer;  ///< Sound buffer that will contain the recorded data
+    std::vector<Int16> m_samples; //!< Temporary sample buffer to hold the recorded data
+    SoundBuffer        m_buffer;  //!< Sound buffer that will contain the recorded data
 };
 
 } // namespace sf

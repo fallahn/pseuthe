@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -100,6 +100,12 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Transform a 2D point
     ///
+    /// These two statements are equivalent:
+    /// \code
+    /// sf::Vector2f transformedPoint = matrix.transformPoint(x, y);
+    /// sf::Vector2f transformedPoint = matrix * sf::Vector2f(x, y);
+    /// \endcode
+    ///
     /// \param x X coordinate of the point to transform
     /// \param y Y coordinate of the point to transform
     ///
@@ -110,6 +116,12 @@ public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Transform a 2D point
+    ///
+    /// These two statements are equivalent:
+    /// \code
+    /// sf::Vector2f transformedPoint = matrix.transformPoint(point);
+    /// sf::Vector2f transformedPoint = matrix * point;
+    /// \endcode
     ///
     /// \param point Point to transform
     ///
@@ -138,8 +150,14 @@ public:
     /// \brief Combine the current transform with another one
     ///
     /// The result is a transform that is equivalent to applying
-    /// *this followed by \a transform. Mathematically, it is
-    /// equivalent to a matrix multiplication.
+    /// \a transform followed by *this. Mathematically, it is
+    /// equivalent to a matrix multiplication (*this) * transform.
+    ///
+    /// These two statements are equivalent:
+    /// \code
+    /// left.combine(right);
+    /// left *= right;
+    /// \endcode
     ///
     /// \param transform Transform to combine with this transform
     ///
@@ -351,14 +369,14 @@ public:
     ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
-    static const Transform Identity; ///< The identity transform (does nothing)
+    static const Transform Identity; //!< The identity transform (does nothing)
 
 private:
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    float m_matrix[16]; ///< 4x4 matrix defining the transformation
+    float m_matrix[16]; //!< 4x4 matrix defining the transformation
 };
 
 ////////////////////////////////////////////////////////////
@@ -402,6 +420,35 @@ SFML_GRAPHICS_API Transform& operator *=(Transform& left, const Transform& right
 ///
 ////////////////////////////////////////////////////////////
 SFML_GRAPHICS_API Vector2f operator *(const Transform& left, const Vector2f& right);
+
+////////////////////////////////////////////////////////////
+/// \relates sf::Transform
+/// \brief Overload of binary operator == to compare two transforms
+///
+/// Performs an element-wise comparison of the elements of the
+/// left transform with the elements of the right transform.
+///
+/// \param left Left operand (the first transform)
+/// \param right Right operand (the second transform)
+///
+/// \return true if the transforms are equal, false otherwise
+///
+////////////////////////////////////////////////////////////
+SFML_GRAPHICS_API bool operator ==(const Transform& left, const Transform& right);
+
+////////////////////////////////////////////////////////////
+/// \relates sf::Transform
+/// \brief Overload of binary operator != to compare two transforms
+///
+/// This call is equivalent to !(left == right).
+///
+/// \param left Left operand (the first transform)
+/// \param right Right operand (the second transform)
+///
+/// \return true if the transforms are not equal, false otherwise
+///
+////////////////////////////////////////////////////////////
+SFML_GRAPHICS_API bool operator !=(const Transform& left, const Transform& right);
 
 } // namespace sf
 

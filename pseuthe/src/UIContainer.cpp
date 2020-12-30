@@ -38,7 +38,7 @@ namespace
 }
 
 Container::Container()
-    : m_selectedIndex   (-1),
+    : m_selectedIndex   (0),
     m_background        (sf::Vector2f(1920.f, 1080.f))
 {
     m_background.setFillColor(sf::Color::Transparent);
@@ -50,7 +50,9 @@ void Container::addControl(Control::Ptr c)
     m_controls.push_back(c);
 
     if (!hasSelection() && c->selectable())
+    {
         select(m_controls.size() - 1);
+    }
 }
 
 bool Container::selectable() const
@@ -176,12 +178,14 @@ bool Container::hasSelection() const
     return (m_selectedIndex >= 0);
 }
 
-void Container::select(sf::Int16 index)
+void Container::select(std::size_t index)
 {
     if (m_controls[index]->selectable())
     {
         if (hasSelection())
+        {
             m_controls[m_selectedIndex]->deselect();
+        }
 
         m_controls[index]->select();
         m_selectedIndex = index;

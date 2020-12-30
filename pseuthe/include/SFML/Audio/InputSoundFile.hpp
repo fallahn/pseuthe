@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -32,6 +32,7 @@
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Time.hpp>
 #include <string>
+#include <algorithm>
 
 
 namespace sf
@@ -62,7 +63,8 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Open a sound file from the disk for reading
     ///
-    /// The supported audio formats are: WAV, OGG/Vorbis, FLAC.
+    /// The supported audio formats are: WAV (PCM only), OGG/Vorbis, FLAC.
+    /// The supported sample sizes for FLAC and WAV are 8, 16, 24 and 32 bit.
     ///
     /// \param filename Path of the sound file to load
     ///
@@ -74,7 +76,8 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Open a sound file in memory for reading
     ///
-    /// The supported audio formats are: WAV, OGG/Vorbis, FLAC.
+    /// The supported audio formats are: WAV (PCM only), OGG/Vorbis, FLAC.
+    /// The supported sample sizes for FLAC and WAV are 8, 16, 24 and 32 bit.
     ///
     /// \param data        Pointer to the file data in memory
     /// \param sizeInBytes Size of the data to load, in bytes
@@ -87,7 +90,8 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Open a sound file from a custom stream for reading
     ///
-    /// The supported audio formats are: WAV, OGG/Vorbis, FLAC.
+    /// The supported audio formats are: WAV (PCM only), OGG/Vorbis, FLAC.
+    /// The supported sample sizes for FLAC and WAV are 8, 16, 24 and 32 bit.
     ///
     /// \param stream Source stream to read from
     ///
@@ -95,18 +99,6 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     bool openFromStream(InputStream& stream);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Open the sound file from the disk for writing
-    ///
-    /// \param filename     Path of the sound file to write
-    /// \param channelCount Number of channels in the sound
-    /// \param sampleRate   Sample rate of the sound
-    ///
-    /// \return True if the file was successfully opened
-    ///
-    ////////////////////////////////////////////////////////////
-    bool openForWriting(const std::string& filename, unsigned int channelCount, unsigned int sampleRate);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the total number of audio samples in the file
@@ -144,12 +136,32 @@ public:
     Time getDuration() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the read offset of the file in time
+    ///
+    /// \return Time position
+    ///
+    ////////////////////////////////////////////////////////////
+    Time getTimeOffset() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the read offset of the file in samples
+    ///
+    /// \return Sample position
+    ///
+    ////////////////////////////////////////////////////////////
+    Uint64 getSampleOffset() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Change the current read position to the given sample offset
     ///
     /// This function takes a sample offset to provide maximum
     /// precision. If you need to jump to a given time, use the
     /// other overload.
     ///
+    /// The sample offset takes the channels into account.
+    /// If you have a time offset instead, you can easily find
+    /// the corresponding sample offset with the following formula:
+    /// `timeInSeconds * sampleRate * channelCount`
     /// If the given offset exceeds to total number of samples,
     /// this function jumps to the end of the sound file.
     ///
@@ -183,23 +195,24 @@ public:
     ////////////////////////////////////////////////////////////
     Uint64 read(Int16* samples, Uint64 maxCount);
 
-private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Close the current file
     ///
     ////////////////////////////////////////////////////////////
     void close();
 
+private:
+
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    SoundFileReader* m_reader;       ///< Reader that handles I/O on the file's format
-    InputStream*     m_stream;       ///< Input stream used to access the file's data
-    bool             m_streamOwned;  ///< Is the stream internal or external?
-    Uint64           m_sampleCount;  ///< Total number of samples in the file
-    unsigned int     m_channelCount; ///< Number of channels of the sound
-    unsigned int     m_sampleRate;   ///< Number of samples per second
+    SoundFileReader* m_reader;       //!< Reader that handles I/O on the file's format
+    InputStream*     m_stream;       //!< Input stream used to access the file's data
+    bool             m_streamOwned;  //!< Is the stream internal or external?
+    Uint64           m_sampleOffset; //!< Sample Read Position
+    Uint64           m_sampleCount;  //!< Total number of samples in the file
+    unsigned int     m_channelCount; //!< Number of channels of the sound
+    unsigned int     m_sampleRate;   //!< Number of samples per second
 };
 
 } // namespace sf

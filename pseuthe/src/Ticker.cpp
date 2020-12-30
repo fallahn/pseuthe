@@ -85,7 +85,7 @@ void Ticker::setSize(sf::FloatRect size)
     m_size = size;
 }
 
-sf::Uint16 Ticker::getMessageCount() const
+std::size_t Ticker::getMessageCount() const
 {
     return m_messages.size();
 }
@@ -94,7 +94,7 @@ void Ticker::setColour(const sf::Color& colour)
 {
     for (auto& t : m_messages)
     {
-        t.setColor(colour);
+        t.setFillColor(colour);
     }
 }
 

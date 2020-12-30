@@ -71,7 +71,7 @@ void TailDrawable::entityUpdate(Entity& entity, float dt)
 
     setPosition(position);
     auto transform = getTransform();
-    int wiggleOffset = m_wavetable.size() / m_simulations.size();
+    auto wiggleOffset = m_wavetable.size() / m_simulations.size();
     for (auto i = 0u; i < m_simulations.size(); ++i)
     {
         auto point = m_simulations[i].second + sf::Vector2f(0.f, m_wavetable[(m_currentIndex + (i * wiggleOffset)) % m_wavetable.size()]);
